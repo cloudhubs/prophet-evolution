@@ -1,27 +1,29 @@
-package edu.university.ecs.lab.semantics.entity.quantification;
+// package edu.university.ecs.lab.semantics.entity.quantification;
 
-import lombok.Data;
+// import lombok.Data;
 
-import java.util.List;
+// import java.util.List;
 
-import edu.university.ecs.lab.semantics.entity.MsCodeClone;
-import edu.university.ecs.lab.semantics.entity.MsFlow;
-import edu.university.ecs.lab.semantics.entity.MsFlowEntity;
+// import edu.university.ecs.lab.semantics.entity.MsCodeClone;
+// import edu.university.ecs.lab.semantics.entity.MsFlow;
+// import edu.university.ecs.lab.semantics.entity.MsFlowEntity;
 
-@Data
-public class ModuleClonePair {
-    private int moduleAId;
-    private String moduleA;
-    private String moduleB;
-    private int moduleBId;
-    private List<MsFlowEntity> moduleAFlows;
-    private List<MsFlowEntity> moduleBFlows;
-    private List<MsCodeClone> codeClones;
-    private double percentClonesModuleA;
-    private double percentClonesModuleB;
+// // REMOVE THIS
 
-    @Override
-    public String toString() {
-        return moduleA + " -> " + moduleB + " : " + percentClonesModuleA;
-    }
-}
+// @Data
+// public class ModuleClonePair {
+//     private int moduleAId;
+//     private String moduleA;
+//     private String moduleB;
+//     private int moduleBId;
+//     private List<MsFlowEntity> moduleAFlows;
+//     private List<MsFlowEntity> moduleBFlows;
+//     private List<MsCodeClone> codeClones;
+//     private double percentClonesModuleA;
+//     private double percentClonesModuleB;
+
+//     @Override
+//     public String toString() {
+//         return moduleA + " -> " + moduleB + " : " + percentClonesModuleA;
+//     }
+// }

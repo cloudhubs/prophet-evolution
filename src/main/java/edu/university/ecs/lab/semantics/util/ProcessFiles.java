@@ -10,6 +10,11 @@ import edu.university.ecs.lab.semantics.util.visitor.MsVisitor;
 
 public class ProcessFiles {
 
+    /*
+     * Core logic for exploring a directory, recursively finding files that end in .java and seperating them based on role
+     * then uses JavaParser's VoidVisitorAdapter within MsVisitor to pick apart methods, fields, etc within 
+     * services, repositories and controllers
+     */
     public static void processFile(File projectDir) {
         new DirExplorer((level, path, file) -> path.endsWith(".java"), (level, path, file) -> {
 //            System.out.println(path);
@@ -54,6 +59,8 @@ public class ProcessFiles {
 
         String myDirectoryPath = path;
         File file = new File(myDirectoryPath);
+
+        // Filter directories out if they contain "ts accept them"
         String[] directories = file.list(new FilenameFilter() {
             @Override
             public boolean accept(File current, String name) {
@@ -64,6 +71,8 @@ public class ProcessFiles {
         });
         MsCache.modules = Arrays.asList(directories);
         File projectDir = new File(path);
+
+        // processFile more like processDirectory selected that contains "ts"
         processFile(projectDir);
 //        System.out.println();
     }

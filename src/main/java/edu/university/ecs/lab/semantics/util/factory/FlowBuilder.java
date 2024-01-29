@@ -8,6 +8,10 @@ import edu.university.ecs.lab.semantics.entity.*;
 import edu.university.ecs.lab.semantics.entity.graph.*;
 import edu.university.ecs.lab.semantics.util.MsCache;
 
+/**
+ * This builds flows of controller down to repository, keeps track of where it's been and where it goes
+ * between controller to service to repository. Logs all function calls, etc. etc.
+ */
 public class FlowBuilder {
 
     public void buildFlows(){

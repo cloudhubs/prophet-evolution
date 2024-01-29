@@ -18,15 +18,15 @@ public class MsCache {
     public static MsInconsistencies msInconsistencies;
     public static List<String> modules;
     public static List<MsFlowEntity> msFlows;
-    public static List<MsCodeClone> msCodeClones;
-    public static MsCodeCloneCache msCodeCloneCache;
-    public static List<MsCodeClone> sameRepositoryCC;
-    public static List<MsCodeClone> sameRestCallsCC;
-    public static List<MsCodeClone> sameControllerCC;
-    // code clone types
-    public static List<MsCodeClone> typeA;
-    public static List<MsCodeClone> typeB;
-    public static List<MsCodeClone> typeC;
+    // public static List<MsCodeClone> msCodeClones;
+    // public static MsCodeCloneCache msCodeCloneCache;
+    // public static List<MsCodeClone> sameRepositoryCC;
+    // public static List<MsCodeClone> sameRestCallsCC;
+    // public static List<MsCodeClone> sameControllerCC;
+    // // code clone types
+    // public static List<MsCodeClone> typeA;
+    // public static List<MsCodeClone> typeB;
+    // public static List<MsCodeClone> typeC;
     
     //ContextEntities Mapping
     public static Map<String, Entity> mappedEntities;
@@ -40,14 +40,14 @@ public class MsCache {
         msRestCallList = new ArrayList<>();
         msFieldList = new ArrayList<>();
         msInconsistencies = new MsInconsistencies();
-        msCodeClones = new ArrayList<>();
-        msCodeCloneCache = new MsCodeCloneCache();
-        sameRepositoryCC = new ArrayList<>();
-        sameRestCallsCC = new ArrayList<>();
-        sameControllerCC = new ArrayList<>();
-        typeA = new ArrayList<>();
-        typeB = new ArrayList<>();
-        typeC = new ArrayList<>();
+        // msCodeClones = new ArrayList<>();
+        // msCodeCloneCache = new MsCodeCloneCache();
+        // sameRepositoryCC = new ArrayList<>();
+        // sameRestCallsCC = new ArrayList<>();
+        // sameControllerCC = new ArrayList<>();
+        // typeA = new ArrayList<>();
+        // typeB = new ArrayList<>();
+        // typeC = new ArrayList<>();
     }
 
     public static void addMsClass(MsClass msClass) {
@@ -79,23 +79,23 @@ public class MsCache {
         System.out.println();
     }
 
-    public static void addCodeClone(MsCodeClone msCodeClone) {
-        msCodeClones.add(msCodeClone);
-    }
+    // public static void addCodeClone(MsCodeClone msCodeClone) {
+    //     msCodeClones.add(msCodeClone);
+    // }
 
-    public static void addHighSimilar(MsCodeClone msCodeClone) {
-        msCodeCloneCache.addHighSimilar(msCodeClone);
-    }
+    // public static void addHighSimilar(MsCodeClone msCodeClone) {
+    //     msCodeCloneCache.addHighSimilar(msCodeClone);
+    // }
 
-    public static void addSameRepository(MsCodeClone msCodeClone) {
-        sameRepositoryCC.add(msCodeClone);
-    }
+    // public static void addSameRepository(MsCodeClone msCodeClone) {
+    //     sameRepositoryCC.add(msCodeClone);
+    // }
 
-    public static void addSameController(MsCodeClone msCodeClone) {
-        sameControllerCC.add(msCodeClone);
-    }
+    // public static void addSameController(MsCodeClone msCodeClone) {
+    //     sameControllerCC.add(msCodeClone);
+    // }
 
-    public static void addSameRestCall(MsCodeClone msCodeClone) {
-        sameRestCallsCC.add(msCodeClone);
-    }
+    // public static void addSameRestCall(MsCodeClone msCodeClone) {
+    //     sameRestCallsCC.add(msCodeClone);
+    // }
 }
