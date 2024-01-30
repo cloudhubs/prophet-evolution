@@ -42,7 +42,7 @@ public class MsParentVisitor {
                         msParentMethod.setParentPackageName(pd.get().getNameAsString());
                     }
                 } else {
-                	System.err.println("Can not get the Package Declaration");
+                	System.err.println("Cannot get the Package Declaration");
                 }
             }
         }

@@ -5,4 +5,10 @@ results/
 .settings/org.eclipse.jdt.apt.core.prefs
 .settings/org.eclipse.jdt.core.prefs
 .project
-.vscode/
+.vscode/.idea/
+commands.txt
+/.settings/
+.project
+.classpath
+/target/
+/result
