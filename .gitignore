@@ -12,3 +12,4 @@ commands.txt
 .classpath
 /target/
 /result
+.vscode/settings.json

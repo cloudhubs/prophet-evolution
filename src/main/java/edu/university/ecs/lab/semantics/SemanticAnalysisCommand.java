@@ -97,15 +97,14 @@ public class SemanticAnalysisCommand implements QuarkusApplication {
         sutPath = REPO_DESTINATION_DIRECTORY;
     }
 
-//     public void processCodeClonesFromCache() {
-// //        CacheManager cacheManager = new CacheManager();
-// //        cacheManager.recreateCache(cachePath);
-// //        CodeClonesFactory codeClonesFactory = new CodeClonesFactory(new EntityLiteralSimilarityCheckStrategy());
-//     	CodeClonesFactory codeClonesFactory = new CodeClonesFactory(new EntitySematicSimilarityCheckStrategy(true));
-//         codeClonesFactory.findCodeClones();
-//         ModuleClonePairFactory mcpf = new ModuleClonePairFactory();
-//         mcpf.printModuleClonePairs();
-//     }
+    private String getRepositoryName(String repositoryUrl) {
+        System.out.println("Extracting repo from url: " + repositoryUrl);
+
+        // Extract repository name from the URL
+        int lastSlashIndex = repositoryUrl.lastIndexOf('/');
+        int lastDotIndex = repositoryUrl.lastIndexOf('.');
+        return repositoryUrl.substring(lastSlashIndex + 1, lastDotIndex);
+    }
 
     public static void main(String[] args) {
         Quarkus.run(SemanticAnalysisCommand.class, args);
