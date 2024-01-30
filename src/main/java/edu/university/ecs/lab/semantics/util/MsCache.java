@@ -7,7 +7,7 @@ import java.util.Map;
 import edu.university.ecs.lab.semantics.entity.*;
 import edu.university.ecs.lab.semantics.entity.graph.*;
 import edu.university.ecs.lab.semantics.entity.inconsistencies.MsInconsistencies;
-import edu.university.ecs.lab.semantics.util.entitysimilarity.Entity;
+// import edu.university.ecs.lab.semantics.util.entitysimilarity.Entity;
 
 public class MsCache {
     public static List<MsClass> msClassList;
@@ -29,7 +29,7 @@ public class MsCache {
     // public static List<MsCodeClone> typeC;
     
     //ContextEntities Mapping
-    public static Map<String, Entity> mappedEntities;
+    // public static Map<String, Entity> mappedEntities;
 
     public static void init(){
         modules = new ArrayList<>();
