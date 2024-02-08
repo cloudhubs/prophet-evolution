@@ -1,0 +1,19 @@
+﻿@inject HttpClient http
+
+<div class="rz-shadow-6">
+    <RadzenMenu>
+        <RadzenMenuItem Text="Home" Path=""> </RadzenMenuItem>
+        <RadzenMenuItem Text="Docs"  Path=@RelativeToBase("docs")>
+            @*<RadzenMenuItem Text="Education" Path=@RelativeToBase("education")> </RadzenMenuItem>
+            <RadzenMenuItem Text="Skills" Path=@RelativeToBase("skills")></RadzenMenuItem>*@
+        </RadzenMenuItem>
+        <RadzenMenuItem Text="Index" Path=@RelativeToBase("index")></RadzenMenuItem>
+    </RadzenMenu>
+</div>
+
+@code {
+    private string RelativeToBase(string relative)
+    {
+        return http.BaseAddress + relative;
+    }
+}

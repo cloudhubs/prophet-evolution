@@ -1,0 +1,23 @@
+﻿@page "/index"
+@inject HttpClient http
+@using Classes
+
+
+<RadzenDataGrid Data="@terms" TItem="Term" AllowSorting="true" AllowFiltering="true" FilterMode="FilterMode.Advanced" >
+    <Columns>
+        <RadzenDataGridColumn TItem="Term" Property="Name" Title="Term"> </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Term" Property="Defintion" Title="Defintion"></RadzenDataGridColumn>
+    </Columns>
+</RadzenDataGrid>
+
+@code {
+    private List<Term> terms = new List<Term>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        string endpoint = http.BaseAddress + "data/terms.json";
+        terms = await http.GetFromJsonAsync<List<Term>>(endpoint);
+    }
+}
+
+
