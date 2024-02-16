@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -10,6 +10,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.23" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.23" PrivateAssets="all" />
     <PackageReference Include="Radzen.Blazor" Version="4.24.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\javadcos\" />
   </ItemGroup>
 
 </Project>

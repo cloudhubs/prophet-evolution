@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ProphetEvolution")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e2ebad13fef0684fa18061915f238d9d28ab2585")]
 [assembly: System.Reflection.AssemblyProductAttribute("ProphetEvolution")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ProphetEvolution")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

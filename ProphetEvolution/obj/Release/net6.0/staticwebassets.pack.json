@@ -1,87 +1,575 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\bin\\Release\\net6.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\bin\\Release\\net6.0\\wwwroot\\_framework\\blazor.webassembly.js",
       "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\obj\\Release\\net6.0\\build-gz\\PsMJgLK7.gz",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\obj\\Release\\net6.0\\compressed\\y7pszstbgh.gz",
       "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\obj\\Release\\net6.0\\scopedcss\\bundle\\ProphetEvolution.styles.css",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\obj\\Release\\net6.0\\scopedcss\\bundle\\ProphetEvolution.styles.css",
       "PackagePath": "staticwebassets\\ProphetEvolution.styles.css"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\app.css",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\app.css",
       "PackagePath": "staticwebassets\\css\\app.css"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
       "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css.map"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\FONT-LICENSE",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\FONT-LICENSE",
       "PackagePath": "staticwebassets\\css\\open-iconic"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\ICON-LICENSE",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\ICON-LICENSE",
       "PackagePath": "staticwebassets\\css\\open-iconic"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\README.md",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\README.md",
       "PackagePath": "staticwebassets\\css\\open-iconic\\README.md"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\css\\open-iconic-bootstrap.min.css",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\css\\open-iconic-bootstrap.min.css",
       "PackagePath": "staticwebassets\\css\\open-iconic\\font\\css\\open-iconic-bootstrap.min.css"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.eot",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.eot",
       "PackagePath": "staticwebassets\\css\\open-iconic\\font\\fonts\\open-iconic.eot"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.otf",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.otf",
       "PackagePath": "staticwebassets\\css\\open-iconic\\font\\fonts\\open-iconic.otf"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.svg",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.svg",
       "PackagePath": "staticwebassets\\css\\open-iconic\\font\\fonts\\open-iconic.svg"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.ttf",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.ttf",
       "PackagePath": "staticwebassets\\css\\open-iconic\\font\\fonts\\open-iconic.ttf"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.woff",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.woff",
       "PackagePath": "staticwebassets\\css\\open-iconic\\font\\fonts\\open-iconic.woff"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\data\\terms.json",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\data\\terms.json",
       "PackagePath": "staticwebassets\\data\\terms.json"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\favicon.ico",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\icon-192.png",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\icon-192.png",
       "PackagePath": "staticwebassets\\icon-192.png"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\images\\1-1.png",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\images\\1-1.png",
       "PackagePath": "staticwebassets\\images\\1-1.png"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\index.html",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\index.html",
       "PackagePath": "staticwebassets\\index.html"
     },
     {
-      "Id": "C:\\Users\\umimu\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\sample-data\\weather.json",
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\allclasses-index.html",
+      "PackagePath": "staticwebassets\\javadocs\\allclasses-index.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\allpackages-index.html",
+      "PackagePath": "staticwebassets\\javadocs\\allpackages-index.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\deltas\\DeltaExtractionCommand.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\deltas\\DeltaExtractionCommand.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\deltas\\class-use\\DeltaExtractionCommand.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\deltas\\class-use\\DeltaExtractionCommand.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\deltas\\package-summary.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\deltas\\package-summary.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\deltas\\package-tree.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\deltas\\package-tree.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\deltas\\package-use.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\deltas\\package-use.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\SemanticAnalysisCommand.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\SemanticAnalysisCommand.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\class-use\\SemanticAnalysisCommand.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\class-use\\SemanticAnalysisCommand.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\MsFlowEntity.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\MsFlowEntity.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\class-use\\MsFlowEntity.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\class-use\\MsFlowEntity.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsAnnotation.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsAnnotation.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsArgument.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsArgument.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsClass.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsClass.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsClassRoles.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsClassRoles.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsField.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsField.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsId.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsId.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsMethod.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsMethod.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsMethodCall.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsMethodCall.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsParentMethod.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsParentMethod.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsRestCall.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\MsRestCall.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsAnnotation.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsAnnotation.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsArgument.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsArgument.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsClass.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsClass.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsClassRoles.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsClassRoles.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsField.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsField.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsId.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsId.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsMethod.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsMethod.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsMethodCall.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsMethodCall.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsParentMethod.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsParentMethod.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsRestCall.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\class-use\\MsRestCall.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\package-summary.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\package-summary.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\package-tree.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\package-tree.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\package-use.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\graph\\package-use.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\package-summary.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\package-summary.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\package-tree.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\package-tree.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\package-use.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\entity\\package-use.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\package-summary.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\package-summary.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\package-tree.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\package-tree.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\package-use.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\package-use.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\DirExplorer.FileHandler.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\DirExplorer.FileHandler.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\DirExplorer.Filter.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\DirExplorer.Filter.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\DirExplorer.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\DirExplorer.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\MsCache.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\MsCache.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\ProcessFiles.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\ProcessFiles.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\class-use\\DirExplorer.FileHandler.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\class-use\\DirExplorer.FileHandler.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\class-use\\DirExplorer.Filter.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\class-use\\DirExplorer.Filter.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\class-use\\DirExplorer.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\class-use\\DirExplorer.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\class-use\\MsCache.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\class-use\\MsCache.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\class-use\\ProcessFiles.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\class-use\\ProcessFiles.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\MsAnnotationBuilder.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\MsAnnotationBuilder.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\MsMethodBuilder.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\MsMethodBuilder.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\class-use\\MsAnnotationBuilder.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\class-use\\MsAnnotationBuilder.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\class-use\\MsMethodBuilder.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\class-use\\MsMethodBuilder.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\package-summary.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\package-summary.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\package-tree.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\package-tree.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\package-use.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\constructs\\package-use.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\FlowBuilder.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\FlowBuilder.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\MsRestCallFactory.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\MsRestCallFactory.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\class-use\\FlowBuilder.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\class-use\\FlowBuilder.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\class-use\\MsRestCallFactory.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\class-use\\MsRestCallFactory.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\package-summary.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\package-summary.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\package-tree.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\package-tree.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\package-use.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\factory\\package-use.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\file\\CacheManager.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\file\\CacheManager.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\file\\class-use\\CacheManager.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\file\\class-use\\CacheManager.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\file\\package-summary.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\file\\package-summary.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\file\\package-tree.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\file\\package-tree.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\file\\package-use.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\file\\package-use.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\package-summary.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\package-summary.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\package-tree.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\package-tree.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\package-use.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\package-use.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\MsFieldVisitor.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\MsFieldVisitor.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\MsParentVisitor.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\MsParentVisitor.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\MsVisitor.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\MsVisitor.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\class-use\\MsFieldVisitor.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\class-use\\MsFieldVisitor.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\class-use\\MsParentVisitor.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\class-use\\MsParentVisitor.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\class-use\\MsVisitor.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\class-use\\MsVisitor.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\package-summary.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\package-summary.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\package-tree.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\package-tree.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\package-use.html",
+      "PackagePath": "staticwebassets\\javadocs\\edu\\university\\ecs\\lab\\semantics\\util\\visitor\\package-use.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\element-list",
+      "PackagePath": "staticwebassets\\javadocs"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\help-doc.html",
+      "PackagePath": "staticwebassets\\javadocs\\help-doc.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-1.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-1.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-10.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-10.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-11.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-11.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-12.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-12.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-13.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-13.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-14.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-14.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-15.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-15.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-16.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-16.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-2.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-2.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-3.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-3.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-4.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-4.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-5.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-5.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-6.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-6.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-7.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-7.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-8.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-8.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index-files\\index-9.html",
+      "PackagePath": "staticwebassets\\javadocs\\index-files\\index-9.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\index.html",
+      "PackagePath": "staticwebassets\\javadocs\\index.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\jquery-ui.overrides.css",
+      "PackagePath": "staticwebassets\\javadocs\\jquery-ui.overrides.css"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\legal\\ADDITIONAL_LICENSE_INFO",
+      "PackagePath": "staticwebassets\\javadocs\\legal"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\legal\\ASSEMBLY_EXCEPTION",
+      "PackagePath": "staticwebassets\\javadocs\\legal"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\legal\\LICENSE",
+      "PackagePath": "staticwebassets\\javadocs\\legal"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\legal\\jquery.md",
+      "PackagePath": "staticwebassets\\javadocs\\legal\\jquery.md"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\legal\\jqueryUI.md",
+      "PackagePath": "staticwebassets\\javadocs\\legal\\jqueryUI.md"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\member-search-index.js",
+      "PackagePath": "staticwebassets\\javadocs\\member-search-index.js"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\module-search-index.js",
+      "PackagePath": "staticwebassets\\javadocs\\module-search-index.js"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\overview-summary.html",
+      "PackagePath": "staticwebassets\\javadocs\\overview-summary.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\overview-tree.html",
+      "PackagePath": "staticwebassets\\javadocs\\overview-tree.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\package-search-index.js",
+      "PackagePath": "staticwebassets\\javadocs\\package-search-index.js"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\resources\\glass.png",
+      "PackagePath": "staticwebassets\\javadocs\\resources\\glass.png"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\resources\\x.png",
+      "PackagePath": "staticwebassets\\javadocs\\resources\\x.png"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\script-dir\\jquery-3.6.0.min.js",
+      "PackagePath": "staticwebassets\\javadocs\\script-dir\\jquery-3.6.0.min.js"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\script-dir\\jquery-ui.min.css",
+      "PackagePath": "staticwebassets\\javadocs\\script-dir\\jquery-ui.min.css"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\script-dir\\jquery-ui.min.js",
+      "PackagePath": "staticwebassets\\javadocs\\script-dir\\jquery-ui.min.js"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\script.js",
+      "PackagePath": "staticwebassets\\javadocs\\script.js"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\search.js",
+      "PackagePath": "staticwebassets\\javadocs\\search.js"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\serialized-form.html",
+      "PackagePath": "staticwebassets\\javadocs\\serialized-form.html"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\stylesheet.css",
+      "PackagePath": "staticwebassets\\javadocs\\stylesheet.css"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\tag-search-index.js",
+      "PackagePath": "staticwebassets\\javadocs\\tag-search-index.js"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\javadocs\\type-search-index.js",
+      "PackagePath": "staticwebassets\\javadocs\\type-search-index.js"
+    },
+    {
+      "Id": "C:\\Users\\umidmuzrapov\\Documents\\repos\\prophet-evolution\\ProphetEvolution\\wwwroot\\sample-data\\weather.json",
       "PackagePath": "staticwebassets\\sample-data\\weather.json"
     },
     {
