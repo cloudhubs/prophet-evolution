@@ -1,0 +1,9 @@
+edu.university.ecs.lab.deltas
+edu.university.ecs.lab.semantics
+edu.university.ecs.lab.semantics.entity
+edu.university.ecs.lab.semantics.entity.graph
+edu.university.ecs.lab.semantics.util
+edu.university.ecs.lab.semantics.util.constructs
+edu.university.ecs.lab.semantics.util.factory
+edu.university.ecs.lab.semantics.util.file
+edu.university.ecs.lab.semantics.util.visitor
