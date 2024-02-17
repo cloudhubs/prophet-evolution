@@ -3,21 +3,54 @@
 @using Classes
 
 
-<RadzenDataGrid Data="@terms" TItem="Term" AllowSorting="true" AllowFiltering="true" FilterMode="FilterMode.Advanced" >
-    <Columns>
-        <RadzenDataGridColumn TItem="Term" Property="Name" Title="Term"> </RadzenDataGridColumn>
-        <RadzenDataGridColumn TItem="Term" Property="Definition" Title="Definition"></RadzenDataGridColumn>
-    </Columns>
-</RadzenDataGrid>
+    <RadzenDataGrid @ref="grid" Data="@Selectedterms" TItem="Term" AllowSorting="true" AllowFiltering="true" AllowColumnResize="true"
+                    RowRender="@RowRender" LoadChildData="@LoadChildData"
+                    FilterMode="FilterMode.Advanced" RowCollapse="@(args => grid.ColumnsCollection.ToList().ForEach(c => c.ClearFilters()))">
+        <Columns>
+            <RadzenDataGridColumn TItem="Term" Property="Name" Frozen="true" Title="Term"> </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Term" Property="Definition" Title="Defintion"></RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+
+
 
 @code {
-    private List<Term> terms = new List<Term>();
+    IEnumerable<Term> terms;
+    RadzenDataGrid<Term> grid;
+    IEnumerable<Term> Selectedterms;
+
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
+
         string endpoint = http.BaseAddress + "data/terms.json";
-        terms = await http.GetFromJsonAsync<List<Term>>(endpoint);
+        terms = (await http.GetFromJsonAsync<List<Term>>(endpoint));
+        Selectedterms = terms.Where(e => e.Parent == null);
     }
+
+
+    void RowRender(RowRenderEventArgs<Term> args)
+    {
+        args.Expandable = terms.Where(e => e.Parent == args.Data.Name).Any();
+
+        /*args.Expandable = terms.Where( e =>
+        {
+            if (e.Parent is null) return false;
+
+            else return e.Parent.Equals(args.Data.Name);
+        }).Any();*/
+    }
+
+    void LoadChildData(DataGridLoadChildDataEventArgs<Term> args)
+    {
+        args.Data = terms.Where(e => 
+        {
+            if (e.Parent is null) return false;
+            else return e.Parent.Equals(args.Item.Name);
+        });
+    }
+
 }
 
 
