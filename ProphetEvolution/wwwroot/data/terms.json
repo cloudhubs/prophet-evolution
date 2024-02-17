@@ -65,38 +65,39 @@
     },
     {
         "name": "intermediate representation (IR)",
-        "definition": ""
+        "definition": "Representation of the microservice system in a human-readable format (specifically json) as output from the parsing phase, that can be used as input to the delta extraction phase"
     },
     {
         "name": "component call graph (CCG)",
-        "definition": "",
+        "definition": "output from analyis of source code parsing, in which microservices are extracted from the source code and linked vertically through their controller, service, and persistence layers. This does not have any dependency information, it is just a forest of services and information extracted",
         "alias": [
-            "call graph, service call graph",
+            "call graph",
+            "service call graph",
             "flow graph",
             "prophet flow"
         ]
     },
     {
         "name": "service dependency graph",
-        "definition": "",
-        "alias": ["dependency graph"]
+        "definition": "IR representing all services as nodes and outgoing dependencies associated with each service, extracted from combining the CCG",
+        "alias": ["dependency graph", "service dependency IR"]
     },
     {
         "name": "delta",
-        "definition": "",
+        "definition": "IR extracted from a service dependency graph and git changes as input, representing the change done between two git commits (a \"base/initital/first\" commit to a \"final/current/end\" commit) that represents change to a system. By combining an initital service dependency IR of commit 'A' with a set of deltas between commits 'A' and 'B', the service dependency IR at commit 'B' can be obtained.",
         "alias": ["change delta"]
     },
     {
         "name": "service architecture reconstruction (SAR)",
-        "definition": ""
+        "definition": "The entire process of reconstructing the structure of a microservice system from its source code into a human-understandable representation (in our case, the IR)"
     },
     {
         "name": "rad",
-        "definition": ""
+        "definition": "Remote API detector, the portion of the codebase that extracts remote endpoints and performs signature matching in order to create the rest flow graph"
     },
     {
         "name": "co-change",
-        "definition": ""
+        "definition": "When two miroservices develop in tandem, where changes to one service are accompanied by changes in another service, often a symptom of logical coupling"
     },
     {
         "name": "perspectives",
@@ -104,28 +105,37 @@
         "subterms": [
             {
                 "name": "control-flow perspective",
-                "definition": ""
+                "definition": "Analysis of the flow of program execution between microservices, this perspective is used to understand remote calls"
             },
             {
                 "name": "data-flow perspective",
-                "definition": ""
+                "definition": "Analysis of the flow of data in the program, used to understand DTO data dependencies"
             },
             {
                 "name": "data persistence perspective",
-                "definition": ""
-            },
-            {
-                "name": "application level",
-                "definition": ""
-            },
-            {
-                "name": "ecosystem level",
-                "definition": ""
+                "definition": "Analysis of the data persisited in a system, used to understand data entity and contraint dependencies"
             }
         ]
     },
     {
         "name": "change impact",
-        "definition": ""
+        "definition": "Result of a code change on the system, approximated in a change impact report developed from analysis of a delta"
+    },
+    {
+        "name": "endpoint dependency graph",
+        "definition": "extracted by performing signature matching between service calls and called endpoints, is an IR showing how the microservices interact over REST APIs, extracted by RAD.",
+        "alias": ["rest flow graph", "remote call graph"]
+    },
+    {
+        "name": "data dependency graph",
+        "definition": "extracted by using graal to analyze data entities and DTO and determine the relation of data between services"
+    },
+    {
+        "name": "bounded context",
+        "definition": "a principle by which all microservices in the system should be autonomous and have their own unambiguous terms, entities, and functionality (can be captured by an isolated domain model)"
+    },
+    {
+        "name": "context mapping",
+        "definition": "the process of determining the relationship between bounded contexts and how they will interact (remote calls)"
     }
 ]
