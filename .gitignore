@@ -1,1 +1,9 @@
 *.mdf *vsidx
+/.idea/
+commands.txt
+/.settings/
+.project
+.classpath
+/target/
+/results/
+/repos/
