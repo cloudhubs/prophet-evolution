@@ -1,141 +1,145 @@
 [
-    {
-        "name": "dependencies",
-        "definition": "",
-        "subterms": [
-            {
-                "name": "external dependencies",
-                "definition": "Dependencies given by seperate specification such as functional or quality requirements"
-            },
-            {
-                "name": "human dependencies",
-                "definition": "Dependencies relating to human factors such as a need for specific expertise"
-            },
-            {
-                "name": "artifact dependencies",
-                "definition": "Dependencies that involve source code (semantics, control, data, etc.), configuration files, libraries, and used technology (i.e. API gateway). These are the dependencies that this project focuses on.",
-                "subterms": [
-                    {
-                        "name": "code clones",
-                        "definition": "fragments of similar or identical nature in code that may be indicative of restated concerns",
-                        "subterms": [
-                            {
-                                "name": "syntactic code clones",
-                                "definition": "Syntactic code clones involve fragments of code that are identical or nearly identical in terms of their syntax. These clones can emerge due to factors such as code reuse, common patterns, or shared functionalities between different microservices. When developers encounter similar tasks or functionalities across multiple microservices, they might replicate or reuse code fragments to save time and effort."
-                            },
-                            {
-                                "name": "semantic code clones",
-                                "definition": "Semantic code clones involve fragments of code that perform similar or identical functions, even though their syntax might be quite different. These clones represent duplicate or highly similar business logic or algorithms that achieve the same outcome."
-                            }
-                        ]
-                    },
-                    {
-                        "name": "direct api calls",
-                        "definition": "Direct API call is a dependency perspective where one microservice invokes another microservice's API directly to access its functionality or data. This creates a direct dependency between the caller and the callee service.",
-                        "alias": ["explicit remote call"]
-                    },
-                    {
-                        "name": "transitive api calls",
-                        "definition": "Transitive API call refers to a dependency perspective where a microservice indirectly invokes another microservice's API through an intermediary service. The intermediary service acts as a bridge between the caller and the callee, allowing for more flexible communication paths."
-                    },
-                    {
-                        "name": "entity data",
-                        "definition": "An entity data dependency refers to the situation where multiple microservices within a bounded context share similar persistent entities. These entities represent core data structures with common attributes and relationships that are used across different microservices."
-                    },
-                    {
-                        "name": "dto data",
-                        "definition": "Similar to the Entity Data Dependency, DTO (Data Transfer Object) Data Dependency involves the sharing of data objects, specifically for data transfer purposes in API calls and event data between microservices. It occurs when multiple microservices need to exchange specific data structures to fulfill their communication requirements."
-                    },
-                    {
-                        "name": "data field constraint",
-                        "definition": "Attributive dependency involving field constraints occurs when a microservice relies on specific constraints or validations applied to fields in another microservice’s data. This ensures consistent data quality and adherence to business rules."
-                    },
-                    {
-                        "name": "shared database",
-                        "definition": "Shared database refers to the practice of multiple microservices using the same database to store and retrieve data. While microservices architecture promotes autonomy, sharing a database can lead to tighter coupling between services.",
-                        "alias": ["shared persistency", "shared repository"]
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        "name": "anti-patterns",
-        "definition": "named and identified generalized coding practices that have possible detriments to a system. For microservices, these may exist due to service dependencies (i.e. cyclic dependencies, knot), service strucutre (i.e. nano service, wrong cuts), etc."
-    },
-    {
-        "name": "intermediate representation (IR)",
-        "definition": "Representation of the microservice system in a human-readable format (specifically json) as output from the parsing phase, that can be used as input to the delta extraction phase"
-    },
-    {
-        "name": "component call graph (CCG)",
-        "definition": "output from analyis of source code parsing, in which microservices are extracted from the source code and linked vertically through their controller, service, and persistence layers. This does not have any dependency information, it is just a forest of services and information extracted",
-        "alias": [
-            "call graph",
-            "service call graph",
-            "flow graph",
-            "prophet flow"
-        ]
-    },
-    {
-        "name": "service dependency graph",
-        "definition": "IR representing all services as nodes and outgoing dependencies associated with each service, extracted from combining the CCG",
-        "alias": ["dependency graph", "service dependency IR"]
-    },
-    {
-        "name": "delta",
-        "definition": "IR extracted from a service dependency graph and git changes as input, representing the change done between two git commits (a \"base/initital/first\" commit to a \"final/current/end\" commit) that represents change to a system. By combining an initital service dependency IR of commit 'A' with a set of deltas between commits 'A' and 'B', the service dependency IR at commit 'B' can be obtained.",
-        "alias": ["change delta"]
-    },
-    {
-        "name": "service architecture reconstruction (SAR)",
-        "definition": "The entire process of reconstructing the structure of a microservice system from its source code into a human-understandable representation (in our case, the IR)"
-    },
-    {
-        "name": "rad",
-        "definition": "Remote API detector, the portion of the codebase that extracts remote endpoints and performs signature matching in order to create the rest flow graph"
-    },
-    {
-        "name": "co-change",
-        "definition": "When two miroservices develop in tandem, where changes to one service are accompanied by changes in another service, often a symptom of logical coupling"
-    },
-    {
-        "name": "perspectives",
-        "definition": "Different ways to analyze a microservice system in order to extract information",
-        "subterms": [
-            {
-                "name": "control-flow perspective",
-                "definition": "Analysis of the flow of program execution between microservices, this perspective is used to understand remote calls"
-            },
-            {
-                "name": "data-flow perspective",
-                "definition": "Analysis of the flow of data in the program, used to understand DTO data dependencies"
-            },
-            {
-                "name": "data persistence perspective",
-                "definition": "Analysis of the data persisited in a system, used to understand data entity and contraint dependencies"
-            }
-        ]
-    },
-    {
-        "name": "change impact",
-        "definition": "Result of a code change on the system, approximated in a change impact report developed from analysis of a delta"
-    },
-    {
-        "name": "endpoint dependency graph",
-        "definition": "extracted by performing signature matching between service calls and called endpoints, is an IR showing how the microservices interact over REST APIs, extracted by RAD.",
-        "alias": ["rest flow graph", "remote call graph"]
-    },
-    {
-        "name": "data dependency graph",
-        "definition": "extracted by using graal to analyze data entities and DTO and determine the relation of data between services"
-    },
-    {
-        "name": "bounded context",
-        "definition": "a principle by which all microservices in the system should be autonomous and have their own unambiguous terms, entities, and functionality (can be captured by an isolated domain model)"
-    },
-    {
-        "name": "context mapping",
-        "definition": "the process of determining the relationship between bounded contexts and how they will interact (remote calls)"
-    }
+  {
+    "name": "dependencies",
+    "definition": ""
+  },
+
+  {
+    "name": "external dependencies",
+    "definition": "Dependencies given by seperate specification such as functional or quality requirements",
+    "parent": "dependencies"
+  },
+  {
+    "name": "human dependencies",
+    "definition": "Dependencies relating to human factors such as a need for specific expertise",
+    "parent": "dependencies"
+  },
+  {
+    "name": "artifact dependencies",
+    "definition": "Dependencies that involve source code (semantics, control, data, etc.), configuration files, libraries, and used technology (i.e. API gateway). These are the dependencies that this project focuses on.",
+    "parent": "dependencies"
+  },
+
+  {
+    "name": "code clones",
+    "definition": "fragments of similar or identical nature in code that may be indicative of restated concerns",
+    "parent": "artifact dependencies"
+  },
+  {
+    "name": "syntactic code clones",
+    "definition": "Syntactic code clones involve fragments of code that are identical or nearly identical in terms of their syntax. These clones can emerge due to factors such as code reuse, common patterns, or shared functionalities between different microservices. When developers encounter similar tasks or functionalities across multiple microservices, they might replicate or reuse code fragments to save time and effort.",
+    "parent": "code clones"
+  },
+  {
+    "name": "semantic code clones",
+    "definition": "Semantic code clones involve fragments of code that perform similar or identical functions, even though their syntax might be quite different. These clones represent duplicate or highly similar business logic or algorithms that achieve the same outcome.",
+    "parent": "code clones"
+  },
+
+  {
+    "name": "direct api calls",
+    "definition": "Direct API call is a dependency perspective where one microservice invokes another microservice's API directly to access its functionality or data. This creates a direct dependency between the caller and the callee service.",
+    "alias": [ "explicit remote call" ],
+    "parent": "artifact dependencies"
+  },
+  {
+    "name": "transitive api calls",
+    "definition": "Transitive API call refers to a dependency perspective where a microservice indirectly invokes another microservice's API through an intermediary service. The intermediary service acts as a bridge between the caller and the callee, allowing for more flexible communication paths.",
+    "parent": "artifact dependencies"
+  },
+  {
+    "name": "entity data",
+    "definition": "An entity data dependency refers to the situation where multiple microservices within a bounded context share similar persistent entities. These entities represent core data structures with common attributes and relationships that are used across different microservices.",
+    "parent": "artifact dependencies"
+  },
+  {
+    "name": "dto data",
+    "definition": "Similar to the Entity Data Dependency, DTO (Data Transfer Object) Data Dependency involves the sharing of data objects, specifically for data transfer purposes in API calls and event data between microservices. It occurs when multiple microservices need to exchange specific data structures to fulfill their communication requirements.",
+    "parent": "artifact dependencies"
+  },
+  {
+    "name": "data field constraint",
+    "definition": "Attributive dependency involving field constraints occurs when a microservice relies on specific constraints or validations applied to fields in another microservice’s data. This ensures consistent data quality and adherence to business rules.",
+    "parent": "artifact dependencies"
+  },
+  {
+    "name": "shared database",
+    "definition": "Shared database refers to the practice of multiple microservices using the same database to store and retrieve data. While microservices architecture promotes autonomy, sharing a database can lead to tighter coupling between services.",
+    "alias": [ "shared persistency", "shared repository" ],
+    "parent": "artifact dependencies"
+  },
+  {
+    "name": "anti-patterns",
+    "definition": "named and identified generalized coding practices that have possible detriments to a system. For microservices, these may exist due to service dependencies (i.e. cyclic dependencies, knot), service strucutre (i.e. nano service, wrong cuts), etc."
+  },
+  {
+    "name": "intermediate representation (IR)",
+    "definition": ""
+  },
+  {
+    "name": "component call graph (CCG)",
+    "definition": "",
+    "alias": [
+      "call graph, service call graph",
+      "flow graph",
+      "prophet flow"
+    ]
+  },
+  {
+    "name": "service dependency graph",
+    "definition": "",
+    "alias": [ "dependency graph" ]
+  },
+  {
+    "name": "delta",
+    "definition": "",
+    "alias": [ "change delta" ]
+  },
+  {
+    "name": "service architecture reconstruction (SAR)",
+    "definition": ""
+  },
+  {
+    "name": "rad",
+    "definition": ""
+  },
+  {
+    "name": "co-change",
+    "definition": ""
+  },
+  {
+    "name": "perspectives",
+    "definition": "Different ways to analyze a microservice system in order to extract information"
+  },
+
+  {
+    "name": "control-flow perspective",
+    "definition": "",
+    "parent": "perspectives"
+  },
+  {
+    "name": "data-flow perspective",
+    "definition": "",
+    "parent": "perspectives"
+  },
+  {
+    "name": "data persistence perspective",
+    "definition": "",
+    "parent": "perspectives"
+  },
+  {
+    "name": "application level",
+    "definition": "",
+    "parent": "perspectives"
+  },
+  {
+    "name": "ecosystem level",
+    "definition": "",
+    "parent": "perspectives"
+  },
+  {
+    "name": "change impact",
+    "definition": ""
+  }
+
 ]
