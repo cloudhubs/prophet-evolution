@@ -1,6 +1,7 @@
 ﻿@page "/index"
 @inject HttpClient http
 @using Classes
+@using System.Text;
 
 
     <RadzenDataGrid @ref="grid" Data="@Selectedterms" TItem="Term" AllowSorting="true" AllowFiltering="true" AllowColumnResize="true"
@@ -8,7 +9,16 @@
                     FilterMode="FilterMode.Advanced" RowCollapse="@(args => grid.ColumnsCollection.ToList().ForEach(c => c.ClearFilters()))">
         <Columns>
             <RadzenDataGridColumn TItem="Term" Property="Name" Frozen="true" Title="Term"> </RadzenDataGridColumn>
-            <RadzenDataGridColumn TItem="Term" Property="Definition" Title="Defintion"></RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Term" Property="Definition" Title="Defintion">
+            <Template Context="data">
+                <p style="white-space:pre-wrap">@data.Definition</p>
+                </Template>
+            </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Term" Property="Alias" Title="Alias">
+            <Template Context="data">
+                <p style="white-space:pre-wrap">@GetAlias(data)</p>
+            </Template>
+        </RadzenDataGridColumn>
         </Columns>
     </RadzenDataGrid>
 
@@ -35,7 +45,7 @@
         args.Expandable = terms.Where(e => e.Parent == args.Data.Name).Any();
 
         /*args.Expandable = terms.Where( e =>
-        {
+            {
             if (e.Parent is null) return false;
 
             else return e.Parent.Equals(args.Data.Name);
@@ -49,6 +59,14 @@
             if (e.Parent is null) return false;
             else return e.Parent.Equals(args.Item.Name);
         });
+    }
+
+    private string GetAlias(Term data)
+    {
+        if (data.Alias is null) return "";
+        StringBuilder str = new StringBuilder();
+        data.Alias.ForEach(e => str.Append(e+" "));
+        return str.ToString();
     }
 
 }
