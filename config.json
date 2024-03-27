@@ -3,8 +3,8 @@
   "outputPath": "out",
   "repositories": [
     {
-      "repoUrl": "https://github.com/cloudhubs/train-ticket-microservices.git",
-      "baseCommit": "f34c476",
+      "repoUrl": "https://github.com/g-goulis/train-ticket-microservices-test.git",
+      "baseCommit": "59277a6fc6a619a809ea04aa5699be9061ca256d",
       "paths": [
         "ts-admin-service",
         "ts-assurance-service",

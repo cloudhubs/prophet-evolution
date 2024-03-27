@@ -122,4 +122,41 @@ public class RestModelService {
       System.err.println("Could not parse file: " + e.getMessage());
     }
   }
+
+  public static JClass scanFile(File file) {
+    try {
+      if (file.getName().contains("Controller")) {
+        JController controller = ParserUtils.parseController(file);
+        if (Objects.nonNull(controller)) {
+          return controller;
+        }
+      } else if (file.getName().contains("Service")) {
+        JService jService = ParserUtils.parseService(file);
+        if (Objects.nonNull(jService)) {
+          return jService;
+        }
+      } else if (file.getName().toLowerCase().contains("dto")) {
+        JClass jClass = ParserUtils.parseClass(file);
+        if (Objects.nonNull(jClass)) {
+          return jClass;
+        }
+      } else if (file.getName().contains("Repository")) {
+        JClass jClass = ParserUtils.parseClass(file);
+        if (Objects.nonNull(jClass)) {
+          return jClass;
+        }
+      } else if (file.getParent().toLowerCase().contains("entity")
+              || file.getParent().toLowerCase().contains("model")) {
+        JClass jClass = ParserUtils.parseClass(file);
+        if (Objects.nonNull(jClass)) {
+          return jClass;
+        }
+      }
+
+      // todo: configs? utils? (everything else? -_-)
+    } catch (IOException e) {
+      System.err.println("Could not parse file: " + e.getMessage());
+    }
+    return null;
+  }
 }

@@ -1,5 +1,6 @@
 package edu.university.ecs.lab.common.models;
 
+import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.enums.HttpMethod;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +29,10 @@ public class RestCall extends MethodCall {
 
   private int responseTypeIndex = -1;
 
+  @SerializedName("source-file")
   private String sourceFile = "";
+
+  @SerializedName("call-dest")
   private String destFile = "";
 
   private static final RestCall[] restTemplates = {

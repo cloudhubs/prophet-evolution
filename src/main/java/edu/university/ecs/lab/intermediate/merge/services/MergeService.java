@@ -6,6 +6,7 @@ import edu.university.ecs.lab.intermediate.merge.models.Delta;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class MergeService {
   public String incrementVersion(String version) {
@@ -59,6 +60,11 @@ public class MergeService {
     Change change = delta.getChange();
 
     msModel.getControllers().addAll(change.getControllers());
+
+    if(!change.getServices().isEmpty()) {
+      updateApiDestinationsAdd(msModelMap, change.getServices(), msId);
+    }
+
     msModel.getServices().addAll(change.getServices());
     msModel.getDtos().addAll(change.getDtos());
     msModel.getRepositories().addAll(change.getRepositories());
@@ -80,6 +86,9 @@ public class MergeService {
   public void removeFiles(String serviceId, Map<String, MsModel> msModelMap, Delta delta) {
     Change change = delta.getChange();
 
+    if(!change.getControllers().isEmpty()) {
+      updateApiDestinationsDelete(msModelMap, change.getControllers(), serviceId);
+    }
     findAndRemoveSubClasses(change.getControllers(), msModelMap.get(serviceId).getControllers());
     findAndRemoveSubClasses(change.getServices(), msModelMap.get(serviceId).getServices());
     findAndRemoveClasses(change.getDtos(), msModelMap.get(serviceId).getDtos());
@@ -106,5 +115,37 @@ public class MergeService {
 
   private void findAndRemoveSubclass(String className, List<? extends JClass> serviceList) {
     serviceList.removeIf(c -> c.getClassName().equals(className));
+  }
+
+  private static void updateApiDestinationsAdd(Map<String, MsModel> msModelMap, List<JService> services, String servicePath) {
+    for(RestCall restCall : services.get(0).getRestCalls()) {
+      for(MsModel model : msModelMap.values()) {
+        if(!model.getId().equals(servicePath)) {
+          for(JController controller : model.getControllers()){
+            for(Endpoint endpoint : controller.getEndpoints()) {
+              if(endpoint.getUrl().equals(restCall.getApi())) {
+                restCall.setDestFile(controller.getClassPath());
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private static void updateApiDestinationsDelete(Map<String, MsModel> msModelMap, List<JController> controllers, String servicePath) {
+    for(Endpoint endpoint : controllers.get(0).getEndpoints()) {
+      for(MsModel model : msModelMap.values()) {
+        if(!model.getId().equals(servicePath)) {
+          for(JService service : model.getServices()){
+            for(RestCall restCall : service.getRestCalls()) {
+              if(restCall.getApi().equals(endpoint.getUrl()) && !restCall.getDestFile().equals("")) {
+                restCall.setDestFile("");
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

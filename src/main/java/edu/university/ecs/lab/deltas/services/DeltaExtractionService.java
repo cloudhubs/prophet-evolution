@@ -1,5 +1,6 @@
 package edu.university.ecs.lab.deltas.services;
 
+import edu.university.ecs.lab.common.models.MsModel;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.deltas.utils.DeltaComparisonUtils;
 import edu.university.ecs.lab.deltas.utils.GitFetchUtils;
@@ -8,6 +9,7 @@ import org.eclipse.jgit.lib.Repository;
 
 import javax.json.*;
 import java.io.*;
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -59,13 +61,51 @@ public class DeltaExtractionService {
    * @throws IOException if an I/O error occurs
    */
   public void processDifferences(String path, Repository repo, List<DiffEntry> diffEntries)
-      throws IOException {
+          throws IOException, InterruptedException {
     JsonArrayBuilder outputBuilder = Json.createArrayBuilder();
 
     // process each difference
     for (DiffEntry entry : diffEntries) {
-      // skip non-Java files
-      if (!entry.getNewPath().endsWith(".java")) {
+      // skip non-Java files but also include deleted files
+      if (!entry.getNewPath().endsWith(".java") && !entry.getNewPath().equals("/dev/null")) {
+        continue;
+      }
+
+      // String changeURL = gitFetchUtils.getGithubFileUrl(repo, entry);
+      System.out.println("Extracting changes from: " + path);
+      String oldPath = path + "/" + entry.getOldPath();
+      JsonObjectBuilder jout;
+
+      switch (entry.getChangeType()) {
+        case DELETE:
+          System.out.println(
+                  "Change impact of type " + entry.getChangeType() + " detected in " + entry.getOldPath());
+
+          jout = Json.createObjectBuilder();
+          jout.add("localPath", oldPath);
+          jout.add("changeType", entry.getChangeType().name());
+          jout.add("commitId", entry.getNewId().name());
+          jout.add("changes", comparisonUtils.extractDeltaChanges(oldPath));
+
+          outputBuilder.add(jout.build());
+          continue;
+      }
+
+    }
+
+    ///////////////////////////////////////
+    // Advance local repo
+
+    ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", "origin/main");
+    processBuilder.directory(new File(Path.of("repos/train-ticket-microservices-test/").toAbsolutePath().toString()));
+    processBuilder.redirectErrorStream(true);
+    Process process = processBuilder.start();
+    int exitCode = process.waitFor();
+    ///////////////////////////////////////
+
+    for (DiffEntry entry : diffEntries) {
+      // skip non-Java files but also include deleted files
+      if (!entry.getNewPath().endsWith(".java") && !entry.getNewPath().equals("/dev/null")) {
         continue;
       }
 
@@ -76,6 +116,7 @@ public class DeltaExtractionService {
       String newPath = path + "/" + entry.getNewPath();
 
       javax.json.JsonObject deltaChanges;
+      JsonObjectBuilder jout;
 
       switch (entry.getChangeType()) {
         case MODIFY:
@@ -91,19 +132,26 @@ public class DeltaExtractionService {
           }
 
           break;
-        case DELETE:
         case COPY:
+        case DELETE:
+          continue;
         case RENAME:
         case ADD:
+          deltaChanges = comparisonUtils.extractDeltaChanges(newPath);
+          if (deltaChanges.isEmpty()) {
+            continue;
+          }
+          break;
         default:
           deltaChanges = Json.createObjectBuilder().build();
           break;
       }
 
-      System.out.println(
-          "Change impact of type " + entry.getChangeType() + " detected in " + entry.getNewPath());
 
-      JsonObjectBuilder jout = Json.createObjectBuilder();
+      System.out.println(
+              "Change impact of type " + entry.getChangeType() + " detected in " + entry.getNewPath());
+
+      jout = Json.createObjectBuilder();
       jout.add("localPath", newPath);
       jout.add("changeType", entry.getChangeType().name());
       jout.add("commitId", entry.getNewId().name());

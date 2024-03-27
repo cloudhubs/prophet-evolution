@@ -11,6 +11,7 @@ import edu.university.ecs.lab.intermediate.merge.utils.IRParserUtils;
 import javax.json.JsonObject;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,17 +20,17 @@ import java.util.Objects;
 public class IRMergeRunner {
 
   public static void main(String[] args) throws IOException {
-    if (args.length < 2) {
-      System.err.println(
-          "Invalid # of args, 2 expected: <path/to/intermediate-json> <path/to/delta-json>");
-      return;
-    }
+//    if (args.length < 2) {
+//      System.err.println(
+//          "Invalid # of args, 2 expected: <path/to/intermediate-json> <path/to/delta-json>");
+//      return;
+//    }
 
     MergeService mergeService = new MergeService();
 
-    MsSystem msSystem = IRParserUtils.parseIRSystem(args[0]);
+    MsSystem msSystem = IRParserUtils.parseIRSystem(Path.of("out/rest-extraction-output-[1711537197491].json").toAbsolutePath().toString());
     Map<String, MsModel> msModelMap = msSystem.getServiceMap();
-    List<Delta> deltas = IRParserUtils.parseDelta(args[1]);
+    List<Delta> deltas = IRParserUtils.parseDelta(Path.of("out/delta-changes-[1711537261044].json").toAbsolutePath().toString());
 
     // iterate through delta changes
     for (Delta delta : deltas) {
@@ -87,4 +88,7 @@ public class IRMergeRunner {
     MsJsonWriter.writeJsonToFile(jout, outputName);
     System.out.println("Successfully wrote updated extraction to: \"" + outputName + "\"");
   }
+
+
+
 }
