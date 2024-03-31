@@ -123,7 +123,7 @@ public class RestModelService {
     }
   }
 
-  public static JClass scanFile(File file) {
+  public static JClass scanFileForClassModel(File file) {
     try {
       if (file.getName().contains("Controller")) {
         JController controller = ParserUtils.parseController(file);

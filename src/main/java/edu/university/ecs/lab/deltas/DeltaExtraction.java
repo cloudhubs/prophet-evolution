@@ -21,7 +21,7 @@ public class DeltaExtraction {
   public static void main(String[] args) throws Exception {
     DeltaExtractionService deltaService = new DeltaExtractionService();
 
-    MsSystem msSystem = IRParserUtils.parseIRSystem(Path.of("out/rest-extraction-output-[1711537197491].json").toAbsolutePath().toString());
+    MsSystem msSystem = IRParserUtils.parseIRSystem(Path.of("out/rest-extraction-output-[1711926349877].json").toAbsolutePath().toString());
     Map<String, MsModel> msModelMap = msSystem.getServiceMap();
     // iterate through each repository path
     for (String path : List.of(Path.of("repos/train-ticket-microservices-test").toAbsolutePath().toString())) {

@@ -4,7 +4,7 @@ import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.InputConfig;
 import edu.university.ecs.lab.common.config.InputRepository;
 import edu.university.ecs.lab.common.models.*;
-import edu.university.ecs.lab.common.utils.MsFileUtils;
+import edu.university.ecs.lab.common.utils.JsonConvertUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.intermediate.create.services.GitCloneService;
 import edu.university.ecs.lab.intermediate.create.services.RestModelService;
@@ -82,7 +82,7 @@ public class RestExtraction {
     Scanner scanner = new Scanner(System.in); // read system name from command line
     System.out.println("Enter system name: ");
     JsonObject jout =
-        MsFileUtils.constructJsonMsSystem(scanner.nextLine(), "0.0.1", msEndpointsMap);
+        JsonConvertUtils.constructJsonMsSystem(scanner.nextLine(), "0.0.1", msEndpointsMap);
 
     String outputName =
         outputPath

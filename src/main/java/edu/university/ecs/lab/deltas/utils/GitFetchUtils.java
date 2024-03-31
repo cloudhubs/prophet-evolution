@@ -62,8 +62,8 @@ public class GitFetchUtils {
       try (ObjectReader reader = repo.newObjectReader()) {
         // get the difference between local main and origin/main
         return git.diff()
-            .setOldTree(prepareLocalTreeParser(repo))
-            .setNewTree(prepareRemoteTreeParser(reader, repo, "refs/remotes/origin/" + branch)) // current local branch
+            .setOldTree(prepareRemoteTreeParser(reader, repo, "refs/remotes/origin/" + branch))
+            .setNewTree(prepareLocalTreeParser(repo)) // current local branch
             .call();
       }
     }

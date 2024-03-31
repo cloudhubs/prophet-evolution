@@ -18,6 +18,7 @@ import java.util.List;
 @ToString
 public class JClass {
   protected String className;
+
   protected String classPath;
   protected String packageName;
 

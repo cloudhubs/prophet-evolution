@@ -1,7 +1,7 @@
 package edu.university.ecs.lab.intermediate.merge;
 
 import edu.university.ecs.lab.common.models.MsModel;
-import edu.university.ecs.lab.common.utils.MsFileUtils;
+import edu.university.ecs.lab.common.utils.JsonConvertUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.intermediate.merge.models.Delta;
 import edu.university.ecs.lab.intermediate.merge.models.MsSystem;
@@ -78,7 +78,7 @@ public class IRMergeRunner {
 
   private static void writeNewIntermediate(
       String systemname, String version, Map<String, MsModel> msModelMap) throws IOException {
-    JsonObject jout = MsFileUtils.constructJsonMsSystem(systemname, version, msModelMap);
+    JsonObject jout = JsonConvertUtils.constructJsonMsSystem(systemname, version, msModelMap);
 
     String outputPath = System.getProperty("user.dir") + File.separator + "out";
 

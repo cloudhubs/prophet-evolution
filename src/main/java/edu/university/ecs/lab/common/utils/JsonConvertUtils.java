@@ -7,10 +7,10 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-/** Utility class for handling microservice files. */
-public class MsFileUtils {
+/** Utility class for converting objects to  JSON. */
+public class JsonConvertUtils {
   /** Private constructor to prevent instantiation. */
-  private MsFileUtils() {}
+  private JsonConvertUtils() {}
 
   /**
    * Construct a JSON object representing the given ms system name, version, and microservice data
@@ -41,20 +41,16 @@ public class MsFileUtils {
 
       msObjectBuilder.add("id", microservice.getValue().getId().replaceAll("\\\\", "/"));
       msObjectBuilder.add("msName", msName);
-      //      msObjectBuilder.add("msPath", microservice.getKey().replaceAll("\\\\", "/"));
       msObjectBuilder.add("commitId", microservice.getValue().getCommit());
 
       msObjectBuilder.add(
           "controllers", buildRestControllers(msName, microservice.getValue().getControllers()));
 
-      // msObjectBuilder.add("restCalls",
-      // buildRestCalls(microservice.getValue().getAllRestCalls()));
-
       msObjectBuilder.add("services", buildRestServices(microservice.getValue().getServices()));
-      msObjectBuilder.add("dtos", buildJavaClass(microservice.getValue().getDtos()));
+      msObjectBuilder.add("dtos", buildJavaClasses(microservice.getValue().getDtos()));
       msObjectBuilder.add(
-          "repositories", buildJavaClass(microservice.getValue().getRepositories()));
-      msObjectBuilder.add("entities", buildJavaClass(microservice.getValue().getEntities()));
+          "repositories", buildJavaClasses(microservice.getValue().getRepositories()));
+      msObjectBuilder.add("entities", buildJavaClasses(microservice.getValue().getEntities()));
 
       jsonArrayBuilder.add(msObjectBuilder.build());
     }
@@ -64,110 +60,116 @@ public class MsFileUtils {
   }
 
   /**
-   * Write the given endpoint list to the given json list
+   * Construct a list of JController objects as a JsonArray
    *
    * @param msName microservice system name
-   * @return rest endpoint json list
+   * @param controllers list of JController objects to be converted
+   * @return Converted JsonArray of JController objects
    */
   public static JsonArray buildRestControllers(String msName, List<JController> controllers) {
     JsonArrayBuilder controllerArrayBuilder = Json.createArrayBuilder();
 
     for (JController controller : controllers) {
-      JsonObjectBuilder controllerBuilder = Json.createObjectBuilder();
-      controllerBuilder.add("className", controller.getClassName());
-      controllerBuilder.add("classPath", controller.getClassPath().replaceAll("\\\\", "/"));
-      controllerBuilder.add("variables", buildFieldArray(controller.getFields()));
-
-      JsonArrayBuilder endpointArrayBuilder = Json.createArrayBuilder();
-
-      // Get "endpoint" methods in controller
-      for (Endpoint endpoint : controller.getEndpoints()) {
-        String id =
-            endpoint.getHttpMethod()
-                + ":"
-                + msName
-                + "."
-                + endpoint.getMethodName()
-                + "#"
-                + Math.abs(endpoint.getParameterList().hashCode());
-
-        JsonObjectBuilder endpointBuilder = Json.createObjectBuilder();
-
-        endpointBuilder.add("id", id);
-        endpointBuilder.add("api", endpoint.getUrl());
-        endpointBuilder.add("type", endpoint.getDecorator());
-        endpointBuilder.add("httpMethod", endpoint.getHttpMethod());
-        endpointBuilder.add("methodName", endpoint.getMethodName());
-        endpointBuilder.add("parameter", endpoint.getParameterList());
-        endpointBuilder.add("returnType", endpoint.getReturnType());
-        //        endpointBuilder.add(
-        //            "method-variables", addVariableArray(restEndpoint.getMethodVariables()));
-
-        endpointArrayBuilder.add(endpointBuilder.build());
-      }
-
-      controllerBuilder.add("restEndpoints", endpointArrayBuilder.build());
-      controllerArrayBuilder.add(controllerBuilder.build());
+      controllerArrayBuilder.add(buildRestController(msName, controller));
     }
 
     return controllerArrayBuilder.build();
   }
 
   /**
-   * Write the given service list to the given json list
+   * Convert a single JController to a JsonObject
    *
-   * @param services list of service classes
-   * @return rest service json list
+   * @param msName microservice system name
+   * @param controller JController to be converted
+   * @return Converted JsonObject of JController object
+   */
+  public static JsonObject buildRestController(String msName, JController controller) {
+    JsonObjectBuilder controllerBuilder = Json.createObjectBuilder(buildJavaClass(controller));
+
+    JsonArrayBuilder endpointArrayBuilder = Json.createArrayBuilder();
+
+    // Get "endpoint" methods in controller
+    for (Endpoint endpoint : controller.getEndpoints()) {
+      endpointArrayBuilder.add(buildEndpoint(msName, endpoint));
+    }
+
+    controllerBuilder.add("restEndpoints", endpointArrayBuilder.build());
+
+
+    return controllerBuilder.build();
+  }
+
+  /**
+   * Constructs a list of JService objects as a JsonArray
+   *
+   * @param services list of JService objects to be converted
+   * @return Converted JsonArray of JService objects
    */
   public static JsonArray buildRestServices(List<JService> services) {
     JsonArrayBuilder serviceArrayBuilder = Json.createArrayBuilder();
 
     for (JService service : services) {
-      JsonObjectBuilder serviceBuilder = Json.createObjectBuilder();
-      if (service.getClassName() == null) {
-        System.out.println("here");
-      }
-
-      serviceBuilder.add("className", service.getClassName());
-      serviceBuilder.add("classPath", service.getClassPath().replaceAll("\\\\", "/"));
-      serviceBuilder.add("restCalls", buildRestCalls(service.getRestCalls()));
-
-      serviceBuilder.add("variables", buildFieldArray(service.getFields()));
-      serviceBuilder.add("methods", buildMethodArray(service.getMethods()));
-
-      serviceArrayBuilder.add(serviceBuilder.build());
+      serviceArrayBuilder.add(buildRestService(service));
     }
 
     return serviceArrayBuilder.build();
   }
 
   /**
-   * Write the given class list to the given json list
+   * Convert a single JService to a JsonObject
    *
-   * @param classList list of generic java classes
-   * @return class json list
+   * @param service JService to be converted
+   * @return Converted JsonObject of JService object
    */
-  public static JsonArray buildJavaClass(List<JClass> classList) {
-    JsonArrayBuilder jclassArrayBuilder = Json.createArrayBuilder();
-
-    for (JClass javaClass : classList) {
-      JsonObjectBuilder dtoBuilder = Json.createObjectBuilder();
-      dtoBuilder.add("className", javaClass.getClassName());
-      dtoBuilder.add("classPath", javaClass.getClassPath().replaceAll("\\\\", "/"));
-      dtoBuilder.add("methods", buildMethodArray(javaClass.getMethods()));
-      dtoBuilder.add("variables", buildFieldArray(javaClass.getFields()));
-
-      jclassArrayBuilder.add(dtoBuilder.build());
+  public static JsonObject buildRestService(JService service) {
+    JsonObjectBuilder serviceBuilder = Json.createObjectBuilder(buildJavaClass(service));
+    if (service.getClassName() == null) {
+      System.out.println("here");
     }
 
-    return jclassArrayBuilder.build();
+    serviceBuilder.add("restCalls", buildRestCalls(service.getRestCalls()));
+
+    return serviceBuilder.build();
   }
 
   /**
-   * Write the given endpoint list to the given json list.
+   * Constructs a list of JClass objects as a JsonArray
    *
-   * @param restCalls the list of calls
-   * @return array of call objects
+   * @param jClasses list of JClass objects to be converted
+   * @return Converted JsonArray of JClass objects
+   */
+  public static JsonArray buildJavaClasses(List<JClass> jClasses) {
+    JsonArrayBuilder jClassArrayBuilder = Json.createArrayBuilder();
+
+    for (JClass jClass : jClasses) {
+      jClassArrayBuilder.add(buildJavaClass(jClass));
+    }
+
+    return jClassArrayBuilder.build();
+  }
+
+  /**
+   * Convert a single JClass to a JsonObject
+   *
+   * @param jClass JClass to be converted
+   * @return Converted JsonObject of JClass object
+   */
+  public static JsonObject buildJavaClass(JClass jClass) {
+    JsonObjectBuilder jClassBuilder = Json.createObjectBuilder();
+
+    jClassBuilder.add("className", jClass.getClassName());
+    jClassBuilder.add("classPath", jClass.getClassPath().replaceAll("\\\\", "/"));
+    jClassBuilder.add("methods", buildMethodArray(jClass.getMethods()));
+    jClassBuilder.add("variables", buildFieldArray(jClass.getFields()));
+
+    return jClassBuilder.build();
+  }
+
+  /**
+   * Constructs a list of RestCall objects as a JsonArray
+   *
+   * @param restCalls list of RestCall objects to be converted
+   * @return Converted JsonArray of RestCall objects
    */
   public static JsonArray buildRestCalls(List<RestCall> restCalls) {
     JsonArrayBuilder restCallArrayBuilder = Json.createArrayBuilder();
@@ -193,6 +195,12 @@ public class MsFileUtils {
     return restCallArrayBuilder.build();
   }
 
+  /**
+   * Constructs a list of Method objects as a JsonArray
+   *
+   * @param methodList list of Method objects to be converted
+   * @return Converted JsonArray of Method objects
+   */
   public static JsonArray buildMethodArray(List<Method> methodList) {
     // TODO find cause of this
     if (methodList == null) {
@@ -213,6 +221,12 @@ public class MsFileUtils {
     return methodArrayBuilder.build();
   }
 
+  /**
+   * Constructs a list of Field objects as a JsonArray
+   *
+   * @param fieldList list of Field objects to be converted
+   * @return Converted JsonArray of Field objects
+   */
   public static JsonArray buildFieldArray(List<Field> fieldList) {
     // TODO find cause of this
     if (fieldList == null) {
@@ -330,4 +344,43 @@ public class MsFileUtils {
   //
   //    return flowBuilder.build();
   //  }
+
+  /**
+   * Constructs a String endpointId from an Endpoint object and name of microservice
+   *
+   * @param msName the name of the microservice system
+   * @param endpoint endpoint object used in construction
+   * @return a unique Id representing this endpoint
+   */
+  private static String buildEndpointId(String msName, Endpoint endpoint) {
+    return endpoint.getHttpMethod()
+        + ":"
+        + msName
+        + "."
+        + endpoint.getMethodName()
+        + "#"
+        + Math.abs(endpoint.getParameterList().hashCode());
+  }
+
+  /**
+   * Convert a single Endpoint to a JsonObject
+   *
+   * @param endpoint Endpoint to be converted
+   * @return Converted JsonObject of Endpoint object
+   */
+  private static JsonObject buildEndpoint(String msName, Endpoint endpoint) {
+    JsonObjectBuilder endpointBuilder = Json.createObjectBuilder();
+
+    String id = buildEndpointId(msName, endpoint);
+
+    endpointBuilder.add("id", id);
+    endpointBuilder.add("api", endpoint.getUrl());
+    endpointBuilder.add("type", endpoint.getDecorator());
+    endpointBuilder.add("httpMethod", endpoint.getHttpMethod());
+    endpointBuilder.add("methodName", endpoint.getMethodName());
+    endpointBuilder.add("parameter", endpoint.getParameterList());
+    endpointBuilder.add("returnType", endpoint.getReturnType());
+
+    return endpointBuilder.build();
+  }
 }
