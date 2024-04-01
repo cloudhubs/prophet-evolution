@@ -9,6 +9,7 @@ import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.deltas.utils.DeltaComparisonUtils;
 import edu.university.ecs.lab.deltas.utils.GitFetchUtils;
 import org.eclipse.jgit.diff.DiffEntry;
+import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.lib.Repository;
 
 import javax.json.*;
@@ -68,6 +69,9 @@ public class DeltaExtractionService {
    */
   public void processDifferences(String msPath, Repository repo, List<DiffEntry> diffEntries)
           throws IOException, InterruptedException {
+
+    advanceLocalRepo();
+
     JsonObjectBuilder finalOutputBuilder = Json.createObjectBuilder();
 
     // Lists for changed objects aka files
@@ -102,16 +106,16 @@ public class DeltaExtractionService {
       entryBuilder.add("changes", deltaChanges);
 
       if (file.getName().contains("Controller")) {
-        controllers.add(getDeltaChanges(entry, file, ClassRole.CONTROLLER));
+        controllers.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.CONTROLLER), entry, file.getPath()));
       } else if (file.getName().contains("Service")) {
-        services.add(getDeltaChanges(entry, file, ClassRole.SERVICE));
+        services.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.SERVICE), entry, file.getPath()));
       } else if (file.getName().toLowerCase().contains("dto")) {
-        dtos.add(getDeltaChanges(entry, file, ClassRole.DTO));
+        dtos.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.DTO), entry, file.getPath()));
       } else if (file.getName().contains("Repository")) {
-        repositories.add(getDeltaChanges(entry, file, ClassRole.REPOSITORY));
+        repositories.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.REPOSITORY), entry, file.getPath()));
       } else if (file.getParent().toLowerCase().contains("entity")
               || file.getParent().toLowerCase().contains("model")) {
-        entities.add(getDeltaChanges(entry, file, ClassRole.ENTITY));
+        entities.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.ENTITY), entry, file.getPath()));
       }
 
 
@@ -120,11 +124,11 @@ public class DeltaExtractionService {
     }
 
     // write differences to output file
-    finalOutputBuilder.add("controllers", Json.createArrayBuilder(controllers).build());
-    finalOutputBuilder.add("services", Json.createArrayBuilder(services).build());
-    finalOutputBuilder.add("repositories", Json.createArrayBuilder(repositories).build());
-    finalOutputBuilder.add("dtos", Json.createArrayBuilder(dtos).build());
-    finalOutputBuilder.add("entities", Json.createArrayBuilder(entities).build());
+    finalOutputBuilder.add("controllers", convertListToJsonArray(controllers));
+    finalOutputBuilder.add("services", convertListToJsonArray(services));
+    finalOutputBuilder.add("repositories", convertListToJsonArray(repositories));
+    finalOutputBuilder.add("dtos", convertListToJsonArray(dtos));
+    finalOutputBuilder.add("entities", convertListToJsonArray(entities));
 
     String outputName = "./out/delta-changes-[" + (new Date()).getTime() + "].json";
     MsJsonWriter.writeJsonToFile(finalOutputBuilder.build(), outputName);
@@ -138,6 +142,7 @@ public class DeltaExtractionService {
         return DeltaComparisonUtils.extractDeltaChanges(file, classRole);
       case COPY:
       case DELETE:
+        break;
       case RENAME:
       case ADD:
         return DeltaComparisonUtils.extractDeltaChanges(file, classRole);
@@ -146,5 +151,31 @@ public class DeltaExtractionService {
     }
 
     return JsonValue.EMPTY_JSON_OBJECT;
+  }
+
+  private static JsonObject constructObjectFromDelta(JsonObject deltaChanges, DiffEntry entry, String path) {
+    JsonObjectBuilder jout = Json.createObjectBuilder();
+    jout.add("localPath", path);
+    jout.add("changeType", entry.getChangeType().name());
+    jout.add("commitId", entry.getNewId().name());
+    jout.add("changes", deltaChanges);
+
+    return jout.build();
+  }
+
+  private static void advanceLocalRepo() throws IOException, InterruptedException {
+    ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", "origin/main");
+    processBuilder.directory(new File(Path.of("repos/train-ticket-microservices-test/").toAbsolutePath().toString()));
+    processBuilder.redirectErrorStream(true);
+    Process process = processBuilder.start();
+    int exitCode = process.waitFor();
+  }
+
+  private static JsonArray convertListToJsonArray(List<JsonObject> jsonObjectList) {
+    JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+    for (JsonObject jsonObject : jsonObjectList) {
+      arrayBuilder.add(jsonObject);
+    }
+    return arrayBuilder.build();
   }
 }

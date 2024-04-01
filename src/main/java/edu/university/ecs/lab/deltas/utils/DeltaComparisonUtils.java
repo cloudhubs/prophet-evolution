@@ -40,8 +40,8 @@ public class DeltaComparisonUtils {
     return JsonConvertUtils.buildJavaClass(jClass);
   }
 
-//  public static JClass extractFileClassModel(File localFile) {
-//    return scanFile(localFile);
+//  public static JClass extractFileClassModel(File classFile) {
+//    return scanFileForClassModel(classFile);
 //  }
 
 //  public JsonObject extractDeltaAdditionChanges(Map<String, MsModel> currentModelMap, String repoPath, String pathToLocal) {
