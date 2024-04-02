@@ -81,7 +81,7 @@ Sample output produced:
                         },
                         ...
                     ],
-                    restCalls: [...]
+                    "restCalls": [...]
             },
             ...
           ],
@@ -142,9 +142,9 @@ Sample output produced:
             "msName": "ts-preserve-service",
             "commitId": "b17b69ef75919704d6329f82530ca0e5313061a9", // mapped changes, updated commit Id
             "controllers": [...],
-	       "services": [...]
-	       ...
-	   }
+            "services": [...],
+            ...
+        }
     ]
 }
 ```
