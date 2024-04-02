@@ -20,16 +20,13 @@ Sample input config file:
 
 ```json
 {
-  "clonePath": "/repos",
-  "outputPath": "/out",
+  "clonePath": "./repos",
+  "outputPath": "./out",
   "repositories": [
     {
       "repoUrl": "https://github.com/cloudhubs/train-ticket-microservices.git",
       "baseCommit": "f34c476",
-      "paths": [ "path/to/microservice", "ts-admins-service"]
-    },
-    {
-      "repoUrl": "https://github.com/cloudhubs/tms2020.git"
+      "paths": [ "path/to/microservice", "ts-admins-service", ... ]
     }
   ]
 }
@@ -38,41 +35,61 @@ Sample input config file:
 Sample output produced:
 ```json
 {
-  "systemName": "train-ticket-system",
-  "version": "0.0.1",
-  "services": [
-    {
-      "id": "train-ticket-microservices\\ts-price-service",
-      "msName": "ts-price-service",
-      "msPath": "C:/Users/.../train-ticket-microservices\\ts-price-service",
-      "commitId": "f34c476",
-      "restControllers": [
+    "systemName": "this-system",
+    "version": "0.0.1",
+    "services": [
         {
-          "id": "GET:ts-price-service.home#0",
-          "api": "/api/v1/priceservice/prices/welcome",
-          "source-file": "C:\\Users\\...\\train-ticket-microservices\\ts-price-service\\...\\PriceController.java",
-          "type": "GetMapping",
-          "httpMethod": "GET",
-          "parent-method": "com.cloudhubs.trainticket.price.controller.PriceController.home",
-          "methodName": "home",
-          "arguments": "",
-          "return": "String"
-        },
-        ...,
-      ],
-      "dependencies": [
-        {
-          "api": "/api/v1/paymentservice/payment",
-          "source-file": "C:\\Users\\...\\train-ticket-microservices\\ts-price-service\\...\\InsidePaymentServiceImpl.java",
-          "call-dest": "< TODO >",
-          "call-method": "com.cloudhubs.trainticket.price.service.impl.InsidePaymentServiceImpl.pay()",
-          "httpMethod": "POST"
-        },
-        ...
-      ]
-    },
-    ...
-  ]
+            "id": "C:/Users/…/ts-preserve-service",
+            "msName": "ts-preserve-service",
+            "msPath": "train-ticket-microservices/ts-preserve-service",
+            "commitId": "f34c476",
+            "controllers": [
+                {
+                    "className": "OrderController",
+                    "classPath": "C:/Users/…/OrderController.java",
+                    "variables": [
+                        {
+                            "variableName": "orderService",
+                            "variableType": "OrderService"
+                        },
+                        {
+                            "variableName": "LOGGER",
+                            "variableType": "Logger"
+                        }
+                    ],
+                    "restEndpoints": [
+                        {
+                            "id": "GET:ts-preserve-service.home#0",
+                            "api": "/api/v1/orderservice/welcome",
+                            "type": "GetMapping",
+                            ...                            
+                        },
+		     ...
+                     ],
+                 },
+                 ...
+             ],
+            "services": [
+             {
+                    "className": "OrderOtherServiceImpl",
+                    "classPath": "C:/Users/…/OrderOtherServiceImpl.java",
+                    "methods": [
+                        {
+                            "methodName": "getSoldTickets",
+                            "parameter": "[Seat seatRequest, HttpHeaders headers]",
+                            "returnType": "Response"
+                        },
+                        ...
+                    ],
+                    restCalls: [...]
+            },
+            ...
+          ],
+          "repositories": [ ... ],
+          "dtos": [ ... ],
+          "entities": [ ... ]
+      },
+      ...
 }
 ```
 
@@ -83,25 +100,51 @@ Sample output produced:
 Sample output produced:
 ```json
 {
-    "local-file": "/cimet/.../services/DeltaExtractionService.java",
-    "remote-api": "https://api.github.com/repos/cloudhubs/cimet/contents/.../DeltaExtractionService.java",
-    "change-type": "MODIFY",
-    "changes": [
-      {
-        "className": "DeltaExtractionService",
-        "methodName": "processDifferences",
-        "remote-line": "    System.out.println(\"Delta extracted: \" + outputName);",
-        "local-line": "      jout.add(\"change-type\", entry.getChangeType().name());",
-        "line-number": 107
-      },
-      {
-        "className": "DeltaExtractionService",
-        "methodName": "processDifferences",
-        "remote-line": "  }",
-        "local-line": "      jout.add(\"changes\", deltaChanges);",
-        "line-number": 108
-      },
-      ...
+        "localPath": "./repos/train-ticket-microservices/.../ContactsController.java",
+        "changeType": "MODIFY",
+        "commitId": "901fffa66a5dd85b30862b97c3f5013388a265f1",
+        "changes": {
+            "controllers": [
+                {
+                    "className": "ContactsController",
+                    "classPath": "./repos/train-ticket-microservices/.../ContactsController.java",
+                    "variables": [
+                        {
+                            "variableName": "contactsService",
+                            "variableType": "ContactsService"
+                        },
+                        {
+                            "variableName": "LOGGER",
+                            "variableType": "Logger"
+                        }
+                    ],
+                    "restEndpoints": [...]
+		     },
+	     ]
+	     "services": [...],
+	     ...
+	}
+}
+```
+
+## Merging an IR & Delta Change:
+- Run or compile the main method of ``IRMergeRunner.java`` in the IDE of your choice or via the command line.
+- Provide command line args containing ``<intermediate-system-file>.json`` and ``<delta-change-file>.json``
+
+Sample output produced:
+```json
+{
+    "systemName": "this-system",
+    "version": "0.0.2", // incremented version number
+    "services": [
+        {
+            "id": "ts-preserve-service",
+            "msName": "ts-preserve-service",
+            "commitId": "b17b69ef75919704d6329f82530ca0e5313061a9", // mapped changes, updated commit Id
+            "controllers": [...],
+	       "services": [...]
+	       ...
+	   }
     ]
 }
 ```
