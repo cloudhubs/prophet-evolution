@@ -12,12 +12,26 @@ public class ClassMetrics {
 
     private ClassRole classRole;
 
-    private int classCount;
-
-    private int newClassCount;
+    private int addedClassCount;
 
     private int removedClassCount;
 
     private int modifiedClassCount;
+
+    private int endpointCount;
+
+    private int restCallCount;
+
+    public void incrementAddedClassCount() {
+        addedClassCount++;
+    }
+
+    public void incrementRemovedClassCount() {
+        removedClassCount++;
+    }
+
+    public void incrementModifiedClassCount() {
+        modifiedClassCount++;
+    }
 
 }

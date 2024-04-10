@@ -55,7 +55,7 @@ public class JsonConvertUtils {
       jsonArrayBuilder.add(msObjectBuilder.build());
     }
 
-    parentBuilder.add("services", jsonArrayBuilder.build());
+    parentBuilder.add("microservices", jsonArrayBuilder.build());
     return parentBuilder.build();
   }
 

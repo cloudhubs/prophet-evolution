@@ -94,16 +94,16 @@ public class DeltaExtractionService {
       File file = new File(entry.getNewPath().equals("/dev/null") ? oldPath : newPath);
 
       if (file.getName().contains("Controller")) {
-        controllers.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.CONTROLLER), entry, localPath));
+        controllers.add(constructObjectFromDelta(ClassRole.CONTROLLER, getDeltaChanges(entry, file, ClassRole.CONTROLLER), entry, localPath));
       } else if (file.getName().contains("Service")) {
-        services.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.SERVICE), entry, localPath));
+        services.add(constructObjectFromDelta(ClassRole.SERVICE, getDeltaChanges(entry, file, ClassRole.SERVICE), entry, localPath));
       } else if (file.getName().toLowerCase().contains("dto")) {
-        dtos.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.DTO), entry, localPath));
+        dtos.add(constructObjectFromDelta(ClassRole.DTO, getDeltaChanges(entry, file, ClassRole.DTO), entry, localPath));
       } else if (file.getName().contains("Repository")) {
-        repositories.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.REPOSITORY), entry, localPath));
+        repositories.add(constructObjectFromDelta(ClassRole.REPOSITORY, getDeltaChanges(entry, file, ClassRole.REPOSITORY), entry, localPath));
       } else if (file.getParent().toLowerCase().contains("entity")
               || file.getParent().toLowerCase().contains("model")) {
-        entities.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.ENTITY), entry, localPath));
+        entities.add(constructObjectFromDelta(ClassRole.ENTITY, getDeltaChanges(entry, file, ClassRole.ENTITY), entry, localPath));
       }
 
 
@@ -141,13 +141,21 @@ public class DeltaExtractionService {
     return JsonValue.EMPTY_JSON_OBJECT;
   }
 
-  private static JsonObject constructObjectFromDelta(JsonObject deltaChanges, DiffEntry entry, String path) {
+  private static JsonObject constructObjectFromDelta(ClassRole classRole, JsonObject deltaChanges, DiffEntry entry, String path) {
     JsonObjectBuilder jout = Json.createObjectBuilder();
     String msName = (entry.getNewPath().equals("/dev/null") ? entry.getOldPath().substring(0, entry.getOldPath().indexOf('/')) : entry.getNewPath().substring(0, entry.getNewPath().indexOf('/')));
     jout.add("localPath", path);
     jout.add("changeType", entry.getChangeType().name());
     jout.add("commitId", entry.getNewId().name());
-    jout.add("changes", deltaChanges);
+    if(classRole == ClassRole.CONTROLLER) {
+      jout.add("cChange", deltaChanges);
+
+    } else if (classRole == ClassRole.SERVICE) {
+      jout.add("sChange", deltaChanges);
+
+    } else {
+      jout.add("changes", deltaChanges);
+    }
     jout.add("msName", msName);
 
     return jout.build();
