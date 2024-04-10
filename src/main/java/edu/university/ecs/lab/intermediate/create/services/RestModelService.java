@@ -2,7 +2,7 @@ package edu.university.ecs.lab.intermediate.create.services;
 
 import edu.university.ecs.lab.common.models.JController;
 import edu.university.ecs.lab.common.models.JService;
-import edu.university.ecs.lab.common.utils.ParserUtils;
+import edu.university.ecs.lab.common.utils.JParserUtils;
 import edu.university.ecs.lab.common.models.JClass;
 import edu.university.ecs.lab.common.models.MsModel;
 
@@ -90,28 +90,28 @@ public class RestModelService {
       List<JClass> entities) {
     try {
       if (file.getName().contains("Controller")) {
-        JController controller = ParserUtils.parseController(file);
+        JController controller = JParserUtils.parseController(file);
         if (Objects.nonNull(controller)) {
           controllers.add(controller);
         }
       } else if (file.getName().contains("Service")) {
-        JService jService = ParserUtils.parseService(file);
+        JService jService = JParserUtils.parseService(file);
         if (Objects.nonNull(jService)) {
           services.add(jService);
         }
       } else if (file.getName().toLowerCase().contains("dto")) {
-        JClass jClass = ParserUtils.parseClass(file);
+        JClass jClass = JParserUtils.parseClass(file);
         if (Objects.nonNull(jClass)) {
           dtos.add(jClass);
         }
       } else if (file.getName().contains("Repository")) {
-        JClass jClass = ParserUtils.parseClass(file);
+        JClass jClass = JParserUtils.parseClass(file);
         if (Objects.nonNull(jClass)) {
           repositories.add(jClass);
         }
       } else if (file.getParent().toLowerCase().contains("entity")
           || file.getParent().toLowerCase().contains("model")) {
-        JClass jClass = ParserUtils.parseClass(file);
+        JClass jClass = JParserUtils.parseClass(file);
         if (Objects.nonNull(jClass)) {
           entities.add(jClass);
         }
@@ -126,28 +126,28 @@ public class RestModelService {
   public static JClass scanFileForClassModel(File file) {
     try {
       if (file.getName().contains("Controller")) {
-        JController controller = ParserUtils.parseController(file);
+        JController controller = JParserUtils.parseController(file);
         if (Objects.nonNull(controller)) {
           return controller;
         }
       } else if (file.getName().contains("Service")) {
-        JService jService = ParserUtils.parseService(file);
+        JService jService = JParserUtils.parseService(file);
         if (Objects.nonNull(jService)) {
           return jService;
         }
       } else if (file.getName().toLowerCase().contains("dto")) {
-        JClass jClass = ParserUtils.parseClass(file);
+        JClass jClass = JParserUtils.parseClass(file);
         if (Objects.nonNull(jClass)) {
           return jClass;
         }
       } else if (file.getName().contains("Repository")) {
-        JClass jClass = ParserUtils.parseClass(file);
+        JClass jClass = JParserUtils.parseClass(file);
         if (Objects.nonNull(jClass)) {
           return jClass;
         }
       } else if (file.getParent().toLowerCase().contains("entity")
               || file.getParent().toLowerCase().contains("model")) {
-        JClass jClass = ParserUtils.parseClass(file);
+        JClass jClass = JParserUtils.parseClass(file);
         if (Objects.nonNull(jClass)) {
           return jClass;
         }

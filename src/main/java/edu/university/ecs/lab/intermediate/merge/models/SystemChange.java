@@ -1,7 +1,6 @@
 package edu.university.ecs.lab.intermediate.merge.models;
 
 import com.google.gson.annotations.SerializedName;
-import edu.university.ecs.lab.common.models.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,19 +10,19 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Change {
+public class SystemChange {
   @SerializedName("controllers")
-  private List<JController> controllers;
+  private List<Delta> controllers;
 
   @SerializedName("services")
-  private List<JService> services;
+  private List<Delta> services;
 
   @SerializedName("dtos")
-  private List<JClass> dtos;
+  private List<Delta> dtos;
 
   @SerializedName("repositories")
-  private List<JClass> repositories;
+  private List<Delta> repositories;
 
   @SerializedName("entities")
-  private List<JClass> entities;
+  private List<Delta> entities;
 }

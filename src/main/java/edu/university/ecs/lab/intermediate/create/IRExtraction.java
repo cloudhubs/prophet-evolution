@@ -23,7 +23,7 @@ import java.util.*;
  *
  * <p>
  */
-public class RestExtraction {
+public class IRExtraction {
   /** Exit code: error writing IR to json */
   private static final int BAD_IR_WRITE = 3;
 
@@ -82,7 +82,7 @@ public class RestExtraction {
     Scanner scanner = new Scanner(System.in); // read system name from command line
     System.out.println("Enter system name: ");
     JsonObject jout =
-        JsonConvertUtils.constructJsonMsSystem(scanner.nextLine(), "0.0.1", msEndpointsMap);
+        JsonConvertUtils.buildSystem(scanner.nextLine(), "0.0.1", msEndpointsMap);
 
     String outputName =
         outputPath

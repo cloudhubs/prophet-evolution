@@ -85,13 +85,13 @@ Sample output produced:
 {
     "local-file": "/cimet/.../services/DeltaExtractionService.java",
     "remote-api": "https://api.github.com/repos/cloudhubs/cimet/contents/.../DeltaExtractionService.java",
-    "change-type": "MODIFY",
+    "systemChange-type": "MODIFY",
     "changes": [
       {
         "className": "DeltaExtractionService",
         "methodName": "processDifferences",
         "remote-line": "    System.out.println(\"Delta extracted: \" + outputName);",
-        "local-line": "      jout.add(\"change-type\", entry.getChangeType().name());",
+        "local-line": "      jout.add(\"systemChange-type\", entry.getChangeType().name());",
         "line-number": 107
       },
       {

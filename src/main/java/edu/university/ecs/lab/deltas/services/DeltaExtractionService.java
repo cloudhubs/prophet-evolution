@@ -1,23 +1,16 @@
 package edu.university.ecs.lab.deltas.services;
 
-import edu.university.ecs.lab.common.models.JClass;
-import edu.university.ecs.lab.common.models.JController;
-import edu.university.ecs.lab.common.models.JService;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
-import edu.university.ecs.lab.common.utils.ParserUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.deltas.utils.DeltaComparisonUtils;
 import edu.university.ecs.lab.deltas.utils.GitFetchUtils;
 import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.lib.Config;
 import org.eclipse.jgit.lib.Repository;
 
 import javax.json.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
-
-import static edu.university.ecs.lab.intermediate.create.services.RestModelService.scanFileForClassModel;
 
 /**
  * Service for extracting the differences between a local and remote repository and generating delta
@@ -94,28 +87,23 @@ public class DeltaExtractionService {
       String newPath = msPath + "/" + entry.getNewPath();
 
       JsonObject deltaChanges = JsonValue.EMPTY_JSON_OBJECT;
-      JsonObjectBuilder entryBuilder = Json.createObjectBuilder();
 
       ClassRole classRole = null;
       // If the new path is null, it is a delete and we use old path to parse classtype, otherwise we use newpath
-      File file = new File((entry.getNewPath().equals("/dev/null") ? oldPath : newPath));
-
-      entryBuilder.add("localPath", newPath);
-      entryBuilder.add("changeType", entry.getChangeType().name());
-      entryBuilder.add("commitId", entry.getNewId().name());
-      entryBuilder.add("changes", deltaChanges);
+      String localPath = "./" + (entry.getNewPath().equals("/dev/null") ? entry.getOldPath() : entry.getNewPath());
+      File file = new File(entry.getNewPath().equals("/dev/null") ? oldPath : newPath);
 
       if (file.getName().contains("Controller")) {
-        controllers.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.CONTROLLER), entry, file.getPath()));
+        controllers.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.CONTROLLER), entry, localPath));
       } else if (file.getName().contains("Service")) {
-        services.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.SERVICE), entry, file.getPath()));
+        services.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.SERVICE), entry, localPath));
       } else if (file.getName().toLowerCase().contains("dto")) {
-        dtos.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.DTO), entry, file.getPath()));
+        dtos.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.DTO), entry, localPath));
       } else if (file.getName().contains("Repository")) {
-        repositories.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.REPOSITORY), entry, file.getPath()));
+        repositories.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.REPOSITORY), entry, localPath));
       } else if (file.getParent().toLowerCase().contains("entity")
               || file.getParent().toLowerCase().contains("model")) {
-        entities.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.ENTITY), entry, file.getPath()));
+        entities.add(constructObjectFromDelta(getDeltaChanges(entry, file, ClassRole.ENTITY), entry, localPath));
       }
 
 
@@ -155,10 +143,12 @@ public class DeltaExtractionService {
 
   private static JsonObject constructObjectFromDelta(JsonObject deltaChanges, DiffEntry entry, String path) {
     JsonObjectBuilder jout = Json.createObjectBuilder();
+    String msName = (entry.getNewPath().equals("/dev/null") ? entry.getOldPath().substring(0, entry.getOldPath().indexOf('/')) : entry.getNewPath().substring(0, entry.getNewPath().indexOf('/')));
     jout.add("localPath", path);
     jout.add("changeType", entry.getChangeType().name());
     jout.add("commitId", entry.getNewId().name());
     jout.add("changes", deltaChanges);
+    jout.add("msName", msName);
 
     return jout.build();
   }

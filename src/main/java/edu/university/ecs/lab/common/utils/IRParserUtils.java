@@ -1,8 +1,9 @@
-package edu.university.ecs.lab.intermediate.merge.utils;
+package edu.university.ecs.lab.common.utils;
 
 import com.google.gson.Gson;
 import edu.university.ecs.lab.intermediate.merge.models.Delta;
 import edu.university.ecs.lab.intermediate.merge.models.MsSystem;
+import edu.university.ecs.lab.intermediate.merge.models.SystemChange;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -22,12 +23,12 @@ public class IRParserUtils {
     return msSystem;
   }
 
-  public static List<Delta> parseDelta(String deltaFileName) throws IOException {
+  public static SystemChange parseDelta(String deltaFileName) throws IOException {
     Reader deltaReader = new FileReader(deltaFileName);
 
-    Delta[] deltas = gson.fromJson(deltaReader, Delta[].class);
+    SystemChange systemChange = gson.fromJson(deltaReader, SystemChange.class);
     deltaReader.close();
 
-    return Arrays.asList(deltas);
+    return systemChange;
   }
 }

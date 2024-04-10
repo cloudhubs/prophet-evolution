@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 /** Static utility class for parsing a file and returning associated models from code structure. */
-public class ParserUtils {
+public class JParserUtils {
 
   public static JController parseController(File sourceFile) throws IOException {
     JClass jClass = parseClass(sourceFile);
@@ -36,13 +36,7 @@ public class ParserUtils {
 
     JService service = new JService(jClass);
 
-    List<MethodCall> methodCalls = new ArrayList<>();
-    List<RestCall> restCalls = new ArrayList<>();
-
-    parseMethodCalls(sourceFile, methodCalls, restCalls);
-
-    service.setMethodCalls(methodCalls);
-    service.setRestCalls(restCalls);
+    service.setRestCalls(parseRestCalls(sourceFile));
 
     return service;
   }
@@ -65,6 +59,7 @@ public class ParserUtils {
 
     jClass.setMethods(parseMethods(cu));
     jClass.setFields(parseFields(sourceFile));
+    jClass.setMethodCalls(parseMethodCalls(sourceFile));
 
     return jClass;
   }
@@ -167,8 +162,8 @@ public class ParserUtils {
     return method;
   }
 
-  public static void parseMethodCalls(
-      File sourceFile, List<MethodCall> methodCalls, List<RestCall> restCalls) throws IOException {
+  public static List<RestCall> parseRestCalls(File sourceFile) throws IOException {
+    List<RestCall> restCalls = new ArrayList<>();
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
     // loop through class declarations
@@ -208,6 +203,39 @@ public class ParserUtils {
 
             restCalls.add(restCall);
             // System.out.println(restCall);
+          }
+        }
+      }
+    }
+    return restCalls;
+  }
+
+  public static List<MethodCall> parseMethodCalls(File sourceFile) throws IOException {
+    CompilationUnit cu = StaticJavaParser.parse(sourceFile);
+    List<MethodCall> methodCalls = new ArrayList<>();
+
+    // loop through class declarations
+    for (ClassOrInterfaceDeclaration cid : cu.findAll(ClassOrInterfaceDeclaration.class)) {
+      // loop through methods
+
+      for (MethodDeclaration md : cid.findAll(MethodDeclaration.class)) {
+        String parentMethodName = md.getNameAsString();
+
+        // loop through method calls
+        for (MethodCallExpr mce : md.findAll(MethodCallExpr.class)) {
+          MethodCall methodCall = new MethodCall();
+          String methodName = mce.getNameAsString();
+          Expression scope = mce.getScope().orElse(null);
+
+          RestCall restCall = RestCall.findCallByName(methodName);
+          String calledServiceName = getCalledServiceName(scope);
+
+          // Are we a rest call
+          if (!Objects.isNull(restCall)
+                  && Objects.nonNull(calledServiceName)
+                  && calledServiceName.equals("restTemplate")) {
+            //do nothing, we only want regular methodCalls
+            // System.out.println(restCall);
           } else if (Objects.nonNull(calledServiceName)) {
             methodCall.setParentMethod(parentMethodName);
             methodCall.setMethodName(methodName);
@@ -218,6 +246,7 @@ public class ParserUtils {
         }
       }
     }
+    return methodCalls;
   }
 
   private static List<Field> parseFields(File sourceFile) throws IOException {

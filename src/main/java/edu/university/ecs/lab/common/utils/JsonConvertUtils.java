@@ -21,7 +21,7 @@ public class JsonConvertUtils {
    * @param msDataMap the map of microservices to their data models
    * @return the constructed JSON object
    */
-  public static JsonObject constructJsonMsSystem(
+  public static JsonObject buildSystem(
       String systemName, String version, Map<String, MsModel> msDataMap) {
     JsonObjectBuilder parentBuilder = Json.createObjectBuilder();
 
@@ -161,6 +161,7 @@ public class JsonConvertUtils {
     jClassBuilder.add("classPath", jClass.getClassPath().replaceAll("\\\\", "/"));
     jClassBuilder.add("methods", buildMethodArray(jClass.getMethods()));
     jClassBuilder.add("variables", buildFieldArray(jClass.getFields()));
+    jClassBuilder.add("methodCalls", buildMethodCallArray(jClass.getMethodCalls()));
 
     return jClassBuilder.build();
   }
@@ -214,6 +215,32 @@ public class JsonConvertUtils {
       methodObjectBuilder.add("methodName", method.getMethodName());
       methodObjectBuilder.add("parameter", method.getParameterList());
       methodObjectBuilder.add("returnType", method.getReturnType());
+
+      methodArrayBuilder.add(methodObjectBuilder.build());
+    }
+
+    return methodArrayBuilder.build();
+  }
+
+  /**
+   * Constructs a list of Method objects as a JsonArray
+   *
+   * @param methodCallList list of Method objects to be converted
+   * @return Converted JsonArray of Method objects
+   */
+  public static JsonArray buildMethodCallArray(List<MethodCall> methodCallList) {
+    // TODO find cause of this
+    if (methodCallList == null) {
+      return JsonObject.EMPTY_JSON_ARRAY;
+    }
+    JsonArrayBuilder methodArrayBuilder = Json.createArrayBuilder();
+
+    for (MethodCall methodCall : methodCallList) {
+      JsonObjectBuilder methodObjectBuilder = Json.createObjectBuilder();
+
+      methodObjectBuilder.add("methodName", methodCall.getMethodName());
+      methodObjectBuilder.add("parentMethod", methodCall.getParentMethod());
+      methodObjectBuilder.add("calledFieldName", methodCall.getCalledFieldName());
 
       methodArrayBuilder.add(methodObjectBuilder.build());
     }
