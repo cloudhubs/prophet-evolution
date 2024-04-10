@@ -1,9 +1,8 @@
-package edu.university.ecs.lab.deltas.utils;
+package edu.university.ecs.lab.delta.utils;
 
 import edu.university.ecs.lab.common.models.JClass;
 import edu.university.ecs.lab.common.models.JController;
 import edu.university.ecs.lab.common.models.JService;
-import edu.university.ecs.lab.common.models.MsModel;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.common.utils.JsonConvertUtils;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -11,9 +10,7 @@ import org.eclipse.jgit.diff.DiffEntry;
 import javax.json.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
 
-import static edu.university.ecs.lab.intermediate.create.services.RestModelService.scanFile;
 import static edu.university.ecs.lab.intermediate.create.services.RestModelService.scanFileForClassModel;
 
 /** Utility class for comparing differences between two files. */

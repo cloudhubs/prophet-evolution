@@ -1,7 +1,7 @@
-package edu.university.ecs.lab.deltas;
+package edu.university.ecs.lab.delta;
 
 import edu.university.ecs.lab.common.models.MsModel;
-import edu.university.ecs.lab.deltas.services.DeltaExtractionService;
+import edu.university.ecs.lab.delta.services.DeltaExtractionService;
 import edu.university.ecs.lab.intermediate.merge.models.MsSystem;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
 import org.eclipse.jgit.diff.DiffEntry;

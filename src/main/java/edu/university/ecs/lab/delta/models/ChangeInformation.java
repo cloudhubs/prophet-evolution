@@ -1,4 +1,4 @@
-package edu.university.ecs.lab.deltas.models;
+package edu.university.ecs.lab.delta.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

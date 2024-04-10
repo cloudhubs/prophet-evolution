@@ -1,9 +1,9 @@
-package edu.university.ecs.lab.deltas.services;
+package edu.university.ecs.lab.delta.services;
 
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
-import edu.university.ecs.lab.deltas.utils.DeltaComparisonUtils;
-import edu.university.ecs.lab.deltas.utils.GitFetchUtils;
+import edu.university.ecs.lab.delta.utils.DeltaComparisonUtils;
+import edu.university.ecs.lab.delta.utils.GitFetchUtils;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Repository;
 

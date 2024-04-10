@@ -1,4 +1,4 @@
-package edu.university.ecs.lab.deltas.utils;
+package edu.university.ecs.lab.delta.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
