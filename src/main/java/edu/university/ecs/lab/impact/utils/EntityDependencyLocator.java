@@ -1,4 +1,4 @@
-package edu.university.ecs.lab.impact.propagation.dependencies;
+package edu.university.ecs.lab.impact.utils;
 
 import edu.university.ecs.lab.common.models.Endpoint;
 import edu.university.ecs.lab.common.models.Flow;
@@ -15,15 +15,7 @@ import java.util.stream.Stream;
 
 import static edu.university.ecs.lab.common.utils.FlowUtils.buildFlows;
 
-/**
- * Service for identifying and analyzing impact of changes to
- * entity dependencies.
- *
- * Definition: An entity dependency are functions that depend
- * on an entity in their use case within a given microservice.
- * This is an intra-service dependency
- */
-public class EntityDepAssessor {
+public class EntityDependencyLocator {
 
     public static void run(SystemChange systemChange, MsSystem msSystem) {
         // If no entities or dto's are modified then entity dependencies are not affected
@@ -103,4 +95,5 @@ public class EntityDepAssessor {
     private static boolean checkForEntityModification(SystemChange systemChange) {
         return (systemChange.getEntities().isEmpty() && systemChange.getDtos().isEmpty());
     }
+
 }

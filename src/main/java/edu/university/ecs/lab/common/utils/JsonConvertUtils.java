@@ -22,7 +22,7 @@ public class JsonConvertUtils {
    * @return the constructed JSON object
    */
   public static JsonObject buildSystem(
-      String systemName, String version, Map<String, MsModel> msDataMap) {
+      String systemName, String version, Map<String, Microservice> msDataMap) {
     JsonObjectBuilder parentBuilder = Json.createObjectBuilder();
 
     parentBuilder.add("systemName", systemName);
@@ -30,7 +30,7 @@ public class JsonConvertUtils {
 
     JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
 
-    for (Map.Entry<String, MsModel> microservice : msDataMap.entrySet()) {
+    for (Map.Entry<String, Microservice> microservice : msDataMap.entrySet()) {
       JsonObjectBuilder msObjectBuilder = Json.createObjectBuilder();
       String msName = microservice.getKey();
 

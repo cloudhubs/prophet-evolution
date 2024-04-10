@@ -5,9 +5,9 @@ import edu.university.ecs.lab.common.models.*;
 import java.util.*;
 
 public class FlowUtils {
-  public static List<Flow> buildFlows(MsModel msModel) {
+  public static List<Flow> buildFlows(Microservice microservice) {
     // 1. get controller name & controller endpoint name
-    List<Flow> flows = generateNewFlows(msModel, msModel.getControllers());
+    List<Flow> flows = generateNewFlows(microservice, microservice.getControllers());
 
     for (Flow flow : flows) {
       // 2. get service method call in controller method
@@ -56,7 +56,7 @@ public class FlowUtils {
     return flows;
   }
 
-  public static List<Flow> buildFlows(Map<String, MsModel> msModelMap) {
+  public static List<Flow> buildFlows(Map<String, Microservice> msModelMap) {
     // 1. get controller name & controller endpoint name
     List<Flow> flows = generateNewFlows(getAllModelControllers(msModelMap));
 
@@ -107,21 +107,21 @@ public class FlowUtils {
     return flows;
   }
 
-  private static Map<MsModel, List<JController>> getAllModelControllers(
-      Map<String, MsModel> msModelMap) {
-    Map<MsModel, List<JController>> controllerMap = new HashMap<>();
+  private static Map<Microservice, List<JController>> getAllModelControllers(
+      Map<String, Microservice> msModelMap) {
+    Map<Microservice, List<JController>> controllerMap = new HashMap<>();
 
-    for (MsModel model : msModelMap.values()) {
+    for (Microservice model : msModelMap.values()) {
       controllerMap.put(model, model.getControllers());
     }
     return controllerMap;
   }
 
-  private static List<Flow> generateNewFlows(Map<MsModel, List<JController>> controllerMap) {
+  private static List<Flow> generateNewFlows(Map<Microservice, List<JController>> controllerMap) {
     List<Flow> flows = new ArrayList<>();
     Flow f;
 
-    for (Map.Entry<MsModel, List<JController>> controllerList : controllerMap.entrySet()) {
+    for (Map.Entry<Microservice, List<JController>> controllerList : controllerMap.entrySet()) {
       for (JController controller : controllerList.getValue()) {
         for (Endpoint endpoint : controller.getEndpoints()) {
           f = new Flow();
@@ -134,7 +134,7 @@ public class FlowUtils {
     return flows;
   }
 
-  private static List<Flow> generateNewFlows(MsModel msModel, List<JController> controllers) {
+  private static List<Flow> generateNewFlows(Microservice microservice, List<JController> controllers) {
     List<Flow> flows = new ArrayList<>();
     Flow f;
 
@@ -143,7 +143,7 @@ public class FlowUtils {
         f = new Flow();
         f.setController(controller);
         f.setControllerMethod(endpoint);
-        f.setModel(msModel);
+        f.setModel(microservice);
         flows.add(f);
       }
     }

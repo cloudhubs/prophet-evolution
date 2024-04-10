@@ -12,7 +12,7 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
-public class MsModel {
+public class Microservice {
   @SerializedName("id")
   private String id;
 
@@ -30,7 +30,7 @@ public class MsModel {
   private List<JClass> entities;
 
   /** Default constructor, init lists as empty */
-  public MsModel() {}
+  public Microservice() {}
 
   public int getModelSize() {
     return controllers.size()

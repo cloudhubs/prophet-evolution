@@ -1,13 +1,12 @@
 package edu.university.ecs.lab.impact.propagation;
 
 import edu.university.ecs.lab.impact.propagation.dependencies.EntityDepAssessor;
-import edu.university.ecs.lab.intermediate.merge.models.MsSystem;
-import edu.university.ecs.lab.intermediate.merge.models.SystemChange;
+import edu.university.ecs.lab.common.models.MsSystem;
+import edu.university.ecs.lab.delta.models.SystemChange;
 
 import java.io.IOException;
 
-import static edu.university.ecs.lab.common.utils.IRParserUtils.parseDelta;
-import static edu.university.ecs.lab.common.utils.IRParserUtils.parseIRSystem;
+import static edu.university.ecs.lab.common.utils.IRParserUtils.*;
 
 public class PropagationManager {
 
@@ -16,7 +15,7 @@ public class PropagationManager {
 
     public PropagationManager(String irPath, String deltaPath) throws IOException {
         msSystem = parseIRSystem(irPath);
-        systemChange = parseDelta(deltaPath);
+        systemChange = parseSystemChange(deltaPath);
     }
 
     public void identify() {

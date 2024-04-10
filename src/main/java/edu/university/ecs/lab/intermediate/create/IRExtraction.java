@@ -41,7 +41,7 @@ public class IRExtraction {
     InputConfig inputConfig = ConfigUtil.validateConfig(jsonFilePath);
 
     // Clone remote repositories and scan through each cloned repo to extract endpoints
-    Map<String, MsModel> msDataMap = cloneAndScanServices(inputConfig);
+    Map<String, Microservice> msDataMap = cloneAndScanServices(inputConfig);
 
     assert msDataMap != null;
 
@@ -64,7 +64,7 @@ public class IRExtraction {
    * @param msEndpointsMap a map of service to their information
    */
   private static void writeToIntermediateRepresentation(
-      InputConfig inputConfig, Map<String, MsModel> msEndpointsMap) throws IOException {
+      InputConfig inputConfig, Map<String, Microservice> msEndpointsMap) throws IOException {
 
     String outputPath = inputConfig.getOutputPath();
 
@@ -101,9 +101,9 @@ public class IRExtraction {
    * @param inputConfig the input config object
    * @return a map of services and their endpoints
    */
-  private static Map<String, MsModel> cloneAndScanServices(InputConfig inputConfig)
+  private static Map<String, Microservice> cloneAndScanServices(InputConfig inputConfig)
       throws Exception {
-    Map<String, MsModel> msModelMap = new HashMap<>();
+    Map<String, Microservice> msModelMap = new HashMap<>();
 
     // Clone remote repositories
     String clonePath = inputConfig.getClonePath();
@@ -119,7 +119,7 @@ public class IRExtraction {
     }
 
     for (InputRepository inputRepository : inputConfig.getRepositories()) {
-      MsModel model;
+      Microservice model;
       GitCloneService gitCloneService = new GitCloneService(clonePath);
       List<String> msPathRoots = gitCloneService.cloneRemote(inputRepository);
 
@@ -146,10 +146,10 @@ public class IRExtraction {
     return msModelMap;
   }
 
-  private static void updateCallDestinations(Map<String, MsModel> msModelMap) {
-    for (MsModel cModel : msModelMap.values()) {
+  private static void updateCallDestinations(Map<String, Microservice> msModelMap) {
+    for (Microservice cModel : msModelMap.values()) {
       for (JController controller : cModel.getControllers()) {
-        for (MsModel sModel : msModelMap.values()) {
+        for (Microservice sModel : msModelMap.values()) {
           // TODO Temp fix, an api dest cannot be in same micro-service
           if (sModel != cModel) {
             for (JService service : sModel.getServices()) {

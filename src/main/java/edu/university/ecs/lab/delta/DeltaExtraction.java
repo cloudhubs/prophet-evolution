@@ -1,8 +1,8 @@
 package edu.university.ecs.lab.delta;
 
-import edu.university.ecs.lab.common.models.MsModel;
+import edu.university.ecs.lab.common.models.Microservice;
 import edu.university.ecs.lab.delta.services.DeltaExtractionService;
-import edu.university.ecs.lab.intermediate.merge.models.MsSystem;
+import edu.university.ecs.lab.common.models.MsSystem;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Repository;
@@ -21,7 +21,7 @@ public class DeltaExtraction {
     DeltaExtractionService deltaService = new DeltaExtractionService();
 
     MsSystem msSystem = IRParserUtils.parseIRSystem(Path.of("out/rest-extraction-output-[1712174345434].json").toAbsolutePath().toString());
-    Map<String, MsModel> msModelMap = msSystem.getServiceMap();
+    Map<String, Microservice> msModelMap = msSystem.getServiceMap();
     // iterate through each repository path
     for (String path : List.of(Path.of("repos/train-ticket-microservices-test").toAbsolutePath().toString())) {
       // point to local repository

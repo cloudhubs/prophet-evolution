@@ -3,8 +3,8 @@
 //import edu.university.ecs.lab.common.models.MsModel;
 //import edu.university.ecs.lab.common.utils.JsonConvertUtils;
 //import edu.university.ecs.lab.common.writers.MsJsonWriter;
-//import edu.university.ecs.lab.intermediate.merge.models.Delta;
-//import edu.university.ecs.lab.intermediate.merge.models.MsSystem;
+//import edu.university.ecs.lab.delta.models.Delta;
+//import edu.university.ecs.lab.common.models.MsSystem;
 //import edu.university.ecs.lab.intermediate.merge.services.MergeService;
 //import edu.university.ecs.lab.common.utils.IRParserUtils;
 //

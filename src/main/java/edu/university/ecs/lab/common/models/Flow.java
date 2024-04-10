@@ -11,7 +11,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class Flow {
-  private MsModel model;
+  private Microservice model;
   private JClass controller;
   private Method controllerMethod;
   private MethodCall serviceMethodCall;

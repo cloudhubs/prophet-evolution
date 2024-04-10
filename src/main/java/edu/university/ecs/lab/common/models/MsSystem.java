@@ -1,7 +1,6 @@
-package edu.university.ecs.lab.intermediate.merge.models;
+package edu.university.ecs.lab.common.models;
 
 import com.google.gson.annotations.SerializedName;
-import edu.university.ecs.lab.common.models.MsModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,14 +16,14 @@ public class MsSystem {
   private String systemName;
   private String version;
 
-  @SerializedName("services")
-  private List<MsModel> msList;
+  @SerializedName("microservices")
+  private List<Microservice> msList;
 
-  public Map<String, MsModel> getServiceMap() {
-    Map<String, MsModel> msMap = new LinkedHashMap<>();
+  public Map<String, Microservice> getServiceMap() {
+    Map<String, Microservice> msMap = new LinkedHashMap<>();
 
-    for (MsModel model : msList) {
-      msMap.put(model.getId(), model);
+    for (Microservice ms : msList) {
+      msMap.put(ms.getId(), ms);
     }
 
     return msMap;

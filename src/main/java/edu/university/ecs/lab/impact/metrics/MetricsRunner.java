@@ -2,16 +2,15 @@ package edu.university.ecs.lab.impact.metrics;
 
 import edu.university.ecs.lab.common.models.Flow;
 import edu.university.ecs.lab.common.models.JClass;
-import edu.university.ecs.lab.common.models.MsModel;
+import edu.university.ecs.lab.common.models.Microservice;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
-import edu.university.ecs.lab.intermediate.merge.models.SystemChange;
-import edu.university.ecs.lab.intermediate.merge.models.Delta;
+import edu.university.ecs.lab.delta.models.SystemChange;
+import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static edu.university.ecs.lab.common.utils.FlowUtils.buildFlows;
 
@@ -26,8 +25,8 @@ public class MetricsRunner {
 //      return;
 //    }
 
-    Map<String, MsModel> systemMap = IRParserUtils.parseIRSystem(Path.of("out/rest-extraction-output-[1712174345434].json").toAbsolutePath().toString()).getServiceMap();
-    SystemChange systemChange = IRParserUtils.parseDelta(Path.of("out/delta-changes-[1712174479531].json").toAbsolutePath().toString());
+    Map<String, Microservice> systemMap = IRParserUtils.parseIRSystem(Path.of("out/rest-extraction-output-[1712174345434].json").toAbsolutePath().toString()).getServiceMap();
+    SystemChange systemChange = IRParserUtils.parseSystemChange(Path.of("out/delta-changes-[1712174479531].json").toAbsolutePath().toString());
 
     // First changes to classes
     System.out.println("Controller changes: " + getChangeCount(systemMap, systemChange.getControllers(), ClassRole.CONTROLLER));
@@ -39,7 +38,7 @@ public class MetricsRunner {
 
     System.out.println(
             "% of Literal Classes Changed: "
-                    + ((double) totalChanges / systemMap.values().stream().mapToInt(MsModel::getModelSize).sum()));
+                    + ((double) totalChanges / systemMap.values().stream().mapToInt(Microservice::getModelSize).sum()));
 
     updateAffectClassLocalPaths(systemMap, systemChange.getControllers(), ClassRole.CONTROLLER);
     updateAffectClassLocalPaths(systemMap, systemChange.getServices(), ClassRole.SERVICE);
@@ -48,7 +47,7 @@ public class MetricsRunner {
 
     System.out.println(
             "% of Affected Classes Changed (Flows): "
-                    + ((double) affectedClassLocalPaths.size() / systemMap.values().stream().mapToInt(MsModel::getModelSize).sum()));
+                    + ((double) affectedClassLocalPaths.size() / systemMap.values().stream().mapToInt(Microservice::getModelSize).sum()));
   }
 
   private static boolean verifyClassChange(List<? extends JClass> classList, Delta delta) {
@@ -69,7 +68,7 @@ public class MetricsRunner {
     return (!matchingClass.equals(jClassNew));
   }
 
-  private static int getChangeCount(Map<String, MsModel> systemMap, List<Delta> changeList, ClassRole classRole) {
+  private static int getChangeCount(Map<String, Microservice> systemMap, List<Delta> changeList, ClassRole classRole) {
     int changes = 0;
     for (Delta delta : changeList) {
       String localPath = delta.getLocalPath();
@@ -82,7 +81,7 @@ public class MetricsRunner {
           changes++;
           break;
         case "MODIFY":
-          MsModel currModel = systemMap.get(delta.getMsName());
+          Microservice currModel = systemMap.get(delta.getMsName());
           // todo
           if (Objects.isNull(currModel)) {
             throw new RuntimeException("ERROR");
@@ -99,7 +98,7 @@ public class MetricsRunner {
     return changes;
   }
 
-  private static List<? extends JClass> getClassListFromRole(MsModel model, ClassRole classRole) {
+  private static List<? extends JClass> getClassListFromRole(Microservice model, ClassRole classRole) {
     switch(classRole) {
       case CONTROLLER:
         return model.getControllers();
@@ -116,10 +115,10 @@ public class MetricsRunner {
     throw new RuntimeException("ERROR");
   }
 
-  private static void updateAffectClassLocalPaths(Map<String, MsModel> systemMap, List<Delta> changeList, ClassRole classRole) {
+  private static void updateAffectClassLocalPaths(Map<String, Microservice> systemMap, List<Delta> changeList, ClassRole classRole) {
 
     for(Delta delta : changeList) {
-      MsModel currModel = systemMap.get(delta.getMsName());
+      Microservice currModel = systemMap.get(delta.getMsName());
 
       List<Flow> flows = buildFlows(currModel);
 

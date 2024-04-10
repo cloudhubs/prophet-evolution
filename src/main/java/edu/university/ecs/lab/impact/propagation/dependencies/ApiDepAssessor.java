@@ -1,7 +1,7 @@
 package edu.university.ecs.lab.impact.propagation.dependencies;
 
-import edu.university.ecs.lab.intermediate.merge.models.MsSystem;
-import edu.university.ecs.lab.intermediate.merge.models.SystemChange;
+import edu.university.ecs.lab.common.models.MsSystem;
+import edu.university.ecs.lab.delta.models.SystemChange;
 
 public class ApiDepAssessor {
 

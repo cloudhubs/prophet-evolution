@@ -1,4 +1,4 @@
-package edu.university.ecs.lab.intermediate.merge.models;
+package edu.university.ecs.lab.delta.models;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;

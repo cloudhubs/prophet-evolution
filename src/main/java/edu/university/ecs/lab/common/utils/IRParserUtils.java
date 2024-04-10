@@ -1,15 +1,12 @@
 package edu.university.ecs.lab.common.utils;
 
 import com.google.gson.Gson;
-import edu.university.ecs.lab.intermediate.merge.models.Delta;
-import edu.university.ecs.lab.intermediate.merge.models.MsSystem;
-import edu.university.ecs.lab.intermediate.merge.models.SystemChange;
+import edu.university.ecs.lab.common.models.MsSystem;
+import edu.university.ecs.lab.delta.models.SystemChange;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
-import java.util.List;
 
 public class IRParserUtils {
   private static final Gson gson = new Gson();
@@ -23,7 +20,7 @@ public class IRParserUtils {
     return msSystem;
   }
 
-  public static SystemChange parseDelta(String deltaFileName) throws IOException {
+  public static SystemChange parseSystemChange(String deltaFileName) throws IOException {
     Reader deltaReader = new FileReader(deltaFileName);
 
     SystemChange systemChange = gson.fromJson(deltaReader, SystemChange.class);

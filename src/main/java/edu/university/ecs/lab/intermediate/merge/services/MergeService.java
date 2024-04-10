@@ -1,8 +1,8 @@
 //package edu.university.ecs.lab.intermediate.merge.services;
 //
 //import edu.university.ecs.lab.common.models.*;
-//import edu.university.ecs.lab.intermediate.merge.models.SystemChange;
-//import edu.university.ecs.lab.intermediate.merge.models.Delta;
+//import edu.university.ecs.lab.delta.models.SystemChange;
+//import edu.university.ecs.lab.delta.models.Delta;
 //
 //import java.util.List;
 //import java.util.Map;

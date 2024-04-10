@@ -4,7 +4,7 @@ import edu.university.ecs.lab.common.models.JController;
 import edu.university.ecs.lab.common.models.JService;
 import edu.university.ecs.lab.common.utils.JParserUtils;
 import edu.university.ecs.lab.common.models.JClass;
-import edu.university.ecs.lab.common.models.MsModel;
+import edu.university.ecs.lab.common.models.Microservice;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,10 +22,10 @@ public class RestModelService {
    * @param pathToMs the path to the microservice TLD
    * @return model of a single service containing the extracted endpoints and dependencies
    */
-  public static MsModel recursivelyScanFiles(String rootPath, String pathToMs) {
+  public static Microservice recursivelyScanFiles(String rootPath, String pathToMs) {
     String repoPath = rootPath + pathToMs;
     System.out.println("Scanning repository '" + repoPath + "'...");
-    MsModel model = new MsModel();
+    Microservice model = new Microservice();
 
     List<JController> controllers = new ArrayList<>();
     List<JService> services = new ArrayList<>();
