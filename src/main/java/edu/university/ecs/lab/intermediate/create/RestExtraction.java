@@ -79,10 +79,8 @@ public class RestExtraction {
       }
     }
 
-    Scanner scanner = new Scanner(System.in); // read system name from command line
-    System.out.println("Enter system name: ");
     JsonObject jout =
-        MsFileUtils.constructJsonMsSystem(scanner.nextLine(), "0.0.1", msEndpointsMap);
+        MsFileUtils.constructJsonMsSystem(inputConfig.getSystemName(), "0.0.1", msEndpointsMap);
 
     String outputName =
         outputPath

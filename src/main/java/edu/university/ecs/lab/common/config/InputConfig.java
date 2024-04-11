@@ -7,6 +7,10 @@ import java.util.List;
 /** Model to represent the configuration JSON file input */
 @Getter
 public class InputConfig {
+
+  /** The name of the system analyzed */
+  private String systemName;
+
   /** The path to write output files from the program to */
   private String outputPath;
 

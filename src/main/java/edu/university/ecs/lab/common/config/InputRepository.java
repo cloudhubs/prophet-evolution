@@ -13,6 +13,9 @@ public class InputRepository {
   /** Commit number the service originated from */
   private String baseCommit;
 
+  /** Target Branch of service analysis */
+  private String branch;
+
   /** Commit number the service ended at */
   // TODO is this unused? if so remove
   @Deprecated private String endCommit;

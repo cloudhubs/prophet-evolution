@@ -1,4 +1,5 @@
 {
+  "systemName": "Train-ticket",
   "clonePath": "./repos",
   "outputPath": "out",
   "repositories": [
