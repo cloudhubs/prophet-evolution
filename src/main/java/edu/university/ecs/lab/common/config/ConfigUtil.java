@@ -39,7 +39,7 @@ public class ConfigUtil {
       System.exit(BAD_CONFIG);
     }
 
-    //TODO ? Add in more necessary params of input config
+    // TODO ? Add in more necessary params of input config
 
     return inputConfig;
   }
