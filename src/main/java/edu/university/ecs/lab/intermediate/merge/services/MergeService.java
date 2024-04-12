@@ -4,10 +4,8 @@ import edu.university.ecs.lab.common.models.*;
 import edu.university.ecs.lab.intermediate.merge.models.Change;
 import edu.university.ecs.lab.intermediate.merge.models.Delta;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class MergeService {
   public String incrementVersion(String version) {
@@ -59,7 +57,6 @@ public class MergeService {
     msModel.setCommit(delta.getCommitId());
 
     Change change = delta.getChange();
-
 
     msModel.getControllers().addAll(change.getControllers());
     msModel.getServices().addAll(change.getServices());
