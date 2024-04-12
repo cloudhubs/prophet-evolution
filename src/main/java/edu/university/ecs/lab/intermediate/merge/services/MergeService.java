@@ -4,8 +4,10 @@ import edu.university.ecs.lab.common.models.*;
 import edu.university.ecs.lab.intermediate.merge.models.Change;
 import edu.university.ecs.lab.intermediate.merge.models.Delta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class MergeService {
   public String incrementVersion(String version) {
@@ -58,11 +60,26 @@ public class MergeService {
 
     Change change = delta.getChange();
 
-    msModel.getControllers().addAll(change.getControllers());
-    msModel.getServices().addAll(change.getServices());
-    msModel.getDtos().addAll(change.getDtos());
-    msModel.getRepositories().addAll(change.getRepositories());
-    msModel.getEntities().addAll(change.getEntities());
+    if (Objects.nonNull(change.getControllers())) {
+      msModel.getControllers().addAll(change.getControllers());
+    }
+    if (Objects.nonNull(change.getControllers())) {
+      msModel.getServices().addAll(change.getServices());
+    }
+    if (Objects.nonNull(change.getControllers())) {
+      msModel.getDtos().addAll(change.getDtos());
+    }
+    if (Objects.nonNull(change.getControllers())) {
+      msModel.getRepositories().addAll(change.getRepositories());
+    }
+    if (Objects.nonNull(change.getControllers())) {
+      msModel.getEntities().addAll(change.getEntities());
+    }
+
+
+
+
+
 
     return msModel;
   }
