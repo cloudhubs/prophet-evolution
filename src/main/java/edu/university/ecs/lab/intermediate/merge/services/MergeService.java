@@ -4,7 +4,6 @@ import edu.university.ecs.lab.common.models.*;
 import edu.university.ecs.lab.intermediate.merge.models.Change;
 import edu.university.ecs.lab.intermediate.merge.models.Delta;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -75,11 +74,6 @@ public class MergeService {
     if (Objects.nonNull(change.getControllers())) {
       msModel.getEntities().addAll(change.getEntities());
     }
-
-
-
-
-
 
     return msModel;
   }
