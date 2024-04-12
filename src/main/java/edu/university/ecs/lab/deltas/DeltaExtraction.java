@@ -15,13 +15,20 @@ public class DeltaExtraction {
   public static void main(String[] args) throws Exception {
     DeltaExtractionService deltaService = new DeltaExtractionService();
 
+    if (args.length < 2) {
+      System.err.println("Required arguments <branch> <list of paths...>");
+    }
+
+    String branch = args[0];
+    String[] paths = Arrays.copyOfRange(args, 1, args.length);
+
     // iterate through each repository path
-    for (String path : args) {
+    for (String path : paths) {
       // point to local repository
       Repository localRepo = deltaService.establishLocalEndpoint(path);
 
       // extract remote differences with local
-      List<DiffEntry> differences = deltaService.fetchRemoteDifferences(localRepo, "main");
+      List<DiffEntry> differences = deltaService.fetchRemoteDifferences(localRepo, branch);
 
       // process/write differences to delta output
       deltaService.processDifferences(path, localRepo, differences);
