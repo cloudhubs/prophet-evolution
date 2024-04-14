@@ -32,9 +32,9 @@ public class MetricsRunner {
 //      SystemChange systemChange = IRParserUtils.parseSystemChange(Path.of("out/delta-changes-[1712174479531].json").toAbsolutePath().toString());
 
     MetricsManager metricsManager = new MetricsManager(
-            Path.of("out/rest-extraction-output-[1712759650472].json").toAbsolutePath().toString(),
+            Path.of("out/rest-extraction-output-[1713037237904].json").toAbsolutePath().toString(),
             Path.of("out/rest-extraction-new-[1712768440951].json").toAbsolutePath().toString(),
-            Path.of("out/delta-changes-[1712767099667].json").toAbsolutePath().toString()
+            Path.of("out/delta-changes-[1713073535740].json").toAbsolutePath().toString()
     );
     metricsManager.generateSystemMetrics();
 

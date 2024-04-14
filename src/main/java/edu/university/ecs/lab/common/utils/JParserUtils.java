@@ -5,6 +5,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
+import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.intermediate.create.utils.StringParserUtils;
 import edu.university.ecs.lab.common.models.*;
 
@@ -51,11 +52,11 @@ public class JParserUtils {
 
     JClass jClass = new JClass();
 
-    jClass.setClassPath(sourceFile.getPath());
+    jClass.setClassPath(".\\" + sourceFile.getPath().split("\\\\", 4)[3]);
     jClass.setClassName(sourceFile.getName().replace(".java", ""));
     jClass.setPackageName(packageName);
 
-    // jClass.setRole(role);
+//    jClass.setClassRole(ClassRole.CONTROLLER);
 
     jClass.setMethods(parseMethods(cu));
     jClass.setFields(parseFields(sourceFile));

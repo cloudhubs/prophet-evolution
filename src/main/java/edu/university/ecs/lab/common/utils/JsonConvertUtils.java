@@ -177,23 +177,38 @@ public class JsonConvertUtils {
 
     // Get "restCall" methodCalls in service
     for (RestCall restCall : restCalls) {
-      JsonObjectBuilder restCallBuilder = Json.createObjectBuilder();
-
-      // TODO source this issue
-      if (restCall.getDestFile() == null) {
-        restCall.setDestFile("");
-      }
-
-      restCallBuilder.add("api", restCall.getApi());
-      restCallBuilder.add("source-file", restCall.getSourceFile().replaceAll("\\\\", "/"));
-      restCallBuilder.add("call-dest", restCall.getDestFile().replaceAll("\\\\", "/"));
-      restCallBuilder.add("call-method", restCall.getMethodName() + "()");
-      restCallBuilder.add("httpMethod", restCall.getHttpMethod());
-
-      restCallArrayBuilder.add(restCallBuilder.build());
+      restCallArrayBuilder.add(buildRestCall(restCall));
     }
 
     return restCallArrayBuilder.build();
+  }
+
+  /**
+   *
+   *
+   * @param restCall RestCall object to be converted
+   * @return Converted JsonObject of RestCall object
+   */
+  public static JsonObject buildRestCall(RestCall restCall) {
+    // Get "restCall" methodCalls in service
+    JsonObjectBuilder restCallBuilder = Json.createObjectBuilder();
+    if(restCall == null) {
+      return JsonValue.EMPTY_JSON_OBJECT;
+    }
+
+    // TODO source this issue
+    if (restCall.getDestFile() == null) {
+      restCall.setDestFile("");
+    }
+
+    restCallBuilder.add("api", restCall.getApi());
+    restCallBuilder.add("source-file", restCall.getSourceFile().replaceAll("\\\\", "/"));
+    restCallBuilder.add("call-dest", restCall.getDestFile().replaceAll("\\\\", "/"));
+    restCallBuilder.add("call-method", restCall.getMethodName() + "()");
+    restCallBuilder.add("httpMethod", restCall.getHttpMethod());
+
+
+    return restCallBuilder.build();
   }
 
   /**

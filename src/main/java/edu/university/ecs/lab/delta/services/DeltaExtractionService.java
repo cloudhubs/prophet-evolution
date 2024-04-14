@@ -94,16 +94,16 @@ public class DeltaExtractionService {
       File file = new File(entry.getNewPath().equals("/dev/null") ? oldPath : newPath);
 
       if (file.getName().contains("Controller")) {
-        controllers.add(constructObjectFromDelta(ClassRole.CONTROLLER, getDeltaChanges(entry, file, ClassRole.CONTROLLER), entry, localPath));
+        controllers.add(constructObjectFromDelta(ClassRole.CONTROLLER, getDeltaChanges(entry, file, ClassRole.CONTROLLER, localPath), entry, localPath));
       } else if (file.getName().contains("Service")) {
-        services.add(constructObjectFromDelta(ClassRole.SERVICE, getDeltaChanges(entry, file, ClassRole.SERVICE), entry, localPath));
+        services.add(constructObjectFromDelta(ClassRole.SERVICE, getDeltaChanges(entry, file, ClassRole.SERVICE, localPath), entry, localPath));
       } else if (file.getName().toLowerCase().contains("dto")) {
-        dtos.add(constructObjectFromDelta(ClassRole.DTO, getDeltaChanges(entry, file, ClassRole.DTO), entry, localPath));
+        dtos.add(constructObjectFromDelta(ClassRole.DTO, getDeltaChanges(entry, file, ClassRole.DTO, localPath), entry, localPath));
       } else if (file.getName().contains("Repository")) {
-        repositories.add(constructObjectFromDelta(ClassRole.REPOSITORY, getDeltaChanges(entry, file, ClassRole.REPOSITORY), entry, localPath));
+        repositories.add(constructObjectFromDelta(ClassRole.REPOSITORY, getDeltaChanges(entry, file, ClassRole.REPOSITORY, localPath), entry, localPath));
       } else if (file.getParent().toLowerCase().contains("entity")
               || file.getParent().toLowerCase().contains("model")) {
-        entities.add(constructObjectFromDelta(ClassRole.ENTITY, getDeltaChanges(entry, file, ClassRole.ENTITY), entry, localPath));
+        entities.add(constructObjectFromDelta(ClassRole.ENTITY, getDeltaChanges(entry, file, ClassRole.ENTITY, localPath), entry, localPath));
       }
 
 
@@ -124,16 +124,16 @@ public class DeltaExtractionService {
     System.out.println("Delta extracted: " + outputName);
   }
 
-  private static JsonObject getDeltaChanges(DiffEntry entry, File file, ClassRole classRole) {
+  private static JsonObject getDeltaChanges(DiffEntry entry, File file, ClassRole classRole, String localPath) {
     switch (entry.getChangeType()) {
       case MODIFY:
-        return DeltaComparisonUtils.extractDeltaChanges(file, classRole);
+        return DeltaComparisonUtils.extractDeltaChanges(new File("./repos/train-ticket-microservices-test" + localPath.substring(1)), classRole);
       case COPY:
       case DELETE:
         break;
       case RENAME:
       case ADD:
-        return DeltaComparisonUtils.extractDeltaChanges(file, classRole);
+        return DeltaComparisonUtils.extractDeltaChanges(new File("./repos/train-ticket-microservices-test" + localPath.substring(1)), classRole);
       default:
         break;
     }

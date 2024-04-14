@@ -1,6 +1,6 @@
 {
   "clonePath": "./repos",
-  "outputPath": "out",
+  "outputPath": "./out",
   "repositories": [
     {
       "repoUrl": "https://github.com/g-goulis/train-ticket-microservices-test.git",

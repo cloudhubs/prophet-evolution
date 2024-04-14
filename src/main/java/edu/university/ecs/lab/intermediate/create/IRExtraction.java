@@ -1,8 +1,8 @@
 package edu.university.ecs.lab.intermediate.create;
 
 import edu.university.ecs.lab.common.config.ConfigUtil;
-import edu.university.ecs.lab.common.config.InputConfig;
-import edu.university.ecs.lab.common.config.InputRepository;
+import edu.university.ecs.lab.common.config.models.InputConfig;
+import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.*;
 import edu.university.ecs.lab.common.utils.JsonConvertUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
@@ -64,7 +64,7 @@ public class IRExtraction {
    * @param msEndpointsMap a map of service to their information
    */
   private static void writeToIntermediateRepresentation(
-      InputConfig inputConfig, Map<String, Microservice> msEndpointsMap) throws IOException {
+    InputConfig inputConfig, Map<String, Microservice> msEndpointsMap) throws IOException {
 
     String outputPath = inputConfig.getOutputPath();
 
@@ -117,14 +117,18 @@ public class IRExtraction {
         return null;
       }
     }
+    GitCloneService gitCloneService = new GitCloneService(inputConfig);
 
     for (InputRepository inputRepository : inputConfig.getRepositories()) {
+
       Microservice model;
-      GitCloneService gitCloneService = new GitCloneService(clonePath);
-      List<String> msPathRoots = gitCloneService.cloneRemote(inputRepository);
+
+      gitCloneService.cloneRemote(inputRepository);
+
+      List<String> microservicePaths = gitCloneService.getMicroservicePaths(inputRepository);
 
       // Scan through each local repo and extract endpoints/calls
-      for (String msPath : msPathRoots) {
+      for (String msPath : microservicePaths) {
         String path = msPath;
 
         if (msPath.contains(clonePath) && msPath.length() > clonePath.length() + 1) {

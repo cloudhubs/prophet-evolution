@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 /**
  * Represents an extension of a method call. A rest call exists at the service level and represents
  * a call to an endpoint mapping.
@@ -14,7 +16,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class RestCall extends MethodCall {
   /** The api url that is targeted in rest call */
   private String api = "";
@@ -85,5 +86,19 @@ public class RestCall extends MethodCall {
     }
 
     return null;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    RestCall restCall = (RestCall) o;
+    return responseTypeIndex == restCall.responseTypeIndex && Objects.equals(api, restCall.api) && Objects.equals(httpMethod, restCall.httpMethod) && Objects.equals(sourceFile, restCall.sourceFile);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), api, httpMethod, responseTypeIndex, sourceFile, destFile);
   }
 }

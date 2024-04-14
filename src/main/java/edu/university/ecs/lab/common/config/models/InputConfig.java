@@ -1,4 +1,4 @@
-package edu.university.ecs.lab.common.config;
+package edu.university.ecs.lab.common.config.models;
 
 import lombok.Getter;
 

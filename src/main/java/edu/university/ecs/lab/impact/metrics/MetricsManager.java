@@ -3,17 +3,22 @@ package edu.university.ecs.lab.impact.metrics;
 import edu.university.ecs.lab.common.models.*;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
+import edu.university.ecs.lab.common.utils.JsonConvertUtils;
 import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import edu.university.ecs.lab.impact.models.ClassMetrics;
 import edu.university.ecs.lab.impact.models.DependencyMetrics;
 import edu.university.ecs.lab.impact.models.SystemMetrics;
+import edu.university.ecs.lab.impact.models.change.CallChange;
+import edu.university.ecs.lab.impact.models.change.Link;
+import edu.university.ecs.lab.impact.models.change.Placeholder;
 import edu.university.ecs.lab.impact.models.dependency.ApiDependency;
 import edu.university.ecs.lab.impact.models.dependency.EntityDependency;
 import edu.university.ecs.lab.impact.models.enums.Status;
 import netscape.javascript.JSObject;
 import org.checkerframework.checker.units.qual.A;
+import org.glassfish.json.JsonUtil;
 
 import javax.json.*;
 import java.io.IOException;
@@ -37,21 +42,21 @@ public class MetricsManager {
     }
 
     private void writeMetricsToFile(String fileName, SystemMetrics systemMetrics) throws IOException {
-        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-
-        jsonObjectBuilder.add("EntityDependencyMetrics", convertEntityListToJsonArray(systemMetrics.getDependencyMetrics().getEntityDependencyList()));
-        jsonObjectBuilder.add("ApiDependencyMetrics", convertApiListToJsonArray(systemMetrics.getDependencyMetrics().getApiDependencyList()));
-        jsonObjectBuilder.add("ControllerMetrics", convertClassMetricToJsonObject(systemMetrics.getClassMetrics().get(0)));
-        jsonObjectBuilder.add("ServiceMetrics", convertClassMetricToJsonObject(systemMetrics.getClassMetrics().get(1)));
-        jsonObjectBuilder.add("RepoMetrics", convertClassMetricToJsonObject(systemMetrics.getClassMetrics().get(2)));
-        jsonObjectBuilder.add("DtoMetrics", convertClassMetricToJsonObject(systemMetrics.getClassMetrics().get(3)));
-        jsonObjectBuilder.add("EntityMetrics", convertClassMetricToJsonObject(systemMetrics.getClassMetrics().get(4)));
-
-
-
-
-        writeJsonToFile(jsonObjectBuilder.build(), fileName);
-
+//        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+//
+//        jsonObjectBuilder.add("EntityDependencyMetrics", convertEntityListToJsonArray(systemMetrics.getDependencyMetrics().getEntityDependencyList()));
+//        jsonObjectBuilder.add("ApiDependencyMetrics", convertApiListToJsonArray(systemMetrics.getDependencyMetrics().getApiDependencyList()));
+//        jsonObjectBuilder.add("ControllerMetrics", convertClassMetricToJsonObject(systemMetrics.getClassMetrics().get(0)));
+//        jsonObjectBuilder.add("ServiceMetrics", convertClassMetricToJsonObject(systemMetrics.getClassMetrics().get(1)));
+//        jsonObjectBuilder.add("RepoMetrics", convertClassMetricToJsonObject(systemMetrics.getClassMetrics().get(2)));
+//        jsonObjectBuilder.add("DtoMetrics", convertClassMetricToJsonObject(systemMetrics.getClassMetrics().get(3)));
+//        jsonObjectBuilder.add("EntityMetrics", convertClassMetricToJsonObject(systemMetrics.getClassMetrics().get(4)));
+//
+//
+//
+//
+//        writeJsonToFile(jsonObjectBuilder.build(), fileName);
+        writePlaceholdersToFile(fileName);
     }
 
     private static JsonObject convertClassMetricToJsonObject(ClassMetrics classMetrics) {
@@ -148,7 +153,7 @@ public class MetricsManager {
     }
 
     private DependencyMetrics generateDependencyMetrics(SystemChange systemChange) {
-        List<EntityDependency> entityDependencyList = compareEntityDependencies(systemChange);
+        List<EntityDependency> entityDependencyList = compareEntityDependencies();
         List<ApiDependency> apiDependencyList = compareApiDependencies();
 
         return new DependencyMetrics(apiDependencyList, entityDependencyList);
@@ -194,7 +199,7 @@ public class MetricsManager {
     ///////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    private List<EntityDependency> compareEntityDependencies(SystemChange systemChange) {
+    private List<EntityDependency> compareEntityDependencies() {
         List<EntityDependency> finalDependencies = new ArrayList<>();
         List<EntityDependency> oldDependencies = locateAllEntityDependencies(oldMicroserviceMap);
         List<EntityDependency> newDependencies = locateAllEntityDependencies(newMicroserviceMap);
@@ -379,6 +384,145 @@ public class MetricsManager {
      */
     private static boolean checkForEntityModification(SystemChange systemChange) {
         return (systemChange.getEntities().isEmpty() && systemChange.getDtos().isEmpty());
+    }
+
+    private static JsonArray convertCallChangeToJsonArray(List<CallChange> callChangeList) {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        for (CallChange callChange : callChangeList) {
+            JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+
+            jsonObjectBuilder.add("oldRestCall", JsonConvertUtils.buildRestCall(callChange.getOldCall()));
+            jsonObjectBuilder.add("newRestCall", JsonConvertUtils.buildRestCall(callChange.getNewCall()));
+            jsonObjectBuilder.add("oldLink", callChange.getOldLink().getMsSource() + " -> " + callChange.getOldLink().getMsDestination());
+            jsonObjectBuilder.add("newLink", callChange.getNewLink().getMsSource() + " -> " + callChange.getNewLink().getMsDestination());
+            jsonObjectBuilder.add("impact", "");
+
+            arrayBuilder.add(jsonObjectBuilder.build());
+
+        }
+        return arrayBuilder.build();
+    }
+
+    private void writePlaceholdersToFile(String fileName) throws IOException {
+        JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+        JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+
+        List<Placeholder> placeholderList = getPlaceholders();
+        for(Placeholder placeholder : placeholderList) {
+            objectBuilder.add("MicroserviceName", placeholder.getMicroserviceName());
+            objectBuilder.add("Filepath", placeholder.getFilePath());
+            objectBuilder.add("ClassRole", placeholder.getClassRole().toString());
+            objectBuilder.add("CallChanges", convertCallChangeToJsonArray(placeholder.getCallChangeList()));
+
+            arrayBuilder.add(objectBuilder.build());
+        }
+
+        writeJsonToFile(arrayBuilder.build(), fileName);
+
+    }
+
+    public List<Placeholder> getPlaceholders() {
+        List<Placeholder> placeholderList = new ArrayList<>();
+        Placeholder placeholder;
+
+        if(Objects.nonNull(systemChange.getServices()) && !systemChange.getServices().isEmpty()) {
+            for(Delta delta : systemChange.getServices()) {
+                placeholder = new Placeholder();
+                placeholder.setFilePath(delta.getLocalPath());
+                placeholder.setCallChangeList(getAllRestCallChanges(delta));
+                placeholder.setClassRole(ClassRole.SERVICE);
+                placeholder.setChangeType(delta.getChangeType());
+                placeholder.setMicroserviceName(delta.getMsName());
+                placeholderList.add(placeholder);
+                // RestCall Changes
+
+            }
+        }
+
+        return placeholderList;
+    }
+
+    public List<CallChange> getAllRestCallChanges(Delta delta) {
+        List<CallChange> callChanges = new ArrayList<>();
+        JService oldService = null;
+
+
+        switch (delta.getChangeType()) {
+            case ADD:
+                callChanges.addAll(compareRestCalls(null, delta.getSChange()));
+                break;
+            case MODIFY:
+                oldService = oldMicroserviceMap.get(delta.getMsName()).getServices().stream().filter(s -> s.getClassPath().equals(delta.getLocalPath())).findFirst().orElse(null);
+                callChanges.addAll(compareRestCalls(oldService, delta.getSChange()));
+                break;
+            case DELETE:
+                oldService = oldMicroserviceMap.get(delta.getMsName()).getServices().stream().filter(s -> s.getClassPath().equals(delta.getLocalPath())).findFirst().orElse(null);
+                callChanges.addAll(compareRestCalls(oldService, null));
+                break;
+        }
+
+        return callChanges;
+    }
+
+    /**
+     * Compare all restCalls in oldService to newService
+     * no concept of 'modified' calls there are only oldLinks
+     * and newLinks
+     *
+     * @param oldService
+     * @param newService
+     * @return
+     */
+    private List<CallChange> compareRestCalls(JService oldService, JService newService) {
+        List<CallChange> callChanges = new ArrayList<>();
+
+        // If it is an added class
+        if(oldService == null) {
+            for(RestCall newCall : newService.getRestCalls()) {
+                callChanges.add(buildCallChange(null, newCall));
+            }
+
+            return callChanges;
+        }
+
+        // If it is a deleted class
+        if(newService == null) {
+            for(RestCall oldCall : oldService.getRestCalls()) {
+                callChanges.add(buildCallChange(oldCall, null));
+            }
+
+            return callChanges;
+        }
+
+        List<RestCall> oldRestCalls = oldService.getRestCalls();
+        List<RestCall> newRestCalls = newService.getRestCalls();
+
+        for(RestCall oldCall : oldRestCalls) {
+            if(!newRestCalls.remove(oldCall)) {
+                // If no call removed, it isn't present (removed)
+                callChanges.add(buildCallChange(oldCall, null));
+            }
+        }
+
+        for(RestCall newCall : newRestCalls) {
+            if(!oldRestCalls.remove(newCall)) {
+                // If no call was removed, it isn't present (added)
+                callChanges.add(buildCallChange(null, newCall));
+            }
+        }
+
+        return callChanges;
+    }
+
+    private CallChange buildCallChange(RestCall oldCall, RestCall newCall) {
+        CallChange callChange = new CallChange();
+        callChange.setOldCall(oldCall);
+        callChange.setNewCall(newCall);
+        callChange.setOldLink(new Link("old", "new"));
+        callChange.setNewLink(new Link("old", "new"));
+
+
+        return callChange;
     }
 
 }
