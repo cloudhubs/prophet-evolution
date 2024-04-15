@@ -22,20 +22,17 @@ import java.util.Objects;
 public class IRMergeRunner {
 
   public static void main(String[] args) throws IOException {
-        if (args.length < 2) {
-          System.err.println(
-              "Invalid # of args, 2 expected: <path/to/intermediate-json> <path/to/delta-json>");
-          return;
-        }
+    if (args.length < 2) {
+      System.err.println(
+          "Invalid # of args, 2 expected: <path/to/intermediate-json> <path/to/delta-json>");
+      return;
+    }
 
     MergeService mergeService = new MergeService();
-    MsSystem msSystem =
-        IRParserUtils.parseIRSystem(
-            Path.of(args[0]).toAbsolutePath().toString());
+    MsSystem msSystem = IRParserUtils.parseIRSystem(Path.of(args[0]).toAbsolutePath().toString());
     Map<String, Microservice> msModelMap = msSystem.getServiceMap();
     SystemChange systemChange =
-        IRParserUtils.parseSystemChange(
-            Path.of(args[1]).toAbsolutePath().toString());
+        IRParserUtils.parseSystemChange(Path.of(args[1]).toAbsolutePath().toString());
 
     updateModelMap(ClassRole.CONTROLLER, msModelMap, systemChange.getControllers());
     updateModelMap(ClassRole.SERVICE, msModelMap, systemChange.getServices());

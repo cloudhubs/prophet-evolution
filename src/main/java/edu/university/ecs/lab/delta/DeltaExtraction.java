@@ -4,7 +4,6 @@ import edu.university.ecs.lab.delta.services.DeltaExtractionService;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Repository;
 
-import java.nio.file.Path;
 import java.util.*;
 
 /** Service for extracting the differences between a local and remote repository. */

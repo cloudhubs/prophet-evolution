@@ -536,7 +536,9 @@ public class MetricsManager {
         // Handle case that there was no old controller (aka new controller)
         endpointChanges.addAll(
             compareEndpoints(
-                oldController != null ? oldController.getEndpoints() : null, delta.getCChange().getEndpoints(), delta));
+                oldController != null ? oldController.getEndpoints() : null,
+                delta.getCChange().getEndpoints(),
+                delta));
 
         break;
       case DELETE:
