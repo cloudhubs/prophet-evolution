@@ -15,7 +15,7 @@ public class DeltaExtraction {
   /**
    * main method entry point to delta extraction
    *
-   * @param args command line args list containing /path/to/repo(s)
+   * @param args [branch] [list containing /path/to/repo(s)]
    */
   public static void main(String[] args) throws Exception {
     DeltaExtractionService deltaService = new DeltaExtractionService();
