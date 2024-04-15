@@ -218,23 +218,39 @@ public class JsonConvertUtils {
    * @return Converted JsonArray of Method objects
    */
   public static JsonArray buildMethodArray(List<Method> methodList) {
-    // TODO find cause of this
+
     if (methodList == null) {
       return JsonObject.EMPTY_JSON_ARRAY;
     }
+
     JsonArrayBuilder methodArrayBuilder = Json.createArrayBuilder();
 
     for (Method method : methodList) {
-      JsonObjectBuilder methodObjectBuilder = Json.createObjectBuilder();
-
-      methodObjectBuilder.add("methodName", method.getMethodName());
-      methodObjectBuilder.add("parameter", method.getParameterList());
-      methodObjectBuilder.add("returnType", method.getReturnType());
-
-      methodArrayBuilder.add(methodObjectBuilder.build());
+      methodArrayBuilder.add(buildMethod(method));
     }
 
     return methodArrayBuilder.build();
+  }
+
+  /**
+   * Constructs a list of Method objects as a JsonArray
+   *
+   * @param methodList list of Method objects to be converted
+   * @return Converted JsonArray of Method objects
+   */
+  public static JsonObject buildMethod(Method method) {
+    // TODO find cause of this
+    if (method == null) {
+      return JsonObject.EMPTY_JSON_OBJECT;
+    }
+
+    JsonObjectBuilder methodObjectBuilder = Json.createObjectBuilder();
+
+    methodObjectBuilder.add("methodName", method.getMethodName());
+    methodObjectBuilder.add("parameter", method.getParameterList());
+    methodObjectBuilder.add("returnType", method.getReturnType());
+
+    return methodObjectBuilder.build();
   }
 
   /**

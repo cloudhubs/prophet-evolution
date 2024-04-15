@@ -32,12 +32,12 @@ public class MetricsRunner {
 //      SystemChange systemChange = IRParserUtils.parseSystemChange(Path.of("out/delta-changes-[1712174479531].json").toAbsolutePath().toString());
 
     MetricsManager metricsManager = new MetricsManager(
-            Path.of("out/rest-extraction-output-[1713037237904].json").toAbsolutePath().toString(),
-            Path.of("out/rest-extraction-new-[1712768440951].json").toAbsolutePath().toString(),
-            Path.of("out/delta-changes-[1713073535740].json").toAbsolutePath().toString()
+            Path.of("out/rest-extraction-output-[1713167787926].json").toAbsolutePath().toString(),
+            Path.of("out/delta-changes-[1713168006247].json").toAbsolutePath().toString()
     );
     metricsManager.generateSystemMetrics();
-
+  }
+}
     // First changes to classes
 //    System.out.println("Controller changes: " + getChangeCount(systemMap, systemChange.getControllers(), ClassRole.CONTROLLER));
 //    System.out.println("Service changes: " + getChangeCount(systemMap, systemChange.getServices(), ClassRole.SERVICE));
@@ -58,8 +58,6 @@ public class MetricsRunner {
 //    System.out.println(
 //            "% of Affected Classes Changed (Flows): "
 //                    + ((double) affectedClassLocalPaths.size() / systemMap.values().stream().mapToInt(Microservice::getModelSize).sum()));
-  }
-}
 
 //  private static boolean verifyClassChange(List<? extends JClass> classList, Delta delta) {
 //    String msName = delta.getMsName();

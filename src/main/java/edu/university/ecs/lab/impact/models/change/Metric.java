@@ -11,11 +11,12 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Placeholder {
+public class Metric {
     String filePath;
     String microserviceName;
     ChangeType changeType;
     ClassRole classRole;
     List<CallChange> callChangeList;
+    List<EndpointChange> endpointChangeList;
 
 }

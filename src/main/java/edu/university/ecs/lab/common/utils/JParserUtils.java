@@ -200,7 +200,7 @@ public class JParserUtils {
             restCall.setApi(parseURL(mce, cid));
             restCall.setParentMethod(parentMethodName);
             restCall.setCalledFieldName(getCalledServiceName(scope));
-            restCall.setSourceFile(sourceFile.getPath());
+            restCall.setSourceFile(".\\" + sourceFile.getPath().split("\\\\", 4)[3]);
 
             restCalls.add(restCall);
             // System.out.println(restCall);
