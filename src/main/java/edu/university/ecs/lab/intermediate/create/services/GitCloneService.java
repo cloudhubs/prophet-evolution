@@ -1,6 +1,8 @@
 package edu.university.ecs.lab.intermediate.create.services;
 
-import edu.university.ecs.lab.common.config.InputRepository;
+import edu.university.ecs.lab.common.config.ConfigUtil;
+import edu.university.ecs.lab.common.config.models.InputConfig;
+import edu.university.ecs.lab.common.config.models.InputRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,34 +16,33 @@ import java.util.Objects;
 @AllArgsConstructor
 public class GitCloneService {
   /** The absolute root path to clone the repositories to */
-  private final String clonePath;
+  private final InputConfig inputConfig;
 
   /**
    * This method clones a remote repository to the local file system
    *
-   * @param repo the repo to be cloned
+   * @param inputRepository the repo to be cloned
    * @return list of service paths
    * @throws Exception if Git clone failed
    */
-  public List<String> cloneRemote(InputRepository repo) throws Exception {
-    List<String> repoNames = new ArrayList<>();
+  public void cloneRemote(InputRepository inputRepository) throws Exception {
 
-    String output = clonePath + File.separator + getRepositoryName(repo.getRepoUrl());
-    ProcessBuilder processBuilder = new ProcessBuilder("git", "clone", repo.getRepoUrl(), output);
+    String relativeClonePath = ConfigUtil.getRepositoryClonePath(inputConfig, inputRepository);
+    ProcessBuilder processBuilder = new ProcessBuilder("git", "clone", inputRepository.getRepoUrl(), relativeClonePath);
     processBuilder.redirectErrorStream(true);
     Process process = processBuilder.start();
 
     int exitCode = process.waitFor();
 
     if (exitCode < 400) {
-      System.out.println("Git clone of " + repo.getRepoUrl() + " successful ");
+      System.out.println("Git clone of " + inputRepository.getRepoUrl() + " successful ");
 
-      if (Objects.isNull(repo.getBaseCommit())) {
-        repo.setBaseCommit("HEAD");
+      if (Objects.isNull(inputRepository.getBaseCommit())) {
+        inputRepository.setBaseCommit("HEAD");
       }
 
-      processBuilder = new ProcessBuilder("git", "reset", "--hard", repo.getBaseCommit());
-      processBuilder.directory(new File(output));
+      processBuilder = new ProcessBuilder("git", "reset", "--hard", inputRepository.getBaseCommit());
+      processBuilder.directory(new File(relativeClonePath));
       processBuilder.redirectErrorStream(true);
       process = processBuilder.start();
 
@@ -49,54 +50,47 @@ public class GitCloneService {
 
       // TODO exit code not working
       if (exitCode < 400) {
-        System.out.println("Git reset of " + repo.getRepoUrl() + " successful ");
+        System.out.println("Git reset of " + inputRepository.getRepoUrl() + " successful ");
       } else {
         throw new Exception(
-            "Git reset of " + repo.getRepoUrl() + " failed with status code: " + exitCode);
+            "Git reset of " + inputRepository.getRepoUrl() + " failed with status code: " + exitCode);
       }
     } else {
       throw new Exception(
-          "Git clone of " + repo.getRepoUrl() + " failed with status code: " + exitCode);
+          "Git clone of " + inputRepository.getRepoUrl() + " failed with status code: " + exitCode);
     }
 
     // output = output.replaceAll("\\\\", "/");
 
     // add microservices to path
-    if (Objects.nonNull(repo.getPaths()) && repo.getPaths().length > 0) {
-      for (String subPath : repo.getPaths()) {
+
+  }
+
+  public List<String> getMicroservicePaths(InputRepository inputRepository) throws Exception {
+    List<String> microservicePaths = new ArrayList<>();
+    String relativeClonePath = ConfigUtil.getRepositoryClonePath(inputConfig, inputRepository);
+
+    if (Objects.nonNull(inputRepository.getPaths()) && inputRepository.getPaths().length > 0) {
+      for (String subPath : inputRepository.getPaths()) {
         String path;
 
         if (subPath.substring(0, 1).equals(File.separator)) {
-          path = output + subPath;
+          path = relativeClonePath + subPath;
         } else {
-          path = output + File.separator + subPath;
+          path = relativeClonePath + File.separator + subPath;
         }
 
         File f = new File(path);
 
         if (f.isDirectory()) {
-          repoNames.add(path);
+          microservicePaths.add(path);
         }
       }
     } else {
-      repoNames.add(output);
+      microservicePaths.add(relativeClonePath);
     }
 
-    return repoNames;
+    return microservicePaths;
   }
 
-  /**
-   * This method parses a repository url and extracts the repository name
-   *
-   * @param repositoryUrl the repository url to parsing
-   * @return the repository name
-   */
-  private String getRepositoryName(String repositoryUrl) {
-    System.out.println("Extracting repo from url: " + repositoryUrl);
-
-    // Extract repository name from the URL
-    int lastSlashIndex = repositoryUrl.lastIndexOf('/');
-    int lastDotIndex = repositoryUrl.lastIndexOf('.');
-    return repositoryUrl.substring(lastSlashIndex + 1, lastDotIndex);
-  }
 }
