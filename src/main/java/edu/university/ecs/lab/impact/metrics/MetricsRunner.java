@@ -1,10 +1,8 @@
 package edu.university.ecs.lab.impact.metrics;
 
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
-
 
 public class MetricsRunner {
   static int totalChanges = 0;
