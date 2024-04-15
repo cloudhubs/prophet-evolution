@@ -28,7 +28,8 @@ public class GitCloneService {
   public void cloneRemote(InputRepository inputRepository) throws Exception {
 
     String relativeClonePath = ConfigUtil.getRepositoryClonePath(inputConfig, inputRepository);
-    ProcessBuilder processBuilder = new ProcessBuilder("git", "clone", inputRepository.getRepoUrl(), relativeClonePath);
+    ProcessBuilder processBuilder =
+        new ProcessBuilder("git", "clone", inputRepository.getRepoUrl(), relativeClonePath);
     processBuilder.redirectErrorStream(true);
     Process process = processBuilder.start();
 
@@ -41,7 +42,8 @@ public class GitCloneService {
         inputRepository.setBaseCommit("HEAD");
       }
 
-      processBuilder = new ProcessBuilder("git", "reset", "--hard", inputRepository.getBaseCommit());
+      processBuilder =
+          new ProcessBuilder("git", "reset", "--hard", inputRepository.getBaseCommit());
       processBuilder.directory(new File(relativeClonePath));
       processBuilder.redirectErrorStream(true);
       process = processBuilder.start();
@@ -53,7 +55,10 @@ public class GitCloneService {
         System.out.println("Git reset of " + inputRepository.getRepoUrl() + " successful ");
       } else {
         throw new Exception(
-            "Git reset of " + inputRepository.getRepoUrl() + " failed with status code: " + exitCode);
+            "Git reset of "
+                + inputRepository.getRepoUrl()
+                + " failed with status code: "
+                + exitCode);
       }
     } else {
       throw new Exception(
@@ -92,5 +97,4 @@ public class GitCloneService {
 
     return microservicePaths;
   }
-
 }

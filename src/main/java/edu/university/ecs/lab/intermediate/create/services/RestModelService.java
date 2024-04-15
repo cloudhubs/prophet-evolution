@@ -146,7 +146,7 @@ public class RestModelService {
           return jClass;
         }
       } else if (file.getParent().toLowerCase().contains("entity")
-              || file.getParent().toLowerCase().contains("model")) {
+          || file.getParent().toLowerCase().contains("model")) {
         JClass jClass = JParserUtils.parseClass(file);
         if (Objects.nonNull(jClass)) {
           return jClass;

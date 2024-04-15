@@ -8,7 +8,6 @@ import edu.university.ecs.lab.common.config.models.InputRepository;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.nio.file.Path;
 
 public class ConfigUtil {
   /** Exit code: invalid config path */
@@ -59,7 +58,6 @@ public class ConfigUtil {
     return gson.fromJson(jsonReader, InputConfig.class);
   }
 
-
   /**
    * This method parses a repository url and extracts the repository name
    *
@@ -67,7 +65,7 @@ public class ConfigUtil {
    * @return the repository name
    */
   public static String getRepositoryName(String repositoryUrl) {
-//    System.out.println("Extracting repo from url: " + repositoryUrl);
+    //    System.out.println("Extracting repo from url: " + repositoryUrl);
 
     // Extract repository name from the URL
     int lastSlashIndex = repositoryUrl.lastIndexOf('/');
@@ -75,7 +73,10 @@ public class ConfigUtil {
     return repositoryUrl.substring(lastSlashIndex + 1, lastDotIndex);
   }
 
-  public static String getRepositoryClonePath(InputConfig inputConfig, InputRepository inputRepository) {
-    return inputConfig.getClonePath() + File.separator + getRepositoryName(inputRepository.getRepoUrl());
+  public static String getRepositoryClonePath(
+      InputConfig inputConfig, InputRepository inputRepository) {
+    return inputConfig.getClonePath()
+        + File.separator
+        + getRepositoryName(inputRepository.getRepoUrl());
   }
 }

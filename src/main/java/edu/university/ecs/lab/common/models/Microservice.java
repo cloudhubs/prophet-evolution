@@ -24,6 +24,7 @@ public class Microservice {
 
   /** List of classes */
   private List<JController> controllers;
+
   private List<JService> services;
   private List<JClass> dtos;
   private List<JClass> repositories;

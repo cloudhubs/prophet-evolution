@@ -64,7 +64,7 @@ public class IRExtraction {
    * @param msEndpointsMap a map of service to their information
    */
   private static void writeToIntermediateRepresentation(
-    InputConfig inputConfig, Map<String, Microservice> msEndpointsMap) throws IOException {
+      InputConfig inputConfig, Map<String, Microservice> msEndpointsMap) throws IOException {
 
     String outputPath = inputConfig.getOutputPath();
 
@@ -81,8 +81,7 @@ public class IRExtraction {
 
     Scanner scanner = new Scanner(System.in); // read system name from command line
     System.out.println("Enter system name: ");
-    JsonObject jout =
-        JsonConvertUtils.buildSystem(scanner.nextLine(), "0.0.1", msEndpointsMap);
+    JsonObject jout = JsonConvertUtils.buildSystem(scanner.nextLine(), "0.0.1", msEndpointsMap);
 
     String outputName =
         outputPath

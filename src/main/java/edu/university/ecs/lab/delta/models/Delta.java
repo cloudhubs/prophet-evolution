@@ -20,7 +20,7 @@ public class Delta {
 
   @SerializedName("changes")
   private JClass change;
+
   private JController cChange;
   private JService sChange;
-
 }

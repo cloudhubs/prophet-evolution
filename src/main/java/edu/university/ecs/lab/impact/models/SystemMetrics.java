@@ -11,17 +11,17 @@ import java.util.List;
 @AllArgsConstructor
 public class SystemMetrics {
 
-    private int brokenApiDependencies;
-    private int newApiDependencies;
-    private int affectedEntityDependencies;
-    private int newEntityDependencies;
-    private int newSystems;
-    private int modifiedClasses;
+  private int brokenApiDependencies;
+  private int newApiDependencies;
+  private int affectedEntityDependencies;
+  private int newEntityDependencies;
+  private int newSystems;
+  private int modifiedClasses;
 
-    private List<ClassMetrics> classMetrics;
-    private FlowMetrics flowMetrics;
-    private DependencyMetrics dependencyMetrics;
+  private List<ClassMetrics> classMetrics;
+  private FlowMetrics flowMetrics;
+  private DependencyMetrics dependencyMetrics;
 
-    //private double systemCoupling;
+  // private double systemCoupling;
 
 }

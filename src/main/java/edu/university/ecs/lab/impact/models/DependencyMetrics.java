@@ -9,9 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class DependencyMetrics {
-    List<ApiDependency> apiDependencyList;
-    List<EntityDependency> entityDependencyList;
-
+  List<ApiDependency> apiDependencyList;
+  List<EntityDependency> entityDependencyList;
 }

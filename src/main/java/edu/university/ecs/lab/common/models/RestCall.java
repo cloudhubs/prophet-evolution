@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.enums.HttpMethod;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;
@@ -94,7 +93,10 @@ public class RestCall extends MethodCall {
     if (o == null || getClass() != o.getClass()) return false;
     if (!super.equals(o)) return false;
     RestCall restCall = (RestCall) o;
-    return responseTypeIndex == restCall.responseTypeIndex && Objects.equals(api, restCall.api) && Objects.equals(httpMethod, restCall.httpMethod) && Objects.equals(sourceFile, restCall.sourceFile);
+    return responseTypeIndex == restCall.responseTypeIndex
+        && Objects.equals(api, restCall.api)
+        && Objects.equals(httpMethod, restCall.httpMethod)
+        && Objects.equals(sourceFile, restCall.sourceFile);
   }
 
   @Override

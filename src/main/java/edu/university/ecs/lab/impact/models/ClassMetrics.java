@@ -10,28 +10,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClassMetrics {
 
-    private ClassRole classRole;
+  private ClassRole classRole;
 
-    private int addedClassCount;
+  private int addedClassCount;
 
-    private int removedClassCount;
+  private int removedClassCount;
 
-    private int modifiedClassCount;
+  private int modifiedClassCount;
 
-    private int endpointCount;
+  private int endpointCount;
 
-    private int restCallCount;
+  private int restCallCount;
 
-    public void incrementAddedClassCount() {
-        addedClassCount++;
-    }
+  public void incrementAddedClassCount() {
+    addedClassCount++;
+  }
 
-    public void incrementRemovedClassCount() {
-        removedClassCount++;
-    }
+  public void incrementRemovedClassCount() {
+    removedClassCount++;
+  }
 
-    public void incrementModifiedClassCount() {
-        modifiedClassCount++;
-    }
-
+  public void incrementModifiedClassCount() {
+    modifiedClassCount++;
+  }
 }

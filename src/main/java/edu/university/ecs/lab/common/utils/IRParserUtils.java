@@ -36,6 +36,4 @@ public class IRParserUtils {
   public static String getServiceFromLocalPath(String localPath) {
     return localPath.substring(localPath.indexOf('/', 3) + 1, localPath.indexOf('/', 4));
   }
-
-
 }

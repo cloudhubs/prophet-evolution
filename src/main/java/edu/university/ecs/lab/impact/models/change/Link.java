@@ -9,15 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Link {
-    private String msSource;
-    private String msDestination;
+  private String msSource;
+  private String msDestination;
 
-    public Link(RestCall restCall) {
-        String[] sourceFileParts = restCall.getSourceFile().split("/");
-        String[] destFileParts = restCall.getDestFile().split("/");
+  public Link(RestCall restCall) {
+    String[] sourceFileParts = restCall.getSourceFile().split("/");
+    String[] destFileParts = restCall.getDestFile().split("/");
 
-
-        msSource = sourceFileParts[1];
-        msDestination = restCall.getDestFile().isEmpty() ? "?" : destFileParts[1];
-    }
+    msSource = sourceFileParts[1];
+    msDestination = restCall.getDestFile().isEmpty() ? "?" : destFileParts[1];
+  }
 }

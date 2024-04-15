@@ -28,7 +28,7 @@ public class FlowUtils {
               flow.setServiceMethod(ServiceMethod.get());
               // 6. find method call in the service
               Optional<MethodCall> repositoryMethodCall =
-                      Optional.ofNullable(findRepositoryMethodCall(flow));
+                  Optional.ofNullable(findRepositoryMethodCall(flow));
               if (repositoryMethodCall.isPresent()) {
                 flow.setRepositoryMethodCall(repositoryMethodCall.get());
                 // 7. find repository variable
@@ -41,7 +41,7 @@ public class FlowUtils {
                     flow.setRepository(repositoryClass.get());
                     // 9. find repository method
                     Optional<Method> repositoryMethod =
-                            Optional.ofNullable(findRepositoryMethod(flow));
+                        Optional.ofNullable(findRepositoryMethod(flow));
                     if (repositoryMethod.isPresent()) {
                       flow.setRepositoryMethod(repositoryMethod.get());
                     }
@@ -134,7 +134,8 @@ public class FlowUtils {
     return flows;
   }
 
-  private static List<Flow> generateNewFlows(Microservice microservice, List<JController> controllers) {
+  private static List<Flow> generateNewFlows(
+      Microservice microservice, List<JController> controllers) {
     List<Flow> flows = new ArrayList<>();
     Flow f;
 

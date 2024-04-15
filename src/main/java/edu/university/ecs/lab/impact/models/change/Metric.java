@@ -12,11 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Metric {
-    String filePath;
-    String microserviceName;
-    ChangeType changeType;
-    ClassRole classRole;
-    List<CallChange> callChangeList;
-    List<EndpointChange> endpointChangeList;
-
+  String filePath;
+  String microserviceName;
+  ChangeType changeType;
+  ClassRole classRole;
+  List<CallChange> callChangeList;
+  List<EndpointChange> endpointChangeList;
 }

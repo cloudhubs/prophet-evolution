@@ -9,10 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiDependency {
-    private Status status;
-    private String sourceClass;
-    private String destClass;
-    private String sourceService;
-    private String destService;
-    private boolean isDirectDependency;
+  private Status status;
+  private String sourceClass;
+  private String destClass;
+  private String sourceService;
+  private String destService;
+  private boolean isDirectDependency;
 }

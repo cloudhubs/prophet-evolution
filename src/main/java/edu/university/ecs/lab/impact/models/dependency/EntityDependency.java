@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EntityDependency {
-    private Status status;
-    private String service;
-    private String entityClass;
-    private String endpointClass;
-
+  private Status status;
+  private String service;
+  private String entityClass;
+  private String endpointClass;
 }

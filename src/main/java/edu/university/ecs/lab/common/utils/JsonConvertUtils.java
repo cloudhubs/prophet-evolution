@@ -7,7 +7,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-/** Utility class for converting objects to  JSON. */
+/** Utility class for converting objects to JSON. */
 public class JsonConvertUtils {
   /** Private constructor to prevent instantiation. */
   private JsonConvertUtils() {}
@@ -94,7 +94,6 @@ public class JsonConvertUtils {
     }
 
     controllerBuilder.add("restEndpoints", endpointArrayBuilder.build());
-
 
     return controllerBuilder.build();
   }
@@ -184,15 +183,13 @@ public class JsonConvertUtils {
   }
 
   /**
-   *
-   *
    * @param restCall RestCall object to be converted
    * @return Converted JsonObject of RestCall object
    */
   public static JsonObject buildRestCall(RestCall restCall) {
     // Get "restCall" methodCalls in service
     JsonObjectBuilder restCallBuilder = Json.createObjectBuilder();
-    if(restCall == null) {
+    if (restCall == null) {
       return JsonValue.EMPTY_JSON_OBJECT;
     }
 
@@ -206,7 +203,6 @@ public class JsonConvertUtils {
     restCallBuilder.add("call-dest", restCall.getDestFile().replaceAll("\\\\", "/"));
     restCallBuilder.add("call-method", restCall.getMethodName() + "()");
     restCallBuilder.add("httpMethod", restCall.getHttpMethod());
-
 
     return restCallBuilder.build();
   }
