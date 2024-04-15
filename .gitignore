@@ -6,4 +6,4 @@ commands.txt
 /target/
 /results/
 /repos/
-/.out/
+/out/*
