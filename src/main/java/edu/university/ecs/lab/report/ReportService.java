@@ -1,7 +1,7 @@
 package edu.university.ecs.lab.report;
 
-import edu.university.ecs.lab.intermediate.merge.models.MsSystem;
-import edu.university.ecs.lab.intermediate.merge.utils.IRParserUtils;
+import edu.university.ecs.lab.common.models.MsSystem;
+import edu.university.ecs.lab.common.utils.IRParserUtils;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -35,7 +35,7 @@ public class ReportService {
    *
    * @param intermediatePath path to the original system IR
    * @param deltaPath path to the system delta
-   * @throws IOException if issues with parsing the files in {@link IRParserUtils}
+   * @throws IOException if issues with parsing the files in {@link IRParserUtils#parseIRSystem(String)
    */
   ReportService(String intermediatePath, String deltaPath) throws IOException {
     Objects.requireNonNull(intermediatePath);
