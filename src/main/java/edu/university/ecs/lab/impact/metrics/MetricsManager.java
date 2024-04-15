@@ -25,6 +25,7 @@ import static edu.university.ecs.lab.common.writers.MsJsonWriter.writeJsonToFile
 
 public class MetricsManager {
 
+  private static final String BASE_PATH = "./out/";
   private Map<String, Microservice> microserviceMap;
 
   private SystemChange systemChange;
@@ -110,7 +111,7 @@ public class MetricsManager {
     //        systemMetrics.setDependencyMetrics(generateDependencyMetrics(systemChange));
     systemMetrics.setClassMetrics(generateAllClassMetrics());
 
-    writeMetricsToFile("Metrics.txt", systemMetrics);
+    writeMetricsToFile(BASE_PATH + "Metrics.json", systemMetrics);
 
     return systemMetrics;
   }
@@ -515,7 +516,7 @@ public class MetricsManager {
 
   public List<EndpointChange> getAllEndpointChanges(Delta delta) {
     List<EndpointChange> endpointChanges = new ArrayList<>();
-    JController oldController = null;
+    JController oldController;
 
     if (Objects.isNull(delta.getCChange())) {
       return endpointChanges;
@@ -531,9 +532,11 @@ public class MetricsManager {
                 .filter(c -> c.getClassPath().equals(delta.getLocalPath()))
                 .findFirst()
                 .orElse(null);
+
+        // Handle case that there was no old controller (aka new controller)
         endpointChanges.addAll(
             compareEndpoints(
-                oldController.getEndpoints(), delta.getCChange().getEndpoints(), delta));
+                oldController != null ? oldController.getEndpoints() : null, delta.getCChange().getEndpoints(), delta));
 
         break;
       case DELETE:
