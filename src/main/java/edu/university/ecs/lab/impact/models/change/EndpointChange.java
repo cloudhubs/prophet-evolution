@@ -20,11 +20,11 @@ public class EndpointChange {
   RestImpact impact;
 
   public EndpointChange(
-          Endpoint oldEndpoint,
-          Endpoint newEndpoint,
-          List<Link> oldLinkList,
-          List<Link> newLinkList,
-          ChangeType changeType) {
+      Endpoint oldEndpoint,
+      Endpoint newEndpoint,
+      List<Link> oldLinkList,
+      List<Link> newLinkList,
+      ChangeType changeType) {
     this.oldEndpoint = oldEndpoint;
     this.newEndpoint = newEndpoint;
     this.oldLinkList = oldLinkList;

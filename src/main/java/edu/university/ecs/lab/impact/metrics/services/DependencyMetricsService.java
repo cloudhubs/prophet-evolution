@@ -74,7 +74,7 @@ public class DependencyMetricsService {
                   microservice.getId(),
                   entity.getClassName(),
                   flow.getController().getClassName());
-            entityDependencyList.add(entityDependency);
+          entityDependencyList.add(entityDependency);
         }
       }
     }

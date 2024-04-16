@@ -8,10 +8,9 @@ import lombok.NoArgsConstructor;
 import java.util.Objects;
 
 /**
- * Change to the call itself.
- * A change type of 'Add' means that a new call was created.
- * A change type of 'Delete' means that a call was deleted.
- * A change type of 'Modify' means that a call was modified to point somewhere else.
+ * Change to the call itself. A change type of 'Add' means that a new call was created. A change
+ * type of 'Delete' means that a call was deleted. A change type of 'Modify' means that a call was
+ * modified to point somewhere else.
  */
 @Data
 @NoArgsConstructor
