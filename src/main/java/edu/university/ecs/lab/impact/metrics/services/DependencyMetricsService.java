@@ -93,50 +93,18 @@ public class DependencyMetricsService {
         return (systemChange.getEntities().isEmpty() && systemChange.getDtos().isEmpty());
     }
 
-    public List<EndpointChange> getAllEndpointChanges(Delta delta) {
-        List<EndpointChange> endpointChanges = new ArrayList<>();
-        JController oldController;
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////// REST CALLS////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        if (Objects.isNull(delta.getCChange())) {
-            return endpointChanges;
-        }
-
-        switch (delta.getChangeType()) {
-            case ADD:
-                endpointChanges.addAll(compareEndpoints(null, delta.getCChange().getEndpoints(), delta));
-                break;
-            case MODIFY:
-                oldController =
-                        microserviceMap.get(delta.getMsName()).getControllers().stream()
-                                .filter(c -> c.getClassPath().equals(delta.getLocalPath()))
-                                .findFirst()
-                                .orElse(null);
-
-                // Handle case that there was no old controller (aka new controller)
-                endpointChanges.addAll(
-                        compareEndpoints(
-                                oldController != null ? oldController.getEndpoints() : null,
-                                delta.getCChange().getEndpoints(),
-                                delta));
-
-                break;
-            case DELETE:
-                oldController =
-                        microserviceMap.get(delta.getMsName()).getControllers().stream()
-                                .filter(c -> c.getClassPath().equals(delta.getLocalPath()))
-                                .findFirst()
-                                .orElse(null);
-                endpointChanges.addAll(compareEndpoints(oldController.getEndpoints(), null, delta));
-
-                break;
-        }
-
-        return endpointChanges;
-    }
-
-    public List<CallChange> getAllRestCallChanges(Delta delta) {
+    /**
+     * Get a list of all changed rest calls for a single delta
+     * @param delta delta object representing changes to a system
+     * @return list of rest call changes from the given delta
+     */
+    public List<CallChange> getRestCallChangesForDelta(Delta delta) {
         List<CallChange> callChanges = new ArrayList<>();
-        JService oldService = null;
+        JService oldService;
 
         if (Objects.isNull(delta.getSChange())) {
             return callChanges;
@@ -171,12 +139,12 @@ public class DependencyMetricsService {
     }
 
     /**
-     * Compare all restCalls in oldService to newService no concept of 'modified' calls there are only
+     * Compare all restCalls in oldService to newService, NOTE: no concept of 'modified' calls there are only
      * oldLinks and newLinks
      *
-     * @param oldService
-     * @param newService
-     * @return
+     * @param oldService old service object
+     * @param newService new service object
+     * @return list of changes to rest calls
      */
     private List<CallChange> compareRestCalls(
             JService oldService, JService newService, ChangeType changeType) {
@@ -238,6 +206,59 @@ public class DependencyMetricsService {
     ////////////////// ENDPOINT////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Get a list of all changed endpoints for a single delta
+     * @param delta delta object representing changes to a system
+     * @return list of endpoint changes from the given delta
+     */
+    public List<EndpointChange> getEndpointChangesForDelta(Delta delta) {
+        List<EndpointChange> endpointChanges = new ArrayList<>();
+        JController oldController;
+
+        if (Objects.isNull(delta.getCChange())) {
+            return endpointChanges;
+        }
+
+        switch (delta.getChangeType()) {
+            case ADD:
+                endpointChanges.addAll(compareEndpoints(null, delta.getCChange().getEndpoints(), delta));
+                break;
+            case MODIFY:
+                oldController =
+                        microserviceMap.get(delta.getMsName()).getControllers().stream()
+                                .filter(c -> c.getClassPath().equals(delta.getLocalPath()))
+                                .findFirst()
+                                .orElse(null);
+
+                // Handle case that there was no old controller (aka new controller) but the file still existed
+                endpointChanges.addAll(
+                        compareEndpoints(
+                                oldController != null ? oldController.getEndpoints() : null,
+                                delta.getCChange().getEndpoints(),
+                                delta));
+                break;
+            case DELETE:
+                oldController =
+                        microserviceMap.get(delta.getMsName()).getControllers().stream()
+                                .filter(c -> c.getClassPath().equals(delta.getLocalPath()))
+                                .findFirst()
+                                .orElse(null);
+                endpointChanges.addAll(compareEndpoints(oldController.getEndpoints(), null, delta));
+
+                break;
+        }
+
+        return endpointChanges;
+    }
+
+    /**
+     * Helper method to create a list of {@link EndpointChange} objects based on the old and new {@link Endpoint} lists
+     * and delta changes for a given delta
+     * @param oldEndpointList list of original endpoints
+     * @param newEndpointList list of new endpoints
+     * @param delta set of changes to system
+     * @return list of endpoint changes
+     */
     private List<EndpointChange> compareEndpoints(
             List<Endpoint> oldEndpointList, List<Endpoint> newEndpointList, Delta delta) {
         List<EndpointChange> endpointChanges = new ArrayList<>();
@@ -287,6 +308,9 @@ public class DependencyMetricsService {
         return endpointChanges;
     }
 
+    /**
+     * @apiNote Austin - I don't understand what this method does. It adds a link between the service and itself??
+     */
     private List<Link> getEndpointLinks(Endpoint endpoint, String microserviceName) {
         List<Link> linkList = new ArrayList<>();
 

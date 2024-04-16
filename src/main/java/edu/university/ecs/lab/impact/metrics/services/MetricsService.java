@@ -5,7 +5,6 @@ import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
 import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
-import edu.university.ecs.lab.impact.models.ClassMetrics;
 import edu.university.ecs.lab.impact.models.SystemMetrics;
 import edu.university.ecs.lab.impact.models.change.Metric;
 
@@ -75,11 +74,12 @@ public class MetricsService {
     List<Metric> metricList = new ArrayList<>();
     Metric metric;
 
+    // Handle all service changes
     if (Objects.nonNull(systemChange.getServices()) && !systemChange.getServices().isEmpty()) {
       for (Delta delta : systemChange.getServices()) {
         metric = new Metric();
         metric.setFilePath(delta.getLocalPath());
-        metric.setCallChangeList(dependencyMetricsService.getAllRestCallChanges(delta));
+        metric.setCallChangeList(dependencyMetricsService.getRestCallChangesForDelta(delta));
         metric.setClassRole(ClassRole.SERVICE);
 
         metric.setChangeType(delta.getChangeType());
@@ -90,19 +90,18 @@ public class MetricsService {
       }
     }
 
-    if (Objects.nonNull(systemChange.getControllers())
-        && !systemChange.getControllers().isEmpty()) {
+    // Handle all controller changes
+    if (Objects.nonNull(systemChange.getControllers()) && !systemChange.getControllers().isEmpty()) {
       for (Delta delta : systemChange.getControllers()) {
         metric = new Metric();
         metric.setFilePath(delta.getLocalPath());
-        metric.setEndpointChangeList(dependencyMetricsService.getAllEndpointChanges(delta));
+        metric.setEndpointChangeList(dependencyMetricsService.getEndpointChangesForDelta(delta));
         metric.setClassRole(ClassRole.CONTROLLER);
 
         metric.setChangeType(delta.getChangeType());
         metric.setMicroserviceName(delta.getMsName());
         metricList.add(metric);
         // TODO RestCall Changes
-
       }
     }
 
