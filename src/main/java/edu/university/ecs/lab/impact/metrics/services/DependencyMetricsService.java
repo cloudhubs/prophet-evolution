@@ -29,7 +29,6 @@ public class DependencyMetricsService {
   public DependencyMetrics generateAllDependencyMetrics(SystemChange systemChange) {
     DependencyMetrics metrics = new DependencyMetrics();
     // TODO
-    // metrics.setApiDependencyList(getAllAPIDeps());
     // metrics.setEntityDependencyList(getAllEntityDeps());
     return metrics;
   }
@@ -56,7 +55,7 @@ public class DependencyMetricsService {
   }
 
   private List<EntityDependency> getServiceEntityDeps(Microservice microservice) {
-    List<EntityDependency> apiDependencyList = new ArrayList<>();
+    List<EntityDependency> entityDependencyList = new ArrayList<>();
     EntityDependency entityDependency;
 
     //        // If no entities or dto's are modified then entity dependencies are not affected
@@ -75,12 +74,12 @@ public class DependencyMetricsService {
                   microservice.getId(),
                   entity.getClassName(),
                   flow.getController().getClassName());
-          apiDependencyList.add(entityDependency);
+            entityDependencyList.add(entityDependency);
         }
       }
     }
 
-    return apiDependencyList;
+    return entityDependencyList;
   }
 
   /**

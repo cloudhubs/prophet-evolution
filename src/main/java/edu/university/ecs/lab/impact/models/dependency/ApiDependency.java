@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Deprecated
 public class ApiDependency {
   private Status status;
   private String sourceClass;

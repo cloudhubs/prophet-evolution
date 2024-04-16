@@ -59,8 +59,8 @@ public class MetricFileWriterService {
               : callChange.getNewLink().getMsSource()
                   + " -> "
                   + callChange.getNewLink().getMsDestination());
-      jsonObjectBuilder.add("action", callChange.getAction());
-      jsonObjectBuilder.add("impact", callChange.getImpact());
+      jsonObjectBuilder.add("changeType", callChange.getChangeType().name());
+      jsonObjectBuilder.add("impact", callChange.getImpact().name());
 
       arrayBuilder.add(jsonObjectBuilder.build());
     }
@@ -80,8 +80,8 @@ public class MetricFileWriterService {
           "oldLinks", convertLinkListToJsonArray(endpointChange.getOldLinkList()));
       jsonObjectBuilder.add(
           "newLinks", convertLinkListToJsonArray(endpointChange.getNewLinkList()));
-      jsonObjectBuilder.add("action", endpointChange.getAction());
-      jsonObjectBuilder.add("impact", "");
+      jsonObjectBuilder.add("changeType", endpointChange.getChangeType().name());
+      jsonObjectBuilder.add("impact", "[Not Yet Implemented]");
 
       arrayBuilder.add(jsonObjectBuilder.build());
     }
