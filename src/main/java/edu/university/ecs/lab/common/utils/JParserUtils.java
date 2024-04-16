@@ -51,7 +51,7 @@ public class JParserUtils {
 
     JClass jClass = new JClass();
 
-    jClass.setClassPath(".\\" + sourceFile.getPath().split("\\\\", 4)[3]);
+    jClass.setClassPath("." + File.separator + sourceFile.getPath().split(File.separator, 4)[3]);
     jClass.setClassName(sourceFile.getName().replace(".java", ""));
     jClass.setPackageName(packageName);
 
@@ -199,7 +199,7 @@ public class JParserUtils {
             restCall.setApi(parseURL(mce, cid));
             restCall.setParentMethod(parentMethodName);
             restCall.setCalledFieldName(getCalledServiceName(scope));
-            restCall.setSourceFile(".\\" + sourceFile.getPath().split("\\\\", 4)[3]);
+            restCall.setSourceFile("." + File.separator + sourceFile.getPath().split(File.separator, 4)[3]);
 
             restCalls.add(restCall);
             // System.out.println(restCall);
