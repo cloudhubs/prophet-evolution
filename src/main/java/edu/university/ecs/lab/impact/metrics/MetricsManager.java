@@ -107,7 +107,7 @@ public class MetricsManager {
   public SystemMetrics generateSystemMetrics() throws IOException {
     SystemMetrics systemMetrics = new SystemMetrics();
 
-//    systemMetrics.setDependencyMetrics(generateDependencyMetrics(systemChange));
+    //    systemMetrics.setDependencyMetrics(generateDependencyMetrics(systemChange));
     systemMetrics.setClassMetrics(generateAllClassMetrics());
 
     return systemMetrics;

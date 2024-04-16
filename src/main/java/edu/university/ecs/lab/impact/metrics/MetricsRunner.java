@@ -17,6 +17,7 @@ public class MetricsRunner {
             Path.of(args[0]).toAbsolutePath().toString(),
             Path.of(args[1]).toAbsolutePath().toString());
 
-    metricsManager.writeMetricsToFile("./out/" + "Metrics.json", metricsManager.generateSystemMetrics());
+    metricsManager.writeMetricsToFile(
+        "./out/" + "Metrics.json", metricsManager.generateSystemMetrics());
   }
 }

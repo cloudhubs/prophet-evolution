@@ -20,9 +20,9 @@ public class ClassMetrics {
 
   private int modifiedClassCount;
 
-//  private int endpointCount;
-//
-//  private int restCallCount;
+  //  private int endpointCount;
+  //
+  //  private int restCallCount;
 
   public void incrementAddedClassCount() {
     addedClassCount++;
@@ -40,7 +40,6 @@ public class ClassMetrics {
     return Map.of(
         "Added Classes", addedClassCount,
         "Removed Classes", removedClassCount,
-        "Modified Classes", modifiedClassCount
-    );
+        "Modified Classes", modifiedClassCount);
   }
 }
