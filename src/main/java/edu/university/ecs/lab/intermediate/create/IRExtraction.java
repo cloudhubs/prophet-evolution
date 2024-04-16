@@ -79,7 +79,8 @@ public class IRExtraction {
       }
     }
 
-    JsonObject jout = JsonConvertUtils.buildSystem(inputConfig.getSystemName(), "0.0.1", msEndpointsMap);
+    JsonObject jout =
+        JsonConvertUtils.buildSystem(inputConfig.getSystemName(), "0.0.1", msEndpointsMap);
 
     String outputName =
         outputPath
