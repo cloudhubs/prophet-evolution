@@ -20,10 +20,6 @@ public class ClassMetrics {
 
   private int modifiedClassCount;
 
-//  private int endpointCount;
-//
-//  private int restCallCount;
-
   public void incrementAddedClassCount() {
     addedClassCount++;
   }

@@ -20,7 +20,6 @@ public class SystemMetrics {
   private int modifiedClasses;
 
   private List<ClassMetrics> classMetrics;
-  private FlowMetrics flowMetrics;
   private DependencyMetrics dependencyMetrics;
 
   // private double systemCoupling;

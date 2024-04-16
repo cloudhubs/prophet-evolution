@@ -3,7 +3,7 @@ package edu.university.ecs.lab.report;
 import edu.university.ecs.lab.common.models.MsSystem;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
 import edu.university.ecs.lab.delta.models.SystemChange;
-import edu.university.ecs.lab.impact.metrics.MetricsManager;
+import edu.university.ecs.lab.impact.metrics.services.MetricsService;
 import edu.university.ecs.lab.impact.models.SystemMetrics;
 import edu.university.ecs.lab.impact.models.change.Metric;
 import freemarker.template.Configuration;
@@ -38,7 +38,7 @@ public class ReportService {
   private final String intermediatePath;
     /** The path to the system delta */
   private final String deltaPath;
-  private final MetricsManager metricsManager;
+  private final MetricsService metricsService;
 
 
   /**
@@ -51,7 +51,7 @@ public class ReportService {
   ReportService(String intermediatePath, String deltaPath) throws NullPointerException, IOException {
     this.intermediatePath = Objects.requireNonNull(intermediatePath);
     this.deltaPath = Objects.requireNonNull(deltaPath);
-    this.metricsManager = new MetricsManager(intermediatePath, deltaPath);
+    this.metricsService = new MetricsService(intermediatePath, deltaPath);
   }
 
   /** Generate freemarker report, should be put into /out by default */
@@ -75,8 +75,8 @@ public class ReportService {
     root.put("commit2", "2d0ad0");
 
     /* Metrics */
-    SystemMetrics systemMetrics = metricsManager.generateSystemMetrics();
-    List<Metric> serviceMetrics = metricsManager.getPlaceholders();
+    SystemMetrics systemMetrics = metricsService.generateSystemMetrics();
+    List<Metric> serviceMetrics = metricsService.getPlaceholders();
 
     root.put("systemMetrics", systemMetrics);
     root.put("serviceMetrics", serviceMetrics);

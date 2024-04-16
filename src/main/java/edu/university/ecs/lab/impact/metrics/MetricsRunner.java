@@ -1,5 +1,7 @@
 package edu.university.ecs.lab.impact.metrics;
 
+import edu.university.ecs.lab.impact.metrics.services.MetricsService;
+
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -12,11 +14,11 @@ public class MetricsRunner {
       return;
     }
 
-    MetricsManager metricsManager =
-        new MetricsManager(
+    MetricsService metricsService =
+        new MetricsService(
             Path.of(args[0]).toAbsolutePath().toString(),
             Path.of(args[1]).toAbsolutePath().toString());
 
-    metricsManager.writeMetricsToFile("./out/" + "Metrics.json", metricsManager.generateSystemMetrics());
+    metricsService.writeMetricsToFile("./out/" + "Metrics.json");
   }
 }
