@@ -90,7 +90,8 @@ public class MetricsService {
     }
 
     // Handle all controller changes
-    if (Objects.nonNull(systemChange.getControllers()) && !systemChange.getControllers().isEmpty()) {
+    if (Objects.nonNull(systemChange.getControllers())
+        && !systemChange.getControllers().isEmpty()) {
       for (Delta delta : systemChange.getControllers()) {
         metric = new Metric();
         metric.setFilePath(delta.getLocalPath());
