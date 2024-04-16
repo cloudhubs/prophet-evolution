@@ -2,6 +2,10 @@ package edu.university.ecs.lab.report;
 
 import edu.university.ecs.lab.common.models.MsSystem;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
+import edu.university.ecs.lab.delta.models.SystemChange;
+import edu.university.ecs.lab.impact.metrics.MetricsManager;
+import edu.university.ecs.lab.impact.models.SystemMetrics;
+import edu.university.ecs.lab.impact.models.change.Metric;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -12,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /** To use this class, simply call the constructor and then run generateReport() */
@@ -28,38 +33,53 @@ public class ReportService {
     configureFreemarker();
   }
 
-  private final MsSystem system;
+
+  /** The path to the original system IR */
+  private final String intermediatePath;
+    /** The path to the system delta */
+  private final String deltaPath;
+  private final MetricsManager metricsManager;
+
 
   /**
    * Constructor for ReportService
    *
    * @param intermediatePath path to the original system IR
    * @param deltaPath path to the system delta
-   * @throws IOException if issues with parsing the files in {@link IRParserUtils#parseIRSystem(String)
+   * @throws NullPointerException if either path is null
    */
-  ReportService(String intermediatePath, String deltaPath) throws IOException {
-    Objects.requireNonNull(intermediatePath);
-    Objects.requireNonNull(deltaPath);
-
-    system = IRParserUtils.parseIRSystem(intermediatePath);
+  ReportService(String intermediatePath, String deltaPath) throws NullPointerException, IOException {
+    this.intermediatePath = Objects.requireNonNull(intermediatePath);
+    this.deltaPath = Objects.requireNonNull(deltaPath);
+    this.metricsManager = new MetricsManager(intermediatePath, deltaPath);
   }
 
   /** Generate freemarker report, should be put into /out by default */
-  public void generateReport() {
+  public void generateReport() throws IOException {
     /* Create a data-model */
     Map<String, Object> root = new HashMap<>();
+    MsSystem system = IRParserUtils.parseIRSystem(intermediatePath);
+    SystemChange deltas = IRParserUtils.parseSystemChange(deltaPath);
 
+    /* Base System Information */
     root.put("msName", system.getSystemName());
     root.put("baseVersion", system.getVersion());
-    root.put("dateTime", String.valueOf(LocalDateTime.now()));
 
-    // TODO after rico changes fix this
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a");
+    root.put("dateTime", LocalDateTime.now().format(formatter));
+
+    // TODO make this dynamic from config file
     root.put("branch1", "main");
-    root.put("commit1", "commit1");
-    root.put("branch2", "service-change-branch");
-    root.put("commit2", "commit2");
+    root.put("commit1", "f34c476");
+    root.put("branch2", "main");
+    root.put("commit2", "2d0ad0");
 
-    //        root.put("services", msChangeMap);
+    /* Metrics */
+    SystemMetrics systemMetrics = metricsManager.generateSystemMetrics();
+    List<Metric> serviceMetrics = metricsManager.getPlaceholders();
+
+    root.put("systemMetrics", systemMetrics);
+    root.put("serviceMetrics", serviceMetrics);
 
     /* Get the template (uses cache internally) */
     Template template = null;

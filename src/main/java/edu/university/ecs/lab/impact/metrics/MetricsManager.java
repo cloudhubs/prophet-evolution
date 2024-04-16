@@ -25,7 +25,6 @@ import static edu.university.ecs.lab.common.writers.MsJsonWriter.writeJsonToFile
 
 public class MetricsManager {
 
-  private static final String BASE_PATH = "./out/";
   private Map<String, Microservice> microserviceMap;
 
   private SystemChange systemChange;
@@ -35,7 +34,7 @@ public class MetricsManager {
     systemChange = IRParserUtils.parseSystemChange(deltaPath);
   }
 
-  private void writeMetricsToFile(String fileName, SystemMetrics systemMetrics) throws IOException {
+  public void writeMetricsToFile(String fileName, SystemMetrics systemMetrics) throws IOException {
     //        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
     //
     //        jsonObjectBuilder.add("EntityDependencyMetrics",
@@ -108,10 +107,8 @@ public class MetricsManager {
   public SystemMetrics generateSystemMetrics() throws IOException {
     SystemMetrics systemMetrics = new SystemMetrics();
 
-    //        systemMetrics.setDependencyMetrics(generateDependencyMetrics(systemChange));
+//    systemMetrics.setDependencyMetrics(generateDependencyMetrics(systemChange));
     systemMetrics.setClassMetrics(generateAllClassMetrics());
-
-    writeMetricsToFile(BASE_PATH + "Metrics.json", systemMetrics);
 
     return systemMetrics;
   }
@@ -134,7 +131,6 @@ public class MetricsManager {
     classMetrics.setClassRole(classRole);
 
     for (Delta delta : changeList) {
-
       switch (delta.getChangeType()) {
         case ADD:
           classMetrics.incrementAddedClassCount();

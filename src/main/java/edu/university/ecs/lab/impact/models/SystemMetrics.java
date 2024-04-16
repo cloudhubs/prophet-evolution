@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -23,5 +24,20 @@ public class SystemMetrics {
   private DependencyMetrics dependencyMetrics;
 
   // private double systemCoupling;
+
+  /**
+   * Should include all simple (not map, list, large object, etc.) metrics to render at the beginning of the class metrics report
+   * @return a map of the simple metrics
+   */
+  public Map<String, Object> getOverallMetricsAsMap() {
+    return Map.of(
+        "Broken API Dependencies", brokenApiDependencies,
+        "New API Dependencies", newApiDependencies,
+        "Affected Entity Dependencies", affectedEntityDependencies,
+        "New Entity Dependencies", newEntityDependencies,
+        "New Systems", newSystems,
+        "Modified Classes", modifiedClasses
+    );
+  }
 
 }

@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,9 +20,9 @@ public class ClassMetrics {
 
   private int modifiedClassCount;
 
-  private int endpointCount;
-
-  private int restCallCount;
+//  private int endpointCount;
+//
+//  private int restCallCount;
 
   public void incrementAddedClassCount() {
     addedClassCount++;
@@ -32,5 +34,13 @@ public class ClassMetrics {
 
   public void incrementModifiedClassCount() {
     modifiedClassCount++;
+  }
+
+  public Map<String, Object> getMetricsAsMap() {
+    return Map.of(
+        "Added Classes", addedClassCount,
+        "Removed Classes", removedClassCount,
+        "Modified Classes", modifiedClassCount
+    );
   }
 }
