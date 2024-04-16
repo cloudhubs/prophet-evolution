@@ -5,17 +5,15 @@ import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
 import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
-import edu.university.ecs.lab.impact.models.ClassMetrics;
 import edu.university.ecs.lab.impact.models.SystemMetrics;
 import edu.university.ecs.lab.impact.models.change.Metric;
-
 
 import java.io.IOException;
 import java.util.*;
 
 /**
- * Service to generate metrics from the IR and delta files
- * File writing logic should be placed in {@link MetricFileWriterService} to separate concerns
+ * Service to generate metrics from the IR and delta files File writing logic should be placed in
+ * {@link MetricFileWriterService} to separate concerns
  */
 public class MetricsService {
 
@@ -56,20 +54,20 @@ public class MetricsService {
 
   /**
    * Generate overall metrics from the IR/delta files
+   *
    * @return system metrics
    */
   public SystemMetrics generateSystemMetrics() {
     SystemMetrics systemMetrics = new SystemMetrics();
 
     systemMetrics.setClassMetrics(classMetricsService.generateAllClassMetrics(systemChange));
-    systemMetrics.setDependencyMetrics(dependencyMetricsService.generateAllDependencyMetrics(systemChange));
+    systemMetrics.setDependencyMetrics(
+        dependencyMetricsService.generateAllDependencyMetrics(systemChange));
 
     // TODO Handle the other attributes of system metrics
 
     return systemMetrics;
   }
-
-
 
   public List<Metric> getPlaceholders() {
     List<Metric> metricList = new ArrayList<>();
