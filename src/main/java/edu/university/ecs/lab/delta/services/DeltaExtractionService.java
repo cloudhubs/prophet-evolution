@@ -155,7 +155,7 @@ public class DeltaExtractionService {
     switch (entry.getChangeType()) {
       case MODIFY:
         return DeltaComparisonUtils.extractDeltaChanges(
-            new File("./repos/train-ticket-microservices-test" + localPath.substring(1)),
+            new File("./repos/train-ticket-microservices" + localPath.substring(1)),
             classRole);
       case COPY:
       case DELETE:
@@ -163,7 +163,7 @@ public class DeltaExtractionService {
       case RENAME:
       case ADD:
         return DeltaComparisonUtils.extractDeltaChanges(
-            new File("./repos/train-ticket-microservices-test" + localPath.substring(1)),
+            new File("./repos/train-ticket-microservices" + localPath.substring(1)),
             classRole);
       default:
         break;
@@ -199,7 +199,7 @@ public class DeltaExtractionService {
   private static void advanceLocalRepo() throws IOException, InterruptedException {
     ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", "origin/main");
     processBuilder.directory(
-        new File(Path.of("repos/train-ticket-microservices-test/").toAbsolutePath().toString()));
+        new File(Path.of("repos/train-ticket-microservices/").toAbsolutePath().toString()));
     processBuilder.redirectErrorStream(true);
     Process process = processBuilder.start();
     int exitCode = process.waitFor();
