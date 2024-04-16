@@ -35,10 +35,11 @@ public class ReportService {
 
   /** The path to the original system IR */
   private final String intermediatePath;
+
   /** The path to the system delta */
   private final String deltaPath;
-  private final MetricsService metricsService;
 
+  private final MetricsService metricsService;
 
   /**
    * Constructor for ReportService
