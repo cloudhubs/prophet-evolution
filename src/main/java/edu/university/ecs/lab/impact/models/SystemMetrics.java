@@ -25,7 +25,9 @@ public class SystemMetrics {
   // private double systemCoupling;
 
   /**
-   * Should include all simple (not map, list, large object, etc.) metrics to render at the beginning of the class metrics report
+   * Should include all simple (not map, list, large object, etc.) metrics to render at the
+   * beginning of the class metrics report
+   *
    * @return a map of the simple metrics
    */
   public Map<String, Object> getOverallMetricsAsMap() {
@@ -35,8 +37,6 @@ public class SystemMetrics {
         "Affected Entity Dependencies", affectedEntityDependencies,
         "New Entity Dependencies", newEntityDependencies,
         "New Systems", newSystems,
-        "Modified Classes", modifiedClasses
-    );
+        "Modified Classes", modifiedClasses);
   }
-
 }

@@ -33,10 +33,9 @@ public class ReportService {
     configureFreemarker();
   }
 
-
   /** The path to the original system IR */
   private final String intermediatePath;
-    /** The path to the system delta */
+  /** The path to the system delta */
   private final String deltaPath;
   private final MetricsService metricsService;
 
@@ -48,7 +47,8 @@ public class ReportService {
    * @param deltaPath path to the system delta
    * @throws NullPointerException if either path is null
    */
-  ReportService(String intermediatePath, String deltaPath) throws NullPointerException, IOException {
+  ReportService(String intermediatePath, String deltaPath)
+      throws NullPointerException, IOException {
     this.intermediatePath = Objects.requireNonNull(intermediatePath);
     this.deltaPath = Objects.requireNonNull(deltaPath);
     this.metricsService = new MetricsService(intermediatePath, deltaPath);

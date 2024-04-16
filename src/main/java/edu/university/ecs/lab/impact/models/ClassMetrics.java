@@ -36,7 +36,6 @@ public class ClassMetrics {
     return Map.of(
         "Added Classes", addedClassCount,
         "Removed Classes", removedClassCount,
-        "Modified Classes", modifiedClassCount
-    );
+        "Modified Classes", modifiedClassCount);
   }
 }
