@@ -60,10 +60,10 @@ public class DeltaExtractionService {
    *     #fetchRemoteDifferences(Repository, String)}
    * @throws IOException if an I/O error occurs
    */
-  public void processDifferences(String msPath, Repository repo, List<DiffEntry> diffEntries)
+  public void processDifferences(String msPath, Repository repo, List<DiffEntry> diffEntries, String path)
       throws IOException, InterruptedException {
 
-    advanceLocalRepo();
+    advanceLocalRepo(path);
 
     JsonObjectBuilder finalOutputBuilder = Json.createObjectBuilder();
 
@@ -99,28 +99,28 @@ public class DeltaExtractionService {
         controllers.add(
             constructObjectFromDelta(
                 ClassRole.CONTROLLER,
-                getDeltaChanges(entry, file, ClassRole.CONTROLLER, localPath),
+                getDeltaChanges(entry, file, ClassRole.CONTROLLER, localPath, path),
                 entry,
                 localPath));
       } else if (file.getName().contains("Service")) {
         services.add(
             constructObjectFromDelta(
                 ClassRole.SERVICE,
-                getDeltaChanges(entry, file, ClassRole.SERVICE, localPath),
+                getDeltaChanges(entry, file, ClassRole.SERVICE, localPath, path),
                 entry,
                 localPath));
       } else if (file.getName().toLowerCase().contains("dto")) {
         dtos.add(
             constructObjectFromDelta(
                 ClassRole.DTO,
-                getDeltaChanges(entry, file, ClassRole.DTO, localPath),
+                getDeltaChanges(entry, file, ClassRole.DTO, localPath, path),
                 entry,
                 localPath));
       } else if (file.getName().contains("Repository")) {
         repositories.add(
             constructObjectFromDelta(
                 ClassRole.REPOSITORY,
-                getDeltaChanges(entry, file, ClassRole.REPOSITORY, localPath),
+                getDeltaChanges(entry, file, ClassRole.REPOSITORY, localPath, path),
                 entry,
                 localPath));
       } else if (file.getParent().toLowerCase().contains("entity")
@@ -128,7 +128,7 @@ public class DeltaExtractionService {
         entities.add(
             constructObjectFromDelta(
                 ClassRole.ENTITY,
-                getDeltaChanges(entry, file, ClassRole.ENTITY, localPath),
+                getDeltaChanges(entry, file, ClassRole.ENTITY, localPath, path),
                 entry,
                 localPath));
       }
@@ -151,11 +151,11 @@ public class DeltaExtractionService {
   }
 
   private static JsonObject getDeltaChanges(
-      DiffEntry entry, File file, ClassRole classRole, String localPath) {
+      DiffEntry entry, File file, ClassRole classRole, String localPath, String rootPath) {
     switch (entry.getChangeType()) {
       case MODIFY:
         return DeltaComparisonUtils.extractDeltaChanges(
-            new File("./repos/train-ticket-microservices" + localPath.substring(1)),
+            new File(rootPath + localPath.substring(1)),
             classRole);
       case COPY:
       case DELETE:
@@ -163,7 +163,7 @@ public class DeltaExtractionService {
       case RENAME:
       case ADD:
         return DeltaComparisonUtils.extractDeltaChanges(
-            new File("./repos/train-ticket-microservices" + localPath.substring(1)),
+            new File(rootPath + localPath.substring(1)),
             classRole);
       default:
         break;
@@ -196,10 +196,10 @@ public class DeltaExtractionService {
     return jout.build();
   }
 
-  private static void advanceLocalRepo() throws IOException, InterruptedException {
+  private static void advanceLocalRepo(String path) throws IOException, InterruptedException {
     ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", "origin/main");
     processBuilder.directory(
-        new File(Path.of("repos/train-ticket-microservices/").toAbsolutePath().toString()));
+        new File(Path.of(path).toAbsolutePath().toString()));
     processBuilder.redirectErrorStream(true);
     Process process = processBuilder.start();
     int exitCode = process.waitFor();

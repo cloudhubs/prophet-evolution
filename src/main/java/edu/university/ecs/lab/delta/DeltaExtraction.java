@@ -31,7 +31,7 @@ public class DeltaExtraction {
       List<DiffEntry> differences = deltaService.fetchRemoteDifferences(localRepo, branch);
 
       // process/write differences to delta output
-      deltaService.processDifferences(path, localRepo, differences);
+      deltaService.processDifferences(path, localRepo, differences, path);
 
       // close repository after use
       localRepo.close();
