@@ -33,12 +33,11 @@ public class ReportService {
     configureFreemarker();
   }
 
-  /** Destination branch (branch where we are merging INTO, usually main/master)*/
+  /** Destination branch (branch where we are merging INTO, usually main/master) */
   private final String baseBranch;
 
   /** Source branch (branch where pull request is being made FROM)_ */
   private final String compareBranch;
-
 
   /** The path to the original system IR */
   private final String intermediatePath;
