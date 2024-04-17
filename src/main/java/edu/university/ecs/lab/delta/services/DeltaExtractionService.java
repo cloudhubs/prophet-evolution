@@ -60,7 +60,8 @@ public class DeltaExtractionService {
    *     #fetchRemoteDifferences(Repository, String)}
    * @throws IOException if an I/O error occurs
    */
-  public void processDifferences(String msPath, Repository repo, List<DiffEntry> diffEntries, String path)
+  public void processDifferences(
+      String msPath, Repository repo, List<DiffEntry> diffEntries, String path)
       throws IOException, InterruptedException {
 
     advanceLocalRepo(path);
@@ -196,8 +197,7 @@ public class DeltaExtractionService {
 
   private static void advanceLocalRepo(String path) throws IOException, InterruptedException {
     ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", "origin/main");
-    processBuilder.directory(
-        new File(Path.of(path).toAbsolutePath().toString()));
+    processBuilder.directory(new File(Path.of(path).toAbsolutePath().toString()));
     processBuilder.redirectErrorStream(true);
     Process process = processBuilder.start();
     int exitCode = process.waitFor();
