@@ -155,16 +155,14 @@ public class DeltaExtractionService {
     switch (entry.getChangeType()) {
       case MODIFY:
         return DeltaComparisonUtils.extractDeltaChanges(
-            new File(rootPath + localPath.substring(1)),
-            classRole);
+            new File(rootPath + localPath.substring(1)), classRole);
       case COPY:
       case DELETE:
         break;
       case RENAME:
       case ADD:
         return DeltaComparisonUtils.extractDeltaChanges(
-            new File(rootPath + localPath.substring(1)),
-            classRole);
+            new File(rootPath + localPath.substring(1)), classRole);
       default:
         break;
     }
