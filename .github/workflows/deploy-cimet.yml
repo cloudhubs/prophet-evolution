@@ -1,9 +1,5 @@
 name: CIMET (Change Impact Microservice Evolution Tool)
 
-# Use for manual running
-# on: workflow_dispatch
-
-# Use this for pull request
 on:
   pull_request:
     types:
