@@ -61,8 +61,8 @@ public class MetricsService {
     SystemMetrics systemMetrics = new SystemMetrics();
 
     systemMetrics.setClassMetrics(classMetricsService.generateAllClassMetrics(systemChange));
-//    systemMetrics.setDependencyMetrics(
-//        dependencyMetricsService.generateAllDependencyMetrics(systemChange));
+    //    systemMetrics.setDependencyMetrics(
+    //        dependencyMetricsService.generateAllDependencyMetrics(systemChange));
 
     // TODO Handle the other attributes of system metrics
 
