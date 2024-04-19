@@ -15,6 +15,7 @@ public class DeltaExtraction {
    */
   public static void main(String[] args) throws Exception {
     DeltaExtractionService deltaService = new DeltaExtractionService();
+    args = new String[]{"main", "./repos/train-ticket-microservices-test"};
     if (args.length < 2) {
       System.err.println("Required arguments <branch> <list of paths...>");
     }

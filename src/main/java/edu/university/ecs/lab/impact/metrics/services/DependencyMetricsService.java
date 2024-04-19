@@ -11,6 +11,7 @@ import edu.university.ecs.lab.impact.models.change.EndpointChange;
 import edu.university.ecs.lab.impact.models.change.Link;
 import edu.university.ecs.lab.impact.models.dependency.ApiDependency;
 import edu.university.ecs.lab.impact.models.dependency.EntityDependency;
+import edu.university.ecs.lab.impact.models.enums.RestCallImpact;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +22,11 @@ import static edu.university.ecs.lab.common.utils.FlowUtils.buildFlows;
 
 public class DependencyMetricsService {
   Map<String, Microservice> microserviceMap;
+  SystemChange systemChange;
 
-  public DependencyMetricsService(Map<String, Microservice> microserviceMap) {
+  public DependencyMetricsService(Map<String, Microservice> microserviceMap, SystemChange systemChange) {
     this.microserviceMap = microserviceMap;
+    this.systemChange = systemChange;
   }
 
   public DependencyMetrics generateAllDependencyMetrics(SystemChange systemChange) {
@@ -112,7 +115,7 @@ public class DependencyMetricsService {
 
     switch (delta.getChangeType()) {
       case ADD:
-        callChanges.addAll(compareRestCalls(null, delta.getSChange(), ChangeType.ADD));
+        callChanges.addAll(compareRestCalls(null, delta.getSChange()));
 
         break;
       case MODIFY:
@@ -121,7 +124,7 @@ public class DependencyMetricsService {
                 .filter(s -> s.getClassPath().equals(delta.getLocalPath()))
                 .findFirst()
                 .orElse(null);
-        callChanges.addAll(compareRestCalls(oldService, delta.getSChange(), ChangeType.MODIFY));
+        callChanges.addAll(compareRestCalls(oldService, delta.getSChange()));
 
         break;
       case DELETE:
@@ -130,10 +133,13 @@ public class DependencyMetricsService {
                 .filter(s -> s.getClassPath().equals(delta.getLocalPath()))
                 .findFirst()
                 .orElse(null);
-        callChanges.addAll(compareRestCalls(oldService, null, ChangeType.DELETE));
+        callChanges.addAll(compareRestCalls(oldService, null));
 
         break;
     }
+
+    updateCallChangeImpact(callChanges);
+
 
     return callChanges;
   }
@@ -147,13 +153,13 @@ public class DependencyMetricsService {
    * @return list of changes to rest calls
    */
   private List<CallChange> compareRestCalls(
-      JService oldService, JService newService, ChangeType changeType) {
+      JService oldService, JService newService) {
     List<CallChange> callChanges = new ArrayList<>();
 
     // If it is an added class
     if (oldService == null) {
       for (RestCall newCall : newService.getRestCalls()) {
-        callChanges.add(new CallChange(null, updateRestCallDest(newCall), changeType));
+        callChanges.add(new CallChange(null, updateRestCallDest(newCall), ChangeType.ADD));
       }
 
       return callChanges;
@@ -162,7 +168,7 @@ public class DependencyMetricsService {
     // If it is a deleted class
     if (newService == null) {
       for (RestCall oldCall : oldService.getRestCalls()) {
-        callChanges.add(new CallChange(oldCall, null, changeType));
+        callChanges.add(new CallChange(oldCall, null, ChangeType.DELETE));
       }
 
       return callChanges;
@@ -174,14 +180,14 @@ public class DependencyMetricsService {
     for (RestCall oldCall : oldRestCalls) {
       if (!newRestCalls.remove(oldCall)) {
         // If no call removed, it isn't present (removed)
-        callChanges.add(new CallChange(oldCall, null, changeType));
+        callChanges.add(new CallChange(oldCall, null, ChangeType.DELETE));
       }
     }
 
     for (RestCall newCall : newRestCalls) {
       if (!oldRestCalls.remove(newCall)) {
         // If no call was removed, it isn't present (added)
-        callChanges.add(new CallChange(null, updateRestCallDest(newCall), changeType));
+        callChanges.add(new CallChange(null, updateRestCallDest(newCall), ChangeType.ADD));
       }
     }
 
@@ -200,6 +206,104 @@ public class DependencyMetricsService {
     }
 
     return restCall;
+  }
+
+  private void updateCallChangeImpact(List<CallChange> callChangeList) {
+    // Check for CALL_TO_DEPRECATED_ENDPOINT
+    for(CallChange callChange : callChangeList) {
+      if(checkCallToDeprecatedEndpoint(callChange)) {
+        break;
+      } else if(checkUnusedEndpoint(callChange)) {
+        break;
+      }
+
+    }
+  }
+
+  private boolean checkUnusedEndpoint(CallChange callChange) {
+    // If the change to our RestCall is a delete or add
+    if(callChange.getChangeType() == ChangeType.DELETE) {
+        String targetClassPath = callChange.getOldCall().getDestFile();
+
+        // Look in delta changes for the targetFile if it exists
+        Delta deltaTarget = systemChange.getControllers().stream().filter(c -> c.getLocalPath().equals(targetClassPath)).findFirst().orElse(null);
+
+        // Check recent delta changes
+        if(Objects.nonNull(deltaTarget) && deltaTarget.getChangeType() == ChangeType.ADD) {
+          for (Delta delta : systemChange.getControllers()) {
+            for (RestCall restCall : delta.getSChange().getRestCalls()) {
+              // If a call is made in some other delta change
+              if (restCall.getApi().equals(callChange.getOldCall().getApi())) {
+                return false;
+              }
+            }
+        }
+      }
+
+    } else {
+      // Else we are done with this check because it was an added call
+      return false;
+    }
+
+    // Check microservice system
+    for (Microservice microservice : microserviceMap.values()) {
+      for (JService service : microservice.getServices()) {
+        for (RestCall restCall : service.getRestCalls()) {
+          if (restCall.getApi().equals(callChange.getOldCall().getApi()) && restCall != callChange.getOldCall()) {
+            return false;
+          }
+        }
+      }
+    }
+
+    callChange.setImpact(RestCallImpact.UNUSED_ENDPOINT);
+    return true;
+  }
+
+  private boolean checkCallToDeprecatedEndpoint(CallChange callChange) {
+    // If the change to our RestCall is a add or modify
+    if(callChange.getChangeType() == ChangeType.ADD) {
+      String targetClassPath = callChange.getNewCall().getDestFile();
+
+      // Look in delta changes for the targetFile if it exists
+      Delta deltaTarget = systemChange.getControllers().stream().filter(c -> c.getLocalPath().equals(targetClassPath)).findFirst().orElse(null);
+
+      if (Objects.nonNull(deltaTarget)) {
+        if ((deltaTarget.getChangeType() == ChangeType.ADD || deltaTarget.getChangeType() == ChangeType.MODIFY)) {
+          for (Endpoint endpoint : deltaTarget.getCChange().getEndpoints()) {
+            if (endpoint.getUrl().equals(callChange.getNewCall().getApi())) {
+              return false;
+            }
+          }
+
+          callChange.setImpact(RestCallImpact.CALL_TO_DEPRECATED_ENDPOINT);
+          return true;
+        } else {
+          callChange.setImpact(RestCallImpact.CALL_TO_DEPRECATED_ENDPOINT);
+          return true;
+        }
+      } else {
+
+        // Check Microservice system
+        for (Microservice microservice : microserviceMap.values()) {
+          for (JController controller : microservice.getControllers()) {
+            for (Endpoint endpoint : controller.getEndpoints()) {
+              if (endpoint.getUrl().equals(callChange.getNewCall().getApi())) {
+                return false;
+              }
+            }
+          }
+        }
+        callChange.setImpact(RestCallImpact.CALL_TO_DEPRECATED_ENDPOINT);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  private boolean checkServiceForCallsToApi(JService jService, String url) {
+    return jService.getRestCalls().stream().anyMatch(rc -> rc.getApi().equals(url) && !rc.getDestFile().isEmpty());
   }
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

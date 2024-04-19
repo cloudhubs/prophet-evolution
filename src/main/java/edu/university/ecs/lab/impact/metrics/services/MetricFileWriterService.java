@@ -45,20 +45,8 @@ public class MetricFileWriterService {
 
       jsonObjectBuilder.add("oldRestCall", JsonConvertUtils.buildRestCall(callChange.getOldCall()));
       jsonObjectBuilder.add("newRestCall", JsonConvertUtils.buildRestCall(callChange.getNewCall()));
-      jsonObjectBuilder.add(
-          "oldLink",
-          Objects.isNull(callChange.getOldLink())
-              ? ""
-              : callChange.getOldLink().getMsSource()
-                  + " -> "
-                  + callChange.getOldLink().getMsDestination());
-      jsonObjectBuilder.add(
-          "newLink",
-          Objects.isNull(callChange.getNewLink())
-              ? ""
-              : callChange.getNewLink().getMsSource()
-                  + " -> "
-                  + callChange.getNewLink().getMsDestination());
+      jsonObjectBuilder.add("oldLink", convertLinkToJsonObject(callChange.getOldLink()));
+      jsonObjectBuilder.add("newLink", convertLinkToJsonObject(callChange.getNewLink()));
       jsonObjectBuilder.add("changeType", callChange.getChangeType().name());
       jsonObjectBuilder.add("impact", callChange.getImpact().name());
 
@@ -86,6 +74,18 @@ public class MetricFileWriterService {
       arrayBuilder.add(jsonObjectBuilder.build());
     }
     return arrayBuilder.build();
+  }
+
+  private static JsonObject convertLinkToJsonObject(Link link) {
+    JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+    if(Objects.isNull(link)) {
+      return JsonValue.EMPTY_JSON_OBJECT;
+    }
+
+    jsonObjectBuilder.add("source", Objects.isNull(link.getMsSource()) ? "" : link.getMsSource());
+    jsonObjectBuilder.add("dest", Objects.isNull(link.getMsDestination()) ? "" : link.getMsDestination());
+
+    return jsonObjectBuilder.build();
   }
 
   private static JsonArray convertLinkListToJsonArray(List<Link> linkList) {

@@ -1,11 +1,11 @@
 {
   "systemName": "Train-ticket",
   "clonePath": "./repos",
-  "outputPath": "out",
+  "outputPath": "./out",
   "repositories": [
     {
-      "repoUrl": "https://github.com/cloudhubs/train-ticket-microservices.git",
-      "baseCommit": "f34c476",
+      "repoUrl": "https://github.com/g-goulis/train-ticket-microservices-test.git",
+      "baseCommit": "dde04d9f69a34531c16ea7f6cca05d6bf5277f19",
       "paths": [
         "ts-admin-service",
         "ts-assurance-service",

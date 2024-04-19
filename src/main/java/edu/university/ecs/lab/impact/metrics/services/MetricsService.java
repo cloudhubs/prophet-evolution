@@ -38,7 +38,7 @@ public class MetricsService {
   public MetricsService(String oldIrPath, String deltaPath) throws IOException {
     microserviceMap = IRParserUtils.parseIRSystem(oldIrPath).getServiceMap();
     systemChange = IRParserUtils.parseSystemChange(deltaPath);
-    dependencyMetricsService = new DependencyMetricsService(microserviceMap);
+    dependencyMetricsService = new DependencyMetricsService(microserviceMap, systemChange);
     classMetricsService = new ClassMetricsService();
     fileWriterService = new MetricFileWriterService(this);
   }
