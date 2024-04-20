@@ -10,18 +10,19 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.lang.reflect.Array;
 import java.sql.SQLOutput;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class CimetRunner {
 
     /**
      * Main method for full report
      *
-     * @param args /path/to/config/file <base branch> <compare branch> <list of paths>
+     * @param args /path/to/config/file <base branch> <compare branch>
      */
     public static void main(String[] args) throws Exception {
 
-        if (args.length < 4) {
-            System.err.println("Required arguments /path/to/config/file <base branch> <compare branch> <list of paths>");
+        if (args.length < 3) {
+            System.err.println("Required arguments /path/to/config/file <base branch> <compare branch>");
             return;
         }
 
@@ -32,7 +33,7 @@ public class CimetRunner {
 
         // RUN DELTA
         System.out.println("Starting Delta Extraction...");
-        String[] deltaArgs = ArrayUtils.addAll(Arrays.copyOfRange(args, 2, args.length));
+        String[] deltaArgs = ArrayUtils.addAll(Arrays.copyOfRange(args, 2, 3), FullCimetUtils.microservicePaths.toArray(new String[0]));
         DeltaExtraction.main(deltaArgs);
 
         // RUN IR MERGE

@@ -3,6 +3,7 @@ package edu.university.ecs.lab.intermediate.create.services;
 import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
+import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -28,6 +29,8 @@ public class GitCloneService {
   public void cloneRemote(InputRepository inputRepository) throws Exception {
 
     String relativeClonePath = ConfigUtil.getRepositoryClonePath(inputConfig, inputRepository);
+    FullCimetUtils.microservicePaths.add(relativeClonePath);
+
     ProcessBuilder processBuilder =
         new ProcessBuilder("git", "clone", inputRepository.getRepoUrl(), relativeClonePath);
     processBuilder.redirectErrorStream(true);
@@ -64,6 +67,7 @@ public class GitCloneService {
       throw new Exception(
           "Git clone of " + inputRepository.getRepoUrl() + " failed with status code: " + exitCode);
     }
+
 
     // output = output.replaceAll("\\\\", "/");
 
