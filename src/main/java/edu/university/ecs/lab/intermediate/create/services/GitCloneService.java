@@ -68,7 +68,6 @@ public class GitCloneService {
           "Git clone of " + inputRepository.getRepoUrl() + " failed with status code: " + exitCode);
     }
 
-
     // output = output.replaceAll("\\\\", "/");
 
     // add microservices to path

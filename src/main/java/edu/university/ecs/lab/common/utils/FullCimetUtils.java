@@ -10,8 +10,7 @@ import java.util.Set;
 @Setter
 public class FullCimetUtils {
 
-    public static String pathToIR;
-    public static String pathToDelta;
-    public static Set<String> microservicePaths = new HashSet<>();
-
+  public static String pathToIR;
+  public static String pathToDelta;
+  public static Set<String> microservicePaths = new HashSet<>();
 }
