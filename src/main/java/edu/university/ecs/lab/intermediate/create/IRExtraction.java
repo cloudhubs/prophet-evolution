@@ -4,6 +4,7 @@ import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.*;
+import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.common.utils.JsonConvertUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.intermediate.create.services.GitCloneService;
@@ -88,6 +89,8 @@ public class IRExtraction {
             + "rest-extraction-output-["
             + (new Date()).getTime()
             + "].json";
+
+    FullCimetUtils.pathToIR = outputName;
 
     MsJsonWriter.writeJsonToFile(jout, outputName);
     System.out.println("Successfully wrote rest extraction to: \"" + outputName + "\"");

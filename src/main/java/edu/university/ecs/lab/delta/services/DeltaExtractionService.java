@@ -1,6 +1,7 @@
 package edu.university.ecs.lab.delta.services;
 
 import edu.university.ecs.lab.common.models.enums.ClassRole;
+import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.delta.utils.DeltaComparisonUtils;
 import edu.university.ecs.lab.delta.utils.GitFetchUtils;
@@ -146,6 +147,7 @@ public class DeltaExtractionService {
     finalOutputBuilder.add("entities", convertListToJsonArray(entities));
 
     String outputName = "./out/delta-changes-[" + (new Date()).getTime() + "].json";
+    FullCimetUtils.pathToDelta = outputName;
     MsJsonWriter.writeJsonToFile(finalOutputBuilder.build(), outputName);
 
     System.out.println("Delta extracted: " + outputName);

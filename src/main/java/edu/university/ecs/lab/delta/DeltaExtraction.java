@@ -1,6 +1,7 @@
 package edu.university.ecs.lab.delta;
 
 import edu.university.ecs.lab.delta.services.DeltaExtractionService;
+import edu.university.ecs.lab.intermediate.create.IRExtraction;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Repository;
 
