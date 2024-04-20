@@ -69,7 +69,7 @@ public class MetricFileWriterService {
       jsonObjectBuilder.add(
           "newLinks", convertLinkListToJsonArray(endpointChange.getNewLinkList()));
       jsonObjectBuilder.add("changeType", endpointChange.getChangeType().name());
-      jsonObjectBuilder.add("impact", "[Not Yet Implemented]");
+      jsonObjectBuilder.add("impact", endpointChange.getImpact().name());
 
       arrayBuilder.add(jsonObjectBuilder.build());
     }

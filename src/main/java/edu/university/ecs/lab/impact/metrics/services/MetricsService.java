@@ -6,6 +6,7 @@ import edu.university.ecs.lab.common.utils.IRParserUtils;
 import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.impact.models.SystemMetrics;
+import edu.university.ecs.lab.impact.models.change.EndpointChange;
 import edu.university.ecs.lab.impact.models.change.Metric;
 
 import java.io.IOException;
@@ -23,6 +24,8 @@ public class MetricsService {
   /** Object representing changes to the system as a whole/overall changes */
   private SystemChange systemChange;
 
+  private final CallChangeService callChangeService;
+  private final EndpointChangeService endpointChangeService;
   private final DependencyMetricsService dependencyMetricsService;
   private final ClassMetricsService classMetricsService;
 
@@ -39,6 +42,8 @@ public class MetricsService {
     microserviceMap = IRParserUtils.parseIRSystem(oldIrPath).getServiceMap();
     systemChange = IRParserUtils.parseSystemChange(deltaPath);
     dependencyMetricsService = new DependencyMetricsService(microserviceMap, systemChange);
+    callChangeService = new CallChangeService(microserviceMap, systemChange);
+    endpointChangeService = new EndpointChangeService(microserviceMap, systemChange);
     classMetricsService = new ClassMetricsService();
     fileWriterService = new MetricFileWriterService(this);
   }
@@ -78,13 +83,12 @@ public class MetricsService {
       for (Delta delta : systemChange.getServices()) {
         metric = new Metric();
         metric.setFilePath(delta.getLocalPath());
-        metric.setCallChangeList(dependencyMetricsService.getRestCallChangesForDelta(delta));
+        metric.setCallChangeList(callChangeService.getRestCallChangesForDelta(delta));
         metric.setClassRole(ClassRole.SERVICE);
 
         metric.setChangeType(delta.getChangeType());
         metric.setMicroserviceName(delta.getMsName());
         metricList.add(metric);
-        // TODO RestCall Changes
 
       }
     }
@@ -95,13 +99,12 @@ public class MetricsService {
       for (Delta delta : systemChange.getControllers()) {
         metric = new Metric();
         metric.setFilePath(delta.getLocalPath());
-        metric.setEndpointChangeList(dependencyMetricsService.getEndpointChangesForDelta(delta));
+        metric.setEndpointChangeList(endpointChangeService.getEndpointChangesForDelta(delta));
         metric.setClassRole(ClassRole.CONTROLLER);
 
         metric.setChangeType(delta.getChangeType());
         metric.setMicroserviceName(delta.getMsName());
         metricList.add(metric);
-        // TODO RestCall Changes
       }
     }
 
