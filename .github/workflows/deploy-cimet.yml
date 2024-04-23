@@ -33,11 +33,11 @@ jobs:
       - name: Install Maven
         run: sudo apt-get install -y maven
 
-      - name: Clone Cimet Repository
+      - name: Clone cimet Repository
         run: git clone https://github.com/cloudhubs/cimet tool
         working-directory: ./  # Clone into the root directory
 
-      - name: Build Cimet with Maven
+      - name: Build cimet with Maven
         run: mvn clean install -DskipTests
         working-directory: ./tool
 
@@ -47,8 +47,8 @@ jobs:
         run: echo "$CIMET_CONFIG" >> "./tool/cimet-config.json"
 
       - name: Run Cimet
-        run: mvn exec:java -Dexec.mainClass="edu.university.ecs.lab.CimetRunner" -Dexec.args="cimet-config.json $BASE_BRANCH $SOURCE_BRANCH"
-        working-directory: ./tool        
+        run: mvn exec:java -Dexec.mainClass="edu.university.ecs.lab.CimetRunner" -Dexec.args="cimet-config.json $BASE_BRANCH ${{ github.event.pull_request.base.sha }} $SOURCE_BRANCH ${{ github.event.pull_request.head.sha }}"
+        working-directory: ./tool
 
       - name: Save out folder
         uses: actions/upload-artifact@v2
