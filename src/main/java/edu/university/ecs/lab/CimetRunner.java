@@ -17,7 +17,7 @@ public class CimetRunner {
     /**
      * Main method for full report
      *
-     * @param args /path/to/config/file <base branch> <compare branch>
+     * @param args /path/to/config/file <base branch> <base commit> <compare branch> <compare commit>
      */
     public static void main(String[] args) throws Exception {
 
