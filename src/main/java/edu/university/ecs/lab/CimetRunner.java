@@ -21,8 +21,8 @@ public class CimetRunner {
      */
     public static void main(String[] args) throws Exception {
 
-        if (args.length < 3) {
-            System.err.println("Required arguments /path/to/config/file <base branch> <compare branch>");
+        if (args.length != 5) {
+            System.err.println("Required arguments /path/to/config/file <base branch> <base commit> <compare branch> <compare commit>");
             return;
         }
 
@@ -33,7 +33,7 @@ public class CimetRunner {
 
         // RUN DELTA
         System.out.println("Starting Delta Extraction...");
-        String[] deltaArgs = ArrayUtils.addAll(Arrays.copyOfRange(args, 2, 3), FullCimetUtils.microservicePaths.toArray(new String[0]));
+        String[] deltaArgs = ArrayUtils.addAll(Arrays.copyOfRange(args, 3, 4), FullCimetUtils.microservicePaths.toArray(new String[0]));
         DeltaExtraction.main(deltaArgs);
 
         // RUN IR MERGE
@@ -43,7 +43,7 @@ public class CimetRunner {
 
         // RUN REPORT
         System.out.println("Starting Report Creation...");
-        String[] reportArgs = ArrayUtils.addAll(Arrays.copyOfRange(args, 1, 3), IRMergeArgs);
+        String[] reportArgs = ArrayUtils.addAll(Arrays.copyOfRange(args, 1, 5), IRMergeArgs);
         ReportRunner.main(reportArgs);
 
     }

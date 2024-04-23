@@ -36,8 +36,12 @@ public class ReportService {
   /** Destination branch (branch where we are merging INTO, usually main/master) */
   private final String baseBranch;
 
+  private final String baseCommit;
+
   /** Source branch (branch where pull request is being made FROM)_ */
   private final String compareBranch;
+
+  private final String compareCommit;
 
   /** The path to the original system IR */
   private final String intermediatePath;
@@ -56,13 +60,15 @@ public class ReportService {
    * @param deltaPath path to the system delta
    * @throws NullPointerException if either path is null
    */
-  ReportService(String baseBranch, String compareBranch, String intermediatePath, String deltaPath)
+  ReportService(String baseBranch, String baseCommit, String compareBranch, String compareCommit, String intermediatePath, String deltaPath)
       throws NullPointerException, IOException {
     this.intermediatePath = Objects.requireNonNull(intermediatePath);
     this.deltaPath = Objects.requireNonNull(deltaPath);
     this.metricsService = new MetricsService(intermediatePath, deltaPath);
     this.baseBranch = baseBranch;
     this.compareBranch = compareBranch;
+    this.baseCommit = baseCommit;
+    this.compareCommit = compareCommit;
   }
 
   /** Generate freemarker report, should be put into /out by default */
@@ -81,9 +87,9 @@ public class ReportService {
 
     // TODO make this dynamic from config file
     root.put("branch1", baseBranch);
-    root.put("commit1", "f34c476");
+    root.put("commit1", baseCommit);
     root.put("branch2", compareBranch);
-    root.put("commit2", "2d0ad0");
+    root.put("commit2", compareCommit);
 
     /* Metrics */
     SystemMetrics systemMetrics = metricsService.generateSystemMetrics();
