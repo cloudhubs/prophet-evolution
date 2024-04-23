@@ -60,7 +60,13 @@ public class ReportService {
    * @param deltaPath path to the system delta
    * @throws NullPointerException if either path is null
    */
-  ReportService(String baseBranch, String baseCommit, String compareBranch, String compareCommit, String intermediatePath, String deltaPath)
+  ReportService(
+      String baseBranch,
+      String baseCommit,
+      String compareBranch,
+      String compareCommit,
+      String intermediatePath,
+      String deltaPath)
       throws NullPointerException, IOException {
     this.intermediatePath = Objects.requireNonNull(intermediatePath);
     this.deltaPath = Objects.requireNonNull(deltaPath);
