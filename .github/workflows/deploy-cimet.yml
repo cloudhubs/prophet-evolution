@@ -5,7 +5,7 @@ on:
     types:
       - opened
     branches:
-      - 'master'
+      - 'master' # <-- Change Base Pull Request Branch Here
 
 jobs:
   build-and-extract:
@@ -20,24 +20,24 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Extract branch name
+      - name: Extract Source Branch Name
         shell: bash
         run: echo "SOURCE_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> "$GITHUB_ENV"
         id: extract_source_branch
 
-      - name: Store base branch name
+      - name: Extract Source Branch Name
         shell: bash
-        run: echo "BASE_BRANCH=master" >> "$GITHUB_ENV"
+        run: echo "BASE_BRANCH=${GITHUB_BASE_REF}" >> "$GITHUB_ENV"
         id: extract_base_branch
 
       - name: Install Maven
         run: sudo apt-get install -y maven
 
-      - name: Clone cimet Repository
+      - name: Clone Cimet Repository
         run: git clone https://github.com/cloudhubs/cimet tool
         working-directory: ./  # Clone into the root directory
 
-      - name: Build cimet with Maven
+      - name: Build Cimet with Maven
         run: mvn clean install -DskipTests
         working-directory: ./tool
 
@@ -46,29 +46,9 @@ jobs:
           CIMET_CONFIG: ${{ vars.CIMET_CONFIG }}
         run: echo "$CIMET_CONFIG" >> "./tool/cimet-config.json"
 
-      - name: Compile and Run RestExtraction.java
-        run: mvn exec:java -Dexec.mainClass="edu.university.ecs.lab.intermediate.create.IRExtraction" -Dexec.args="cimet-config.json"
-        working-directory: ./tool
-
-      - name: Get IR Path
-        run: echo "IR_OUTPUT_FILE=$(ls ./out/rest-extraction-output*.json)" >> "$GITHUB_ENV"
-        working-directory: ./tool
-        
-      - name: Compile and Run DeltaExtraction.java
-        run: mvn exec:java -Dexec.mainClass="edu.university.ecs.lab.delta.DeltaExtraction" -Dexec.args="$SOURCE_BRANCH ./repos/train-ticket"
-        working-directory: ./tool
-
-      - name: Get Delta Path
-        run: echo "DELTA_OUTPUT_FILE=$(ls ./out/delta-changes*.json)" >> "$GITHUB_ENV"
-        working-directory: ./tool
-
-      - name: Compile and Run DeltaMerge.java
-        run: mvn exec:java -Dexec.mainClass="edu.university.ecs.lab.intermediate.merge.IRMergeRunner" -Dexec.args="$IR_OUTPUT_FILE $DELTA_OUTPUT_FILE"
-        working-directory: ./tool
-
-      - name: Compile and Run ReportRunner.java
-        run: mvn exec:java -Dexec.mainClass="edu.university.ecs.lab.report.ReportRunner" -Dexec.args="$BASE_BRANCH $SOURCE_BRANCH $IR_OUTPUT_FILE $DELTA_OUTPUT_FILE"
-        working-directory: ./tool
+      - name: Run Cimet
+        run: mvn exec:java -Dexec.mainClass="edu.university.ecs.lab.CimetRunner" -Dexec.args="cimet-config.json $BASE_BRANCH $SOURCE_BRANCH"
+        working-directory: ./tool        
 
       - name: Save out folder
         uses: actions/upload-artifact@v2
