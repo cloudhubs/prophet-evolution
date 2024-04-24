@@ -13,18 +13,13 @@ import java.util.Map;
 @AllArgsConstructor
 public class SystemMetrics {
 
-  private int brokenApiDependencies;
-  private int newApiDependencies;
-  private int affectedEntityDependencies;
-  private int newEntityDependencies;
-  private int newSystems;
-  private int modifiedClasses;
+
+  // System Metrics
   private double scfScore;
   private double adcsScore;
 
   private List<ClassMetrics> classMetrics;
   private List<MicroserviceMetrics> microserviceMetrics;
-  private DependencyMetrics dependencyMetrics;
 
   // private double systemCoupling;
 
@@ -34,13 +29,13 @@ public class SystemMetrics {
    *
    * @return a map of the simple metrics
    */
-  public Map<String, Object> getOverallMetricsAsMap() {
-    return Map.of(
-        "Broken API Dependencies", brokenApiDependencies,
-        "New API Dependencies", newApiDependencies,
-        "Affected Entity Dependencies", affectedEntityDependencies,
-        "New Entity Dependencies", newEntityDependencies,
-        "New Systems", newSystems,
-        "Modified Classes", modifiedClasses);
-  }
+//  public Map<String, Object> getOverallMetricsAsMap() {
+//    return Map.of(
+//        "Broken API Dependencies", brokenApiDependencies,
+//        "New API Dependencies", newApiDependencies,
+//        "Affected Entity Dependencies", affectedEntityDependencies,
+//        "New Entity Dependencies", newEntityDependencies,
+//        "New Systems", newSystems,
+//        "Modified Classes", modifiedClasses);
+//  }
 }
