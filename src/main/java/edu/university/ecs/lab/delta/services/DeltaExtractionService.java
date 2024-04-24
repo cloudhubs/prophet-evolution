@@ -1,6 +1,7 @@
 package edu.university.ecs.lab.delta.services;
 
 import edu.university.ecs.lab.common.models.enums.ClassRole;
+import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.delta.utils.DeltaComparisonUtils;
 import edu.university.ecs.lab.delta.utils.GitFetchUtils;
@@ -60,10 +61,11 @@ public class DeltaExtractionService {
    *     #fetchRemoteDifferences(Repository, String)}
    * @throws IOException if an I/O error occurs
    */
-  public void processDifferences(String msPath, Repository repo, List<DiffEntry> diffEntries)
+  public void processDifferences(
+      String msPath, Repository repo, List<DiffEntry> diffEntries, String path)
       throws IOException, InterruptedException {
 
-    advanceLocalRepo();
+    advanceLocalRepo(path);
 
     JsonObjectBuilder finalOutputBuilder = Json.createObjectBuilder();
 
@@ -99,28 +101,28 @@ public class DeltaExtractionService {
         controllers.add(
             constructObjectFromDelta(
                 ClassRole.CONTROLLER,
-                getDeltaChanges(entry, file, ClassRole.CONTROLLER, localPath),
+                getDeltaChanges(entry, file, ClassRole.CONTROLLER, localPath, path),
                 entry,
                 localPath));
       } else if (file.getName().contains("Service")) {
         services.add(
             constructObjectFromDelta(
                 ClassRole.SERVICE,
-                getDeltaChanges(entry, file, ClassRole.SERVICE, localPath),
+                getDeltaChanges(entry, file, ClassRole.SERVICE, localPath, path),
                 entry,
                 localPath));
       } else if (file.getName().toLowerCase().contains("dto")) {
         dtos.add(
             constructObjectFromDelta(
                 ClassRole.DTO,
-                getDeltaChanges(entry, file, ClassRole.DTO, localPath),
+                getDeltaChanges(entry, file, ClassRole.DTO, localPath, path),
                 entry,
                 localPath));
       } else if (file.getName().contains("Repository")) {
         repositories.add(
             constructObjectFromDelta(
                 ClassRole.REPOSITORY,
-                getDeltaChanges(entry, file, ClassRole.REPOSITORY, localPath),
+                getDeltaChanges(entry, file, ClassRole.REPOSITORY, localPath, path),
                 entry,
                 localPath));
       } else if (file.getParent().toLowerCase().contains("entity")
@@ -128,7 +130,7 @@ public class DeltaExtractionService {
         entities.add(
             constructObjectFromDelta(
                 ClassRole.ENTITY,
-                getDeltaChanges(entry, file, ClassRole.ENTITY, localPath),
+                getDeltaChanges(entry, file, ClassRole.ENTITY, localPath, path),
                 entry,
                 localPath));
       }
@@ -145,24 +147,25 @@ public class DeltaExtractionService {
     finalOutputBuilder.add("entities", convertListToJsonArray(entities));
 
     String outputName = "./out/delta-changes-[" + (new Date()).getTime() + "].json";
+    FullCimetUtils.pathToDelta = outputName;
     MsJsonWriter.writeJsonToFile(finalOutputBuilder.build(), outputName);
 
     System.out.println("Delta extracted: " + outputName);
   }
 
   private static JsonObject getDeltaChanges(
-      DiffEntry entry, File file, ClassRole classRole, String localPath) {
+      DiffEntry entry, File file, ClassRole classRole, String localPath, String rootPath) {
     switch (entry.getChangeType()) {
       case MODIFY:
         return DeltaComparisonUtils.extractDeltaChanges(
-            new File("./repos/train-ticket-microservices-test" + localPath.substring(1)), classRole);
+            new File(rootPath + localPath.substring(1)), classRole);
       case COPY:
       case DELETE:
         break;
       case RENAME:
       case ADD:
         return DeltaComparisonUtils.extractDeltaChanges(
-            new File("./repos/train-ticket-microservices-test" + localPath.substring(1)), classRole);
+            new File(rootPath + localPath.substring(1)), classRole);
       default:
         break;
     }
@@ -194,10 +197,9 @@ public class DeltaExtractionService {
     return jout.build();
   }
 
-  private static void advanceLocalRepo() throws IOException, InterruptedException {
+  private static void advanceLocalRepo(String path) throws IOException, InterruptedException {
     ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", "origin/main");
-    processBuilder.directory(
-        new File(Path.of("repos/train-ticket-microservices-test/").toAbsolutePath().toString()));
+    processBuilder.directory(new File(Path.of(path).toAbsolutePath().toString()));
     processBuilder.redirectErrorStream(true);
     Process process = processBuilder.start();
     int exitCode = process.waitFor();
