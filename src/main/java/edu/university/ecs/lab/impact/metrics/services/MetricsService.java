@@ -22,11 +22,9 @@ public class MetricsService {
 
   /** Object representing changes to the system as a whole/overall changes */
   private final SystemChange systemChange;
-
-  private final CallChangeService callChangeService;
-  private final EndpointChangeService endpointChangeService;
   private final ClassMetricsService classMetricsService;
   private final MicroserviceMetricsService microserviceMetricsService;
+  private final SystemMetricsService systemMetricsService;
 
   /**
    * Constructor for MetricsService
@@ -38,10 +36,9 @@ public class MetricsService {
   public MetricsService(String oldIrPath, String deltaPath) throws IOException {
     microserviceMap = IRParserUtils.parseIRSystem(oldIrPath).getServiceMap();
     systemChange = IRParserUtils.parseSystemChange(deltaPath);
-    callChangeService = new CallChangeService(microserviceMap, systemChange);
-    endpointChangeService = new EndpointChangeService(microserviceMap, systemChange);
     classMetricsService = new ClassMetricsService(microserviceMap, systemChange);
     microserviceMetricsService = new MicroserviceMetricsService(microserviceMap, systemChange);
+    systemMetricsService = new SystemMetricsService(microserviceMap, systemChange);
   }
 
   /**
@@ -52,7 +49,14 @@ public class MetricsService {
   public SystemMetrics generateSystemMetrics() {
     SystemMetrics systemMetrics = new SystemMetrics();
 
+    // System metrics first
+    systemMetrics.setAdcsScore(systemMetricsService.calculateADCS());
+    systemMetrics.setScfScore(systemMetricsService.calculateSCF());
+
+    // Now class change metrics
     systemMetrics.setClassMetrics(classMetricsService.generateAllClassMetrics());
+
+    // Now Microservice specific metrics
     systemMetrics.setMicroserviceMetrics(microserviceMetricsService.getMicroserviceMetrics());
 
 
@@ -60,41 +64,41 @@ public class MetricsService {
     return systemMetrics;
   }
 
-  @Deprecated
-  private List<Metric> getMetrics() {
-    List<Metric> metricList = new ArrayList<>();
-    Metric metric;
-
-    // Handle all service changes
-    if (Objects.nonNull(systemChange.getServices()) && !systemChange.getServices().isEmpty()) {
-      for (Delta delta : systemChange.getServices()) {
-        metric = new Metric();
-        metric.setFilePath(delta.getLocalPath());
-        metric.setCallChangeList(callChangeService.getRestCallChangesForDelta(delta));
-        metric.setClassRole(ClassRole.SERVICE);
-
-        metric.setChangeType(delta.getChangeType());
-        metric.setMicroserviceName(delta.getMsName());
-        metricList.add(metric);
-
-      }
-    }
-
-    // Handle all controller changes
-    if (Objects.nonNull(systemChange.getControllers())
-        && !systemChange.getControllers().isEmpty()) {
-      for (Delta delta : systemChange.getControllers()) {
-        metric = new Metric();
-        metric.setFilePath(delta.getLocalPath());
-        metric.setEndpointChangeList(endpointChangeService.getEndpointChangesForDelta(delta));
-        metric.setClassRole(ClassRole.CONTROLLER);
-
-        metric.setChangeType(delta.getChangeType());
-        metric.setMicroserviceName(delta.getMsName());
-        metricList.add(metric);
-      }
-    }
-
-    return metricList;
-  }
+//  @Deprecated
+//  private List<Metric> getMetrics() {
+//    List<Metric> metricList = new ArrayList<>();
+//    Metric metric;
+//
+//    // Handle all service changes
+//    if (Objects.nonNull(systemChange.getServices()) && !systemChange.getServices().isEmpty()) {
+//      for (Delta delta : systemChange.getServices()) {
+//        metric = new Metric();
+//        metric.setFilePath(delta.getLocalPath());
+//        metric.setCallChangeList(callChangeService.getRestCallChangesForDelta(delta));
+//        metric.setClassRole(ClassRole.SERVICE);
+//
+//        metric.setChangeType(delta.getChangeType());
+//        metric.setMicroserviceName(delta.getMsName());
+//        metricList.add(metric);
+//
+//      }
+//    }
+//
+//    // Handle all controller changes
+//    if (Objects.nonNull(systemChange.getControllers())
+//        && !systemChange.getControllers().isEmpty()) {
+//      for (Delta delta : systemChange.getControllers()) {
+//        metric = new Metric();
+//        metric.setFilePath(delta.getLocalPath());
+//        metric.setEndpointChangeList(endpointChangeService.getEndpointChangesForDelta(delta));
+//        metric.setClassRole(ClassRole.CONTROLLER);
+//
+//        metric.setChangeType(delta.getChangeType());
+//        metric.setMicroserviceName(delta.getMsName());
+//        metricList.add(metric);
+//      }
+//    }
+//
+//    return metricList;
+//  }
 }

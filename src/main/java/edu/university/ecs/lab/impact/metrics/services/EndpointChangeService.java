@@ -31,6 +31,24 @@ public class EndpointChangeService {
      * @param delta delta object representing changes to a system
      * @return list of rest call changes from the given delta
      */
+    public List<EndpointChange> getAllEndpointChangesForService(Microservice microservice) {
+        List<EndpointChange> changes = new ArrayList<>();
+        for(Delta delta : systemChange.getServices()) {
+            if(delta.getMsName().equals(microservice.getId())) {
+                changes.addAll(getEndpointChangesForDelta(delta));
+            }
+        }
+
+
+        return changes;
+    }
+
+    /**
+     * Get a list of all changed rest calls for a single delta
+     *
+     * @param delta delta object representing changes to a system
+     * @return list of rest call changes from the given delta
+     */
     public List<EndpointChange> getEndpointChangesForDelta(Delta delta) {
         List<EndpointChange> endpointChanges = new ArrayList<>();
         JController oldController;

@@ -4,6 +4,7 @@ import edu.university.ecs.lab.common.models.*;
 import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
+import edu.university.ecs.lab.impact.models.DependencyMetrics;
 import edu.university.ecs.lab.impact.models.MicroserviceMetrics;
 import edu.university.ecs.lab.impact.models.change.Link;
 
@@ -12,15 +13,39 @@ import java.util.*;
 public class MicroserviceMetricsService {
     Map<String, Microservice> microserviceMap;
     SystemChange systemChange;
+    private final CallChangeService callChangeService;
+    private final EndpointChangeService endpointChangeService;
+
 
     public MicroserviceMetricsService(Map<String, Microservice> microserviceMap, SystemChange systemChange) {
         this.microserviceMap = microserviceMap;
         this.systemChange = systemChange;
+        this.callChangeService = new CallChangeService(microserviceMap, systemChange);
+        this.endpointChangeService = new EndpointChangeService(microserviceMap, systemChange);
+
     }
 
     public List<MicroserviceMetrics> getMicroserviceMetrics() {
         List<MicroserviceMetrics> microserviceMetricsList = new ArrayList<>();
+        MicroserviceMetrics microserviceMetrics;
+        DependencyMetrics dependencyMetrics;
 
+        for(Microservice microservice : microserviceMap.values()) {
+            microserviceMetrics = new MicroserviceMetrics();
+            dependencyMetrics = new DependencyMetrics();
+
+            microserviceMetrics.setName(microservice.getId());
+
+            // Dependency Metrics
+            dependencyMetrics.setCallChanges(callChangeService.getAllRestCallChangesForService(microservice));
+            dependencyMetrics.setEndpointChanges(endpointChangeService.getAllEndpointChangesForService(microservice));
+            microserviceMetrics.setDependencyMetrics(dependencyMetrics);
+
+            // Numeric Metrics
+            microserviceMetrics.setAdsScore(calculateADS(microservice));
+            microserviceMetrics.setSiucScore(calculateSIUCScore(microservice));
+            microserviceMetrics.setSidc2Score(calculateSIDC2Score(microservice));
+        }
 
 
         return microserviceMetricsList;

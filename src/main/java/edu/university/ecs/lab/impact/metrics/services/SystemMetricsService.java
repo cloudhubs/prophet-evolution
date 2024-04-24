@@ -25,7 +25,7 @@ public class SystemMetricsService {
         Average number of directly connected services (ADCS): the average of ADS metric
         of all services.
      */
-    private double calculateADCS() {
+    public double calculateADCS() {
         MicroserviceMetricsService microserviceMetricsService = new MicroserviceMetricsService(microserviceMap, systemChange);
         int totalADS = 0;
         for(Microservice microservice : microserviceMap.values()) {
@@ -45,7 +45,7 @@ public class SystemMetricsService {
         dependencies as a graph, SC is the sum of all edges and N2 − N represents the
         maximum oriented edges the graph can have.
      */
-    private double calculateSCF() {
+    public double calculateSCF() {
         Set<Link> links = new HashSet<Link>();
 
         for(Microservice microservice : microserviceMap.values()) {

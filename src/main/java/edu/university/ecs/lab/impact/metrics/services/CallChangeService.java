@@ -28,6 +28,24 @@ public class CallChangeService {
      * @param delta delta object representing changes to a system
      * @return list of rest call changes from the given delta
      */
+    public List<CallChange> getAllRestCallChangesForService(Microservice microservice) {
+        List<CallChange> changes = new ArrayList<>();
+        for(Delta delta : systemChange.getServices()) {
+            if(delta.getMsName().equals(microservice.getId())) {
+                changes.addAll(getRestCallChangesForDelta(delta));
+            }
+        }
+
+
+        return changes;
+    }
+
+    /**
+     * Get a list of all changed rest calls for a single delta
+     *
+     * @param delta delta object representing changes to a system
+     * @return list of rest call changes from the given delta
+     */
     public List<CallChange> getRestCallChangesForDelta(Delta delta) {
         List<CallChange> callChanges = new ArrayList<>();
         JService oldService;
