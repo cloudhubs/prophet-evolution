@@ -77,7 +77,7 @@ public class SystemMetricsService {
             }
         }
 
-        return links.size() / (microserviceMap.values().size() * microserviceMap.values().size()) - microserviceMap.values().size();
+        return (double) links.size() / (microserviceMap.values().size() * microserviceMap.values().size()) - microserviceMap.values().size();
     }
 
     private RestCall updateRestCallDest(RestCall restCall) {

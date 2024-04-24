@@ -41,7 +41,7 @@ public class ClassMetricsService {
 
   /**
    * Generate metrics for a specific class role, helper method for {@link
-   * #generateAllClassMetrics(SystemChange)}
+   * #generateAllClassMetrics()}
    *
    * @param classRole role of the class
    * @param changeList list of changes to classes of that role

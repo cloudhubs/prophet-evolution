@@ -19,7 +19,7 @@ public class MicroserviceMetricsService {
     }
 
     public List<MicroserviceMetrics> getMicroserviceMetrics() {
-        List<MicroserviceMetrics> microserviceMetricsList = new ArrayList<MicroserviceMetrics>();
+        List<MicroserviceMetrics> microserviceMetricsList = new ArrayList<>();
 
 
 

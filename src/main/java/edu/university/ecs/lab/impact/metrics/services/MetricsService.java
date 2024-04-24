@@ -13,22 +13,20 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Service to generate metrics from the IR and delta files File writing logic should be placed in
- * {@link MetricFileWriterService} to separate concerns
+ * Service to generate metrics from the IR and delta files
  */
 public class MetricsService {
 
   /** Map of microservices name to data in the system */
-  private Map<String, Microservice> microserviceMap;
+  private final Map<String, Microservice> microserviceMap;
 
   /** Object representing changes to the system as a whole/overall changes */
-  private SystemChange systemChange;
+  private final SystemChange systemChange;
 
   private final CallChangeService callChangeService;
   private final EndpointChangeService endpointChangeService;
   private final ClassMetricsService classMetricsService;
-
-  private final MetricFileWriterService fileWriterService;
+  private final MicroserviceMetricsService microserviceMetricsService;
 
   /**
    * Constructor for MetricsService
@@ -43,16 +41,7 @@ public class MetricsService {
     callChangeService = new CallChangeService(microserviceMap, systemChange);
     endpointChangeService = new EndpointChangeService(microserviceMap, systemChange);
     classMetricsService = new ClassMetricsService(microserviceMap, systemChange);
-    fileWriterService = new MetricFileWriterService(this);
-  }
-
-  /**
-   * Wrapper method to write metrics to file
-   * @param fileName name of file to write to
-   * @throws IOException if file cannot be written to, generated in {@link MetricFileWriterService#writeMetricsToFile(String, SystemMetrics)
-   */
-  public void writeMetricsToFile(String fileName) throws IOException {
-    fileWriterService.writeMetricsToFile(fileName, this.generateSystemMetrics());
+    microserviceMetricsService = new MicroserviceMetricsService(microserviceMap, systemChange);
   }
 
   /**
@@ -64,15 +53,15 @@ public class MetricsService {
     SystemMetrics systemMetrics = new SystemMetrics();
 
     systemMetrics.setClassMetrics(classMetricsService.generateAllClassMetrics());
-    //    systemMetrics.setDependencyMetrics(
-    //        dependencyMetricsService.generateAllDependencyMetrics(systemChange));
+    systemMetrics.setMicroserviceMetrics(microserviceMetricsService.getMicroserviceMetrics());
 
-    // TODO Handle the other attributes of system metrics
+
 
     return systemMetrics;
   }
 
-  public List<Metric> getMetrics() {
+  @Deprecated
+  private List<Metric> getMetrics() {
     List<Metric> metricList = new ArrayList<>();
     Metric metric;
 

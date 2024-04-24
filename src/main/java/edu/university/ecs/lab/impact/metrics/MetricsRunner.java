@@ -20,6 +20,6 @@ public class MetricsRunner {
             Path.of(args[0]).toAbsolutePath().toString(),
             Path.of(args[1]).toAbsolutePath().toString());
 
-    metricsService.writeMetricsToFile("./out/" + "Metrics.json");
+    System.out.println(metricsService.generateSystemMetrics());
   }
 }

@@ -12,30 +12,10 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SystemMetrics {
-
-
   // System Metrics
   private double scfScore;
   private double adcsScore;
 
   private List<ClassMetrics> classMetrics;
   private List<MicroserviceMetrics> microserviceMetrics;
-
-  // private double systemCoupling;
-
-  /**
-   * Should include all simple (not map, list, large object, etc.) metrics to render at the
-   * beginning of the class metrics report
-   *
-   * @return a map of the simple metrics
-   */
-//  public Map<String, Object> getOverallMetricsAsMap() {
-//    return Map.of(
-//        "Broken API Dependencies", brokenApiDependencies,
-//        "New API Dependencies", newApiDependencies,
-//        "Affected Entity Dependencies", affectedEntityDependencies,
-//        "New Entity Dependencies", newEntityDependencies,
-//        "New Systems", newSystems,
-//        "Modified Classes", modifiedClasses);
-//  }
 }
