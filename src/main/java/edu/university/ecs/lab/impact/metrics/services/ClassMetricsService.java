@@ -1,5 +1,6 @@
 package edu.university.ecs.lab.impact.metrics.services;
 
+import edu.university.ecs.lab.common.models.Microservice;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
@@ -7,9 +8,16 @@ import edu.university.ecs.lab.impact.models.ClassMetrics;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ClassMetricsService {
-  public ClassMetricsService() {}
+  Map<String, Microservice> microserviceMap;
+  SystemChange systemChange;
+
+  public ClassMetricsService(Map<String, Microservice> microserviceMap, SystemChange systemChange) {
+    this.microserviceMap = microserviceMap;
+    this.systemChange = systemChange;
+  }
 
   /**
    * Generate set of metrics pertaining to modified classes as a whole in the system, organized by
@@ -17,7 +25,7 @@ public class ClassMetricsService {
    *
    * @return list of class metrics, one of each class role
    */
-  public List<ClassMetrics> generateAllClassMetrics(SystemChange systemChange) {
+  public List<ClassMetrics> generateAllClassMetrics() {
     List<ClassMetrics> classMetricsList = new ArrayList<>();
 
     classMetricsList.add(

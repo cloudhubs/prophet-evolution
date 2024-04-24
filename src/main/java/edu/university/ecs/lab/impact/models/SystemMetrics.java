@@ -1,5 +1,6 @@
 package edu.university.ecs.lab.impact.models;
 
+import edu.university.ecs.lab.impact.metrics.services.MicroserviceMetricsService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,11 @@ public class SystemMetrics {
   private int newEntityDependencies;
   private int newSystems;
   private int modifiedClasses;
+  private double scfScore;
+  private double adcsScore;
 
   private List<ClassMetrics> classMetrics;
+  private List<MicroserviceMetrics> microserviceMetrics;
   private DependencyMetrics dependencyMetrics;
 
   // private double systemCoupling;

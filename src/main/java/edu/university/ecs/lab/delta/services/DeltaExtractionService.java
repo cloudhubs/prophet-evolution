@@ -76,6 +76,13 @@ public class DeltaExtractionService {
     List<JsonObject> repositories = new ArrayList<>();
     List<JsonObject> entities = new ArrayList<>();
 
+    // Lists for present files, helps remove duplicates and keep latest changes
+    List<String> controllersPaths = new ArrayList<>();
+    List<String> servicesPaths = new ArrayList<>();
+    List<String> dtosPaths = new ArrayList<>();
+    List<String> repositoriesPaths = new ArrayList<>();
+    List<String> entitiesPaths = new ArrayList<>();
+
     // process each difference
     for (DiffEntry entry : diffEntries) {
       // skip non-Java files but also include deleted files
@@ -98,13 +105,28 @@ public class DeltaExtractionService {
       File file = new File(entry.getNewPath().equals("/dev/null") ? oldPath : newPath);
 
       if (file.getName().contains("Controller")) {
+
+        if(controllersPaths.contains(localPath)) {
+          removeItemFromList(controllers, localPath);
+        } else {
+          controllersPaths.add(localPath);
+        }
+
         controllers.add(
             constructObjectFromDelta(
                 ClassRole.CONTROLLER,
                 getDeltaChanges(entry, file, ClassRole.CONTROLLER, localPath, path),
                 entry,
                 localPath));
+
       } else if (file.getName().contains("Service")) {
+
+        if(servicesPaths.contains(localPath)) {
+          removeItemFromList(services, localPath);
+        } else {
+          servicesPaths.add(localPath);
+        }
+
         services.add(
             constructObjectFromDelta(
                 ClassRole.SERVICE,
@@ -112,6 +134,13 @@ public class DeltaExtractionService {
                 entry,
                 localPath));
       } else if (file.getName().toLowerCase().contains("dto")) {
+
+        if(dtosPaths.contains(localPath)) {
+          removeItemFromList(dtos, localPath);
+        } else {
+          dtosPaths.add(localPath);
+        }
+
         dtos.add(
             constructObjectFromDelta(
                 ClassRole.DTO,
@@ -119,6 +148,13 @@ public class DeltaExtractionService {
                 entry,
                 localPath));
       } else if (file.getName().contains("Repository")) {
+
+        if(repositoriesPaths.contains(localPath)) {
+          removeItemFromList(repositories, localPath);
+        } else {
+          repositoriesPaths.add(localPath);
+        }
+
         repositories.add(
             constructObjectFromDelta(
                 ClassRole.REPOSITORY,
@@ -127,6 +163,13 @@ public class DeltaExtractionService {
                 localPath));
       } else if (file.getParent().toLowerCase().contains("entity")
           || file.getParent().toLowerCase().contains("model")) {
+
+        if(entitiesPaths.contains(localPath)) {
+          removeItemFromList(entities, localPath);
+        } else {
+          entitiesPaths.add(localPath);
+        }
+
         entities.add(
             constructObjectFromDelta(
                 ClassRole.ENTITY,
@@ -211,5 +254,14 @@ public class DeltaExtractionService {
       arrayBuilder.add(jsonObject);
     }
     return arrayBuilder.build();
+  }
+
+  private void removeItemFromList(List<JsonObject> jsonObjectList, String localPath) {
+    for(JsonObject jsonObject : jsonObjectList) {
+      if(jsonObject.get("localPath").toString().equals(localPath)) {
+        jsonObjectList.remove(jsonObject);
+        return;
+      }
+    }
   }
 }

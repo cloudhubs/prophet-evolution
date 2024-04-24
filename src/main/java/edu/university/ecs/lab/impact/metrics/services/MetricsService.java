@@ -26,7 +26,6 @@ public class MetricsService {
 
   private final CallChangeService callChangeService;
   private final EndpointChangeService endpointChangeService;
-  private final DependencyMetricsService dependencyMetricsService;
   private final ClassMetricsService classMetricsService;
 
   private final MetricFileWriterService fileWriterService;
@@ -41,10 +40,9 @@ public class MetricsService {
   public MetricsService(String oldIrPath, String deltaPath) throws IOException {
     microserviceMap = IRParserUtils.parseIRSystem(oldIrPath).getServiceMap();
     systemChange = IRParserUtils.parseSystemChange(deltaPath);
-    dependencyMetricsService = new DependencyMetricsService(microserviceMap, systemChange);
     callChangeService = new CallChangeService(microserviceMap, systemChange);
     endpointChangeService = new EndpointChangeService(microserviceMap, systemChange);
-    classMetricsService = new ClassMetricsService();
+    classMetricsService = new ClassMetricsService(microserviceMap, systemChange);
     fileWriterService = new MetricFileWriterService(this);
   }
 
@@ -65,7 +63,7 @@ public class MetricsService {
   public SystemMetrics generateSystemMetrics() {
     SystemMetrics systemMetrics = new SystemMetrics();
 
-    systemMetrics.setClassMetrics(classMetricsService.generateAllClassMetrics(systemChange));
+    systemMetrics.setClassMetrics(classMetricsService.generateAllClassMetrics());
     //    systemMetrics.setDependencyMetrics(
     //        dependencyMetricsService.generateAllDependencyMetrics(systemChange));
 
@@ -74,7 +72,7 @@ public class MetricsService {
     return systemMetrics;
   }
 
-  public List<Metric> getPlaceholders() {
+  public List<Metric> getMetrics() {
     List<Metric> metricList = new ArrayList<>();
     Metric metric;
 
