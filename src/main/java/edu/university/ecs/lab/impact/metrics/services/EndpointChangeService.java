@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static edu.university.ecs.lab.common.utils.FlowUtils.buildFlows;
 
@@ -96,7 +97,7 @@ public class EndpointChangeService {
                                 null,
                                 getEndpointLinks(oldEndpoint, microserviceName, true),
                                 new ArrayList<>(),
-                                ChangeType.DELETE));
+                                ChangeType.MODIFY));
                     }
                 }
 
@@ -109,7 +110,7 @@ public class EndpointChangeService {
                                 newEndpoint,
                                 new ArrayList<>(),
                                 getEndpointLinks(newEndpoint, microserviceName, false),
-                                ChangeType.ADD));
+                                ChangeType.MODIFY));
                     }
                 }
 
@@ -123,7 +124,7 @@ public class EndpointChangeService {
                                 newEndpoint,
                                 getEndpointLinks(oldEndpoint, microserviceName, true),
                                 getEndpointLinks(newEndpoint, microserviceName, false),
-                                ChangeType.DELETE));
+                                ChangeType.MODIFY));
                     }
                 }
 
@@ -132,7 +133,7 @@ public class EndpointChangeService {
 
         updateEndpointChangeImpact(endpointChanges, microserviceName);
 
-        return endpointChanges;
+        return filterNoImpact(endpointChanges);
     }
 
 
@@ -224,11 +225,14 @@ public class EndpointChangeService {
             return false;
         }
 
-        Microservice microservice = oldMicroserviceMap.get(microserviceName);
-        List<Flow> flows = buildFlows(microservice);
+        Microservice oldMicroservice = oldMicroserviceMap.get(microserviceName);
+        Microservice newMicroservice = oldMicroserviceMap.get(microserviceName);
 
-        for(Flow flow : flows) {
-            // If the flow contains the same controller methodName as th endpoint deleted && it calls a service method
+        List<Flow> oldFlows = buildFlows(oldMicroservice);
+        List<Flow> newFlows = buildFlows(newMicroservice);
+
+        for(Flow flow : oldFlows) {
+            // If the flow contains the same controller methodName as the endpoint deleted && it calls a service method
             if(flow.getControllerMethod().getMethodName().equals(endpointChange.getOldEndpoint().getMethodName())
             && Objects.nonNull(flow.getServiceMethodCall()) && Objects.nonNull(flow.getService())) {
 
@@ -244,6 +248,7 @@ public class EndpointChangeService {
 
         return false;
     }
+
 
     private boolean checkInconsistentEndpoint(EndpointChange endpointChange) {
         if(endpointChange.getChangeType() != ChangeType.MODIFY) {
@@ -264,5 +269,9 @@ public class EndpointChangeService {
     private boolean checkParameterEquivalence(String paramListOld, String paramListNew) {
 
         return Objects.equals(paramListOld, paramListNew);
+    }
+
+    private List<EndpointChange> filterNoImpact(List<EndpointChange> endpointChanges) {
+        return endpointChanges.stream().filter(endpointChange -> !(endpointChange.getImpact() == EndpointImpact.NONE)).collect(Collectors.toList());
     }
 }
