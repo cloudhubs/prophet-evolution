@@ -30,7 +30,6 @@ public class EndpointChangeService {
      * @return list of rest call changes from the given delta
      */
     public List<EndpointChange> getAllMsEndpointChanges(String microserviceName) {
-        List<EndpointChange> changes = new ArrayList<>();
 
         // Find the microservices
         Microservice oldMicroservice = oldMicroserviceMap.get(microserviceName);
@@ -133,7 +132,7 @@ public class EndpointChangeService {
 
         updateEndpointChangeImpact(endpointChanges, microserviceName);
 
-        return changes;
+        return endpointChanges;
     }
 
 
@@ -231,11 +230,11 @@ public class EndpointChangeService {
         for(Flow flow : flows) {
             // If the flow contains the same controller methodName as th endpoint deleted && it calls a service method
             if(flow.getControllerMethod().getMethodName().equals(endpointChange.getOldEndpoint().getMethodName())
-            && Objects.nonNull(flow.getServiceMethodCall())) {
+            && Objects.nonNull(flow.getServiceMethodCall()) && Objects.nonNull(flow.getService())) {
 
                 // If we find a restcall whose parent is the same service method called in the flow, it is now cut off
                 // TODO assumption here is only one endpoint calls a service method, not necessarily true
-                for(RestCall restCall : flow.getService().getRestCalls()) {
+                for(RestCall restCall : ((JService) flow.getService()).getRestCalls()) {
                     if(restCall.getParentMethod().equals(flow.getServiceMethod().getMethodName())) {
                         return true;
                     }

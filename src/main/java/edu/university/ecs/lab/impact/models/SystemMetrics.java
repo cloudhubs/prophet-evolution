@@ -13,8 +13,10 @@ import java.util.Map;
 @AllArgsConstructor
 public class SystemMetrics {
   // System Metrics
-  private double scfScore;
-  private double adcsScore;
+  private double oldScfScore;
+  private double oldAdcsScore;
+  private double newScfScore;
+  private double newAdcsScore;
 
   private List<ClassMetrics> classMetrics;
   private List<MicroserviceMetrics> microserviceMetrics;

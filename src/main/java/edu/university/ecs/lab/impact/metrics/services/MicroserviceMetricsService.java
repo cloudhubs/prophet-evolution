@@ -48,12 +48,13 @@ public class MicroserviceMetricsService {
 
             // Numeric Metrics
             microserviceMetrics.setOldAdsScore(calculateADS(microservice));
-            microserviceMetrics.setOldAdsScore(calculateADS(newMicroserviceMap.get(microservice.getId())));
+            microserviceMetrics.setNewAdsScore(calculateADS(newMicroserviceMap.get(microservice.getId())));
             microserviceMetrics.setOldSiucScore(calculateSIUCScore(oldMicroserviceMap, microservice));
             microserviceMetrics.setNewSiucScore(calculateSIUCScore(newMicroserviceMap,newMicroserviceMap.get(microservice.getId())));
             microserviceMetrics.setOldSidc2Score(calculateSIDC2Score(microservice));
             microserviceMetrics.setNewSidc2Score(calculateSIDC2Score(newMicroserviceMap.get(microservice.getId())));
 
+            microserviceMetricsList.add(microserviceMetrics);
         }
 
 
@@ -127,7 +128,7 @@ public class MicroserviceMetricsService {
     }
 
     public boolean aboveThreshold(Map<String, Microservice> microserviceMap, Microservice microservice) {
-        return (calculateADS(microserviceMap, microservice) > 5);
+        return (calculateADS(microservice) > 5);
     }
 
     /*

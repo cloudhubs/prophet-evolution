@@ -32,7 +32,6 @@ public class CallChangeService {
      * @return list of rest call changes from the given delta
      */
     public List<CallChange> getAllMsRestCallChanges(String microserviceName) {
-        List<CallChange> changes = new ArrayList<>();
 
         // Find the microservices
         Microservice oldMicroservice = oldMicroserviceMap.values().stream().filter(microservice -> microservice.getId().equals(microserviceName)).findFirst().orElse(null);
@@ -65,7 +64,7 @@ public class CallChangeService {
 
         updateCallChangeImpact(callChanges);
 
-        return changes;
+        return callChanges;
     }
 
     private void updateCallChangeImpact(List<CallChange> callChangeList) {

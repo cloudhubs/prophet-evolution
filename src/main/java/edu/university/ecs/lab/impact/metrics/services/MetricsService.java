@@ -18,7 +18,9 @@ import java.util.*;
 public class MetricsService {
 
   /** Map of microservices name to data in the system */
-  private final Map<String, Microservice> microserviceMap;
+  private final Map<String, Microservice> oldMicroserviceMap;
+  private final Map<String, Microservice> newMicroserviceMap;
+
 
   /** Object representing changes to the system as a whole/overall changes */
   private final SystemChange systemChange;
@@ -33,12 +35,13 @@ public class MetricsService {
    * @param deltaPath path to the system delta
    * @throws IOException if system metrics cannot be generated
    */
-  public MetricsService(String oldIrPath, String deltaPath) throws IOException {
-    microserviceMap = IRParserUtils.parseIRSystem(oldIrPath).getServiceMap();
+  public MetricsService(String oldIrPath, String newIrPath, String deltaPath) throws IOException {
+    oldMicroserviceMap = IRParserUtils.parseIRSystem(oldIrPath).getServiceMap();
+    newMicroserviceMap = IRParserUtils.parseIRSystem(newIrPath).getServiceMap();
     systemChange = IRParserUtils.parseSystemChange(deltaPath);
-    classMetricsService = new ClassMetricsService(microserviceMap, systemChange);
-    microserviceMetricsService = new MicroserviceMetricsService(microserviceMap, systemChange);
-    systemMetricsService = new SystemMetricsService(microserviceMap, systemChange);
+    classMetricsService = new ClassMetricsService(oldMicroserviceMap, systemChange);
+    microserviceMetricsService = new MicroserviceMetricsService(oldMicroserviceMap, newMicroserviceMap, systemChange);
+    systemMetricsService = new SystemMetricsService(oldMicroserviceMap, newMicroserviceMap, systemChange);
   }
 
   /**
@@ -50,8 +53,10 @@ public class MetricsService {
     SystemMetrics systemMetrics = new SystemMetrics();
 
     // System metrics first
-    systemMetrics.setAdcsScore(systemMetricsService.calculateADCS());
-    systemMetrics.setScfScore(systemMetricsService.calculateSCF());
+    systemMetrics.setOldAdcsScore(systemMetricsService.calculateADCS(oldMicroserviceMap));
+    systemMetrics.setOldScfScore(systemMetricsService.calculateSCF(newMicroserviceMap));
+    systemMetrics.setNewAdcsScore(systemMetricsService.calculateADCS(oldMicroserviceMap));
+    systemMetrics.setNewScfScore(systemMetricsService.calculateSCF(newMicroserviceMap));
 
     // Now class change metrics
     systemMetrics.setClassMetrics(classMetricsService.generateAllClassMetrics());

@@ -19,7 +19,7 @@ public class FlowUtils {
         if (serviceField.isPresent()) {
           flow.setControllerServiceField(serviceField.get());
           // 4. get service class
-          Optional<JService> ServiceClass = Optional.ofNullable(findService(flow));
+          Optional<JClass> ServiceClass = Optional.ofNullable(findService(flow));
           if (ServiceClass.isPresent()) {
             flow.setService(ServiceClass.get());
             // 5. find service method name
@@ -70,7 +70,7 @@ public class FlowUtils {
         if (serviceField.isPresent()) {
           flow.setControllerServiceField(serviceField.get());
           // 4. get service class
-          Optional<JService> ServiceClass = Optional.ofNullable(findService(flow));
+          Optional<JClass> ServiceClass = Optional.ofNullable(findService(flow));
           if (ServiceClass.isPresent()) {
             flow.setService(ServiceClass.get());
             // 5. find service method name
@@ -167,7 +167,7 @@ public class FlowUtils {
         .orElse(null);
   }
 
-  private static JService findService(Flow flow) {
+  private static JClass findService(Flow flow) {
     return flow.getModel().getServices().stream()
         .filter(
             jClass -> jClass.getClassName().equals(flow.getControllerServiceField().getFieldType()))
