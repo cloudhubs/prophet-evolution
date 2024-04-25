@@ -4,7 +4,6 @@ import edu.university.ecs.lab.common.models.Endpoint;
 import edu.university.ecs.lab.common.models.RestCall;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import edu.university.ecs.lab.impact.models.enums.EndpointImpact;
-import edu.university.ecs.lab.impact.models.enums.RestCallImpact;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
