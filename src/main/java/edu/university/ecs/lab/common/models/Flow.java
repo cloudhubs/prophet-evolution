@@ -12,11 +12,11 @@ import lombok.ToString;
 @ToString
 public class Flow {
   private Microservice model;
-  private JClass controller;
+  private JController controller;
   private Method controllerMethod;
   private MethodCall serviceMethodCall;
   private Field controllerServiceField;
-  private JClass service;
+  private JService service;
   private Method serviceMethod;
   private MethodCall repositoryMethodCall;
   private Field serviceRepositoryField;

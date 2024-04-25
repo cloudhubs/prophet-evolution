@@ -16,154 +16,148 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static edu.university.ecs.lab.common.utils.FlowUtils.buildFlows;
+
 public class EndpointChangeService {
-    Map<String, Microservice> microserviceMap;
+    Map<String, Microservice> oldMicroserviceMap;
+    Map<String, Microservice> newMicroserviceMap;
+
     SystemChange systemChange;
 
-    public EndpointChangeService(Map<String, Microservice> microserviceMap, SystemChange systemChange) {
-        this.microserviceMap = microserviceMap;
+    public EndpointChangeService(Map<String, Microservice> oldMicroserviceMap, Map<String, Microservice> newMicroserviceMap, SystemChange systemChange) {
+        this.oldMicroserviceMap = oldMicroserviceMap;
+        this.newMicroserviceMap = newMicroserviceMap;
         this.systemChange = systemChange;
     }
-
     /**
      * Get a list of all changed rest calls for a single delta
      *
      * @param delta delta object representing changes to a system
      * @return list of rest call changes from the given delta
      */
-    public List<EndpointChange> getAllEndpointChangesForService(Microservice microservice) {
+    public List<EndpointChange> getAllMsEndpointChanges(String microserviceName) {
         List<EndpointChange> changes = new ArrayList<>();
-        for(Delta delta : systemChange.getServices()) {
-            if(delta.getMsName().equals(microservice.getId())) {
-                changes.addAll(getEndpointChangesForDelta(delta));
-            }
-        }
+
+        // Find the microservices
+        Microservice oldMicroservice = oldMicroserviceMap.get(microserviceName);
+        Microservice newMicroservice = newMicroserviceMap.get(microserviceName);
+
+        // Ensure non null
+        assert Objects.nonNull(oldMicroservice) && Objects.nonNull(newMicroservice);
 
 
-        return changes;
-    }
 
-    /**
-     * Get a list of all changed rest calls for a single delta
-     *
-     * @param delta delta object representing changes to a system
-     * @return list of rest call changes from the given delta
-     */
-    public List<EndpointChange> getEndpointChangesForDelta(Delta delta) {
-        List<EndpointChange> endpointChanges = new ArrayList<>();
-        JController oldController;
-
-        if (Objects.isNull(delta.getCChange())) {
-            return endpointChanges;
-        }
-
-        switch (delta.getChangeType()) {
-            case ADD:
-                endpointChanges.addAll(compareEndpoints(null, delta.getCChange().getEndpoints(), delta));
-                break;
-            case MODIFY:
-                oldController =
-                        microserviceMap.get(delta.getMsName()).getControllers().stream()
-                                .filter(c -> c.getClassPath().equals(delta.getLocalPath()))
-                                .findFirst()
-                                .orElse(null);
-
-                // Handle case that there was no old controller (aka new controller) but the file still
-                // existed
-                endpointChanges.addAll(
-                        compareEndpoints(
-                                oldController != null ? oldController.getEndpoints() : null,
-                                delta.getCChange().getEndpoints(),
-                                delta));
-                break;
-            case DELETE:
-                oldController =
-                        microserviceMap.get(delta.getMsName()).getControllers().stream()
-                                .filter(c -> c.getClassPath().equals(delta.getLocalPath()))
-                                .findFirst()
-                                .orElse(null);
-                endpointChanges.addAll(compareEndpoints(oldController.getEndpoints(), null, delta));
-
-                break;
-        }
-
-        updateEndpointChangeImpact(endpointChanges);
+        // Find all their endpoints
+        List<JController> oldControllers = oldMicroservice.getControllers();
+        List<JController> newControllers = oldMicroservice.getControllers();
 
 
-        return endpointChanges;
-    }
-
-    private void updateEndpointChangeImpact(List<EndpointChange> endpointChangeList) {
-        // Check for CALL_TO_DEPRECATED_ENDPOINT
-        for(EndpointChange endpointChange : endpointChangeList) {
-            if(checkInconsistentEndpoint(endpointChange)) {
-                break;
-            } else if(checkUnusedCall(endpointChange)) {
-                break;
-            } else if(checkBreakingDependentCall(endpointChange)) {
-                break;
-            }
-
-        }
-    }
-
-    /**
-     * Helper method to create a list of {@link EndpointChange} objects based on the old and new
-     * {@link Endpoint} lists and delta changes for a given delta
-     *
-     * @param oldEndpointList list of original endpoints
-     * @param newEndpointList list of new endpoints
-     * @param delta set of changes to system
-     * @return list of endpoint changes
-     */
-    private List<EndpointChange> compareEndpoints(
-            List<Endpoint> oldEndpointList, List<Endpoint> newEndpointList, Delta delta) {
+        // Build endpoint changes
         List<EndpointChange> endpointChanges = new ArrayList<>();
 
-        // Delete
-        if (newEndpointList == null) {
-            for (Endpoint oldEndpoint : oldEndpointList) {
-                endpointChanges.add(
-                        new EndpointChange(
-                                oldEndpoint,
-                                null,
-                                getEndpointLinks(oldEndpoint, delta.getMsName()),
-                                new ArrayList<>(),
-                                delta.getChangeType()));
-            }
-            return endpointChanges;
-        }
-
-        // Create
-        if (oldEndpointList == null) {
-            for (Endpoint newEndpoint : newEndpointList) {
-                endpointChanges.add(
-                        new EndpointChange(
-                                null,
-                                newEndpoint,
-                                new ArrayList<>(),
-                                getEndpointLinks(newEndpoint, delta.getMsName()),
-                                delta.getChangeType()));
-            }
-            return endpointChanges;
-        }
-
-        for (Endpoint oldEndpoint : oldEndpointList) {
-            for (Endpoint newEndpoint : newEndpointList) {
-                if (oldEndpoint.getMethodName().equals(newEndpoint.getMethodName())) {
-                    endpointChanges.add(
-                            new EndpointChange(
-                                    oldEndpoint,
-                                    newEndpoint,
-                                    getEndpointLinks(oldEndpoint, delta.getMsName()),
-                                    getEndpointLinks(newEndpoint, delta.getMsName()),
-                                    delta.getChangeType()));
+        // Handle deleted classes
+        for (JController oldController : oldControllers) {
+            if(newControllers.stream().filter(jController -> jController.getClassPath().equals(oldController.getClassPath())).findFirst().isEmpty()) {
+                for(Endpoint oldEndpoint : oldController.getEndpoints()) {
+                    // Add the new endpoint change of delete
+                    endpointChanges.add(new EndpointChange(
+                            oldEndpoint,
+                            null,
+                            getEndpointLinks(oldEndpoint, microserviceName, true),
+                            new ArrayList<>(),
+                            ChangeType.DELETE));
                 }
             }
         }
 
-        return endpointChanges;
+        // Handle added classes
+        for (JController newController : newControllers) {
+            if(newControllers.stream().filter(jController -> jController.getClassPath().equals(newController.getClassPath())).findFirst().isEmpty()) {
+                for(Endpoint newEndpoint : newController.getEndpoints()) {
+                    // Add the new endpoint change of delete
+                    endpointChanges.add(new EndpointChange(
+                            null,
+                            newEndpoint,
+                            new ArrayList<>(),
+                            getEndpointLinks(newEndpoint, microserviceName, false),
+                            ChangeType.ADD));
+                }
+            }
+        }
+
+        // Handle deleted classes
+        for (JController oldController : oldControllers) {
+            if(newControllers.stream().filter(jController -> jController.getClassPath().equals(oldController.getClassPath())).findFirst().isPresent()) {
+                JController newController = newControllers.stream().filter(jController -> jController.getClassPath().equals(oldController.getClassPath())).findFirst().get();
+
+                // Same concept as before, but with endpoints
+                List<Endpoint> oldEndpoints = oldController.getEndpoints();
+                List<Endpoint> newEndpoints = newController.getEndpoints();
+
+                // Handle deleted endpoints
+                for (Endpoint oldEndpoint : oldEndpoints) {
+                    if(newEndpoints.stream().filter(endpoint -> endpoint.getMethodName().equals(oldEndpoint.getMethodName())).findFirst().isEmpty()) {
+                        // Add the new endpoint change of delete
+                        endpointChanges.add(new EndpointChange(
+                                oldEndpoint,
+                                null,
+                                getEndpointLinks(oldEndpoint, microserviceName, true),
+                                new ArrayList<>(),
+                                ChangeType.DELETE));
+                    }
+                }
+
+                // Handle added endpoints
+                for (Endpoint newEndpoint : newEndpoints) {
+                    if(oldEndpoints.stream().filter(endpoint -> endpoint.getMethodName().equals(newEndpoint.getMethodName())).findFirst().isEmpty()) {
+                        // Add the new endpoint change of delete
+                        endpointChanges.add(new EndpointChange(
+                                null,
+                                newEndpoint,
+                                new ArrayList<>(),
+                                getEndpointLinks(newEndpoint, microserviceName, false),
+                                ChangeType.ADD));
+                    }
+                }
+
+                // Handle modified endpoints
+                for (Endpoint oldEndpoint : oldEndpoints) {
+                    if(newEndpoints.stream().filter(endpoint -> endpoint.getMethodName().equals(oldEndpoint.getMethodName())).findFirst().isPresent()) {
+                        Endpoint newEndpoint = newEndpoints.stream().filter(endpoint -> endpoint.getMethodName().equals(oldEndpoint.getMethodName())).findFirst().get();
+                        // Add the new endpoint change of delete
+                        endpointChanges.add(new EndpointChange(
+                                oldEndpoint,
+                                newEndpoint,
+                                getEndpointLinks(oldEndpoint, microserviceName, true),
+                                getEndpointLinks(newEndpoint, microserviceName, false),
+                                ChangeType.DELETE));
+                    }
+                }
+
+            }
+        }
+
+        updateEndpointChangeImpact(endpointChanges, microserviceName);
+
+        return changes;
     }
+
+
+
+    private void updateEndpointChangeImpact(List<EndpointChange> endpointChangeList, String microserviceName) {
+        // Check for CALL_TO_DEPRECATED_ENDPOINT
+        for(EndpointChange endpointChange : endpointChangeList) {
+            if(checkInconsistentEndpoint(endpointChange)) {
+                break;
+            } else if(checkUnusedCall(endpointChange, microserviceName)) {
+                break;
+            } else if(checkBreakingDependentCall(endpointChange, microserviceName)) {
+                break;
+            }
+
+        }
+    }
+
 
     /**
      * Get's all links that exist between the endpoint and services that call
@@ -173,10 +167,10 @@ public class EndpointChangeService {
      * @param microserviceName
      * @return
      */
-    private List<Link> getEndpointLinks(Endpoint endpoint, String microserviceName) {
+    private List<Link> getEndpointLinks(Endpoint endpoint, String microserviceName, boolean oldMap) {
         List<Link> linkList = new ArrayList<>();
 
-        for (Microservice microservice : microserviceMap.values()) {
+        for (Microservice microservice : (oldMap ? oldMicroserviceMap.values() : newMicroserviceMap.values())) {
             if (microservice.getId().equals(microserviceName)) {
                 continue;
             }
@@ -193,46 +187,34 @@ public class EndpointChangeService {
         return linkList;
     }
 
-    private boolean checkBreakingDependentCall(EndpointChange endpointChange) {
+    private boolean checkBreakingDependentCall(EndpointChange endpointChange, String microserviceName) {
         List<RestCall> brokenRestCalls = new ArrayList<>();
 
-//        if(endpointChange.getChangeType() != ChangeType.ADD) {
-//            return brokenRestCalls;
-//        }
+        // Not directly breaking dependents if it isn't a delete
+        if(endpointChange.getChangeType() != ChangeType.DELETE) {
+            return false;
+        }
 
-        // Check the delta file for added/modified/deleted services
-        List<Delta> addOrModifiedServices = systemChange.getServices().stream().filter(s -> s.getChangeType() == ChangeType.MODIFY || s.getChangeType() == ChangeType.ADD).collect(Collectors.toList());
-        List<String> deletedServiceClasspaths = systemChange.getServices().stream().filter(s -> s.getChangeType() == ChangeType.DELETE).map(s -> s.getSChange().getClassPath()).collect(Collectors.toList());
+        for(Microservice microservice : newMicroserviceMap.values()) {
+            if(microservice.getId().equals(microserviceName)) {
+                continue;
+            }
 
-        // Find any dependent calls from added/modified
-        for(Delta delta : addOrModifiedServices) {
-            for(RestCall restCall : delta.getSChange().getRestCalls()) {
-                if(restCall.getApi().equals(endpointChange.getOldEndpoint().getUrl())) {
-                    brokenRestCalls.add(restCall);
+            for(JService service : microservice.getServices()) {
+                for(RestCall restCall : service.getRestCalls()) {
+                    if(restCall.getApi().equals(endpointChange.getOldEndpoint().getUrl())) {
+                        brokenRestCalls.add(restCall);
+                    }
                 }
             }
         }
 
-        List<String> addOrModifiedClasspaths = addOrModifiedServices.stream().map(s -> s.getSChange().getClassPath()).collect(Collectors.toList());
 
-        // Now we check the map not including what exists in the delta file
-        for(JService jService : microserviceMap.values().stream().flatMap(microservice -> microservice.getServices().stream()).collect(Collectors.toList())) {
-            for(RestCall restCall : jService.getRestCalls()) {
-
-                // If it exists in the map and it isn't a removed service as of the delta change
-                // also don't check duplicate files we already checked in delta
-                if(restCall.getApi().equals(endpointChange.getOldEndpoint().getUrl())
-                && !deletedServiceClasspaths.contains(jService.getClassPath())
-                && !addOrModifiedClasspaths.contains(jService.getClassPath())) {
-                    brokenRestCalls.add(restCall);
-                }
-            }
-        }
-
-        // If we have no broken (dependent) calls then no impact
+        // No impact if no dependent calls were found
         if(brokenRestCalls.isEmpty()) {
             return false;
         }
+
 
         endpointChange.setBrokenRestCalls(brokenRestCalls);
         endpointChange.setImpact(EndpointImpact.BREAKING_DEPENDENT_CALL);
@@ -240,11 +222,32 @@ public class EndpointChangeService {
         return true;
     }
 
-    private boolean checkUnusedCall(EndpointChange endpointChange) {
+    private boolean checkUnusedCall(EndpointChange endpointChange, String microserviceName) {
         /*
             If we remove an endpoint that make a call to a service with an api call that will no longer be called
             TODO Must be done via flows so WIP, no way to easily create flows from delta change + IR (must merge probably)
          */
+        if(endpointChange.getChangeType() != ChangeType.DELETE) {
+            return false;
+        }
+
+        Microservice microservice = oldMicroserviceMap.get(microserviceName);
+        List<Flow> flows = buildFlows(microservice);
+
+        for(Flow flow : flows) {
+            // If the flow contains the same controller methodName as th endpoint deleted && it calls a service method
+            if(flow.getControllerMethod().getMethodName().equals(endpointChange.getOldEndpoint().getMethodName())
+            && Objects.nonNull(flow.getServiceMethodCall())) {
+
+                // If we find a restcall whose parent is the same service method called in the flow, it is now cut off
+                // TODO assumption here is only one endpoint calls a service method, not necessarily true
+                for(RestCall restCall : flow.getService().getRestCalls()) {
+                    if(restCall.getParentMethod().equals(flow.getServiceMethod().getMethodName())) {
+                        return true;
+                    }
+                }
+            }
+        }
 
         return false;
     }
