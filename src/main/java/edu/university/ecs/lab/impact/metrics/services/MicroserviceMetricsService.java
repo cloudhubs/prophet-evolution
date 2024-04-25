@@ -11,17 +11,21 @@ import edu.university.ecs.lab.impact.models.change.Link;
 import java.util.*;
 
 public class MicroserviceMetricsService {
-    Map<String, Microservice> microserviceMap;
+    Map<String, Microservice> oldMicroserviceMap;
+    Map<String, Microservice> newMicroserviceMap;
+
     SystemChange systemChange;
     private final CallChangeService callChangeService;
     private final EndpointChangeService endpointChangeService;
 
 
-    public MicroserviceMetricsService(Map<String, Microservice> microserviceMap, SystemChange systemChange) {
-        this.microserviceMap = microserviceMap;
+    public MicroserviceMetricsService(Map<String, Microservice> oldMicroserviceMap, Map<String, Microservice> newMicroserviceMap, SystemChange systemChange) {
+        this.oldMicroserviceMap = oldMicroserviceMap;
+        this.newMicroserviceMap = newMicroserviceMap;
+
         this.systemChange = systemChange;
-        this.callChangeService = new CallChangeService(microserviceMap, systemChange);
-        this.endpointChangeService = new EndpointChangeService(microserviceMap, systemChange);
+        this.callChangeService = new CallChangeService(oldMicroserviceMap, newMicroserviceMap, systemChange);
+        this.endpointChangeService = new EndpointChangeService(oldMicroserviceMap, newMicroserviceMap, systemChange);
 
     }
 
@@ -30,21 +34,26 @@ public class MicroserviceMetricsService {
         MicroserviceMetrics microserviceMetrics;
         DependencyMetrics dependencyMetrics;
 
-        for(Microservice microservice : microserviceMap.values()) {
+        // TODO technically not scalable to newly added microservices
+        for(Microservice microservice : oldMicroserviceMap.values()) {
             microserviceMetrics = new MicroserviceMetrics();
             dependencyMetrics = new DependencyMetrics();
 
             microserviceMetrics.setName(microservice.getId());
 
             // Dependency Metrics
-            dependencyMetrics.setCallChanges(callChangeService.getAllRestCallChangesForService(microservice));
-            dependencyMetrics.setEndpointChanges(endpointChangeService.getAllEndpointChangesForService(microservice));
+            dependencyMetrics.setCallChanges(callChangeService.getAllMsRestCallChanges(microservice.getId()));
+            dependencyMetrics.setEndpointChanges(endpointChangeService.getAllMsEndpointChanges(microservice.getId()));
             microserviceMetrics.setDependencyMetrics(dependencyMetrics);
 
             // Numeric Metrics
-            microserviceMetrics.setAdsScore(calculateADS(microservice));
-            microserviceMetrics.setSiucScore(calculateSIUCScore(microservice));
-            microserviceMetrics.setSidc2Score(calculateSIDC2Score(microservice));
+            microserviceMetrics.setOldAdsScore(calculateADS(microservice));
+            microserviceMetrics.setOldAdsScore(calculateADS(newMicroserviceMap.get(microservice.getId())));
+            microserviceMetrics.setOldSiucScore(calculateSIUCScore(oldMicroserviceMap, microservice));
+            microserviceMetrics.setNewSiucScore(calculateSIUCScore(newMicroserviceMap,newMicroserviceMap.get(microservice.getId())));
+            microserviceMetrics.setOldSidc2Score(calculateSIDC2Score(microservice));
+            microserviceMetrics.setNewSidc2Score(calculateSIDC2Score(newMicroserviceMap.get(microservice.getId())));
+
         }
 
 
@@ -87,44 +96,6 @@ public class MicroserviceMetricsService {
         for(JController controller : microservice.getControllers()) {
             outer:
             {
-                // Check deltaChange file for controller
-                for (Delta delta : systemChange.getControllers()) {
-                    if (delta.getLocalPath().equals(controller.getClassPath())) {
-                        if (delta.getChangeType() == ChangeType.DELETE) {
-                            break outer;
-                        } else {
-                            JController deltaController = delta.getCChange();
-                            // Calculate duplicates
-                            for(Endpoint endpoint: deltaController.getEndpoints()) {
-                                totalEndpoints++;
-                                String[] params = endpoint.getParameterList().split(",");
-                                for(String param : params) {
-                                    String[] paramParts = param.split(" ");
-                                    if(paramParts.length == 2) {
-                                        // If we try to add it but it was already there
-                                        if(paramTypes.containsKey(paramParts[0])) {
-                                            paramTypes.merge(paramParts[0], 1, Integer::sum);
-                                            commonParams += (paramTypes.get(paramParts[0]) - 1) * 2;
-                                        } else {
-                                            paramTypes.put(paramParts[0], 1);
-                                        }
-                                    }
-
-                                }
-
-                                if(returnTypes.containsKey(endpoint.getReturnType())) {
-                                    returnTypes.merge(endpoint.getReturnType(), 1, Integer::sum);
-                                    commonReturns += (returnTypes.get(endpoint.getReturnType()) - 1) * 2;
-                                } else {
-                                    returnTypes.put(endpoint.getReturnType(), 1);
-                                }
-                            }
-
-                            break outer;
-                        }
-                    }
-                }
-
                 for(Endpoint endpoint: controller.getEndpoints()) {
                     totalEndpoints++;
                     String[] params = endpoint.getParameterList().split(",");
@@ -155,22 +126,8 @@ public class MicroserviceMetricsService {
         return (double) (commonParams + commonReturns) / (totalEndpoints * 2);
     }
 
-    public boolean aboveThreshold(Microservice microservice) {
-        return (calculateADS(microservice) > 5);
-    }
-
-    private RestCall updateRestCallDest(RestCall restCall) {
-        for (Microservice microservice : microserviceMap.values()) {
-            for (JController controller : microservice.getControllers()) {
-                for (Endpoint endpoint : controller.getEndpoints()) {
-                    if (endpoint.getUrl().equals(restCall.getApi())) {
-                        restCall.setDestFile(controller.getClassName());
-                    }
-                }
-            }
-        }
-
-        return restCall;
+    public boolean aboveThreshold(Map<String, Microservice> microserviceMap, Microservice microservice) {
+        return (calculateADS(microserviceMap, microservice) > 5);
     }
 
     /*
@@ -185,59 +142,24 @@ public class MicroserviceMetricsService {
         – Invoked(clients, SOp(sis )) returns the number of used
         operations per client.
      */
-    private double calculateSIUCScore(Microservice microservice) {
+    private double calculateSIUCScore(Map<String, Microservice> microserviceMap, Microservice microservice) {
         Set<String> clients = new HashSet<>();
         int usedOperations = 0;
         long totalOperations = microserviceMap.values().stream().flatMap(ms -> ms.getServices().stream()).flatMap(jService -> jService.getRestCalls().stream()).count();
 
         for(JController controller : microservice.getControllers()) {
-            outer:
-            {
-                for (Delta delta : systemChange.getControllers()) {
 
-                    if (controller.getClassPath().equals(delta.getLocalPath())) {
-                        // If the controller was deleted
-                        if (delta.getChangeType() == ChangeType.DELETE) {
-                            break outer;
-                        }
-                        JController deltaController = delta.getCChange();
+            // Loop through endpoints
+            for (Endpoint endpoint : controller.getEndpoints()) {
 
-                        // Loop through endpoints
-                        for (Endpoint endpoint : deltaController.getEndpoints()) {
-
-                            // Look for links from "clients"
-                            for (Microservice ms : microserviceMap.values()) {
-                                outer2:
-                                {
-                                    for (JService service : ms.getServices()) {
-                                        for (Delta delta2 : systemChange.getServices()) {
-                                            if (service.getClassPath().equals(delta2.getLocalPath())) {
-                                                // If the service was deleted
-                                                if (delta2.getChangeType() == ChangeType.DELETE) {
-                                                    break outer2;
-                                                }
-                                                JService deltaService = delta.getSChange();
-
-                                                for (RestCall restCall : deltaService.getRestCalls()) {
-                                                    if (restCall.getApi().equals(endpoint.getUrl())) {
-                                                        usedOperations++;
-                                                        clients.add(ms.getId());
-                                                    }
-                                                }
-
-                                            }
-                                        }
-
-                                        for (RestCall restCall : service.getRestCalls()) {
-                                            if (restCall.getApi().equals(endpoint.getUrl())) {
-                                                usedOperations++;
-                                                clients.add(ms.getId());
-                                            }
-                                        }
-                                    }
-                                }
+                // Look for links from "clients"
+                for (Microservice ms : microserviceMap.values()) {
+                    for (JService service : ms.getServices()) {
+                        for (RestCall restCall : service.getRestCalls()) {
+                            if (restCall.getApi().equals(endpoint.getUrl())) {
+                                usedOperations++;
+                                clients.add(ms.getId());
                             }
-
                         }
                     }
                 }
@@ -260,29 +182,8 @@ public class MicroserviceMetricsService {
     public int calculateADS(Microservice microservice) {
         Set<Link> links = new HashSet<>();
         for(JService service : microservice.getServices()) {
-            outer:
-            {
-                for (Delta delta : systemChange.getServices()) {
-                    if (service.getClassPath().equals(delta.getLocalPath())) {
-                        JService deltaService = delta.getSChange();
-                        if (delta.getChangeType() != ChangeType.DELETE) {
-                            for (RestCall restCall : deltaService.getRestCalls()) {
-                                RestCall updatedRestCall = updateRestCallDest(restCall);
-
-                                links.add(new Link(updatedRestCall));
-
-                            }
-                        }
-                        break outer;
-                    }
-                }
-
-                for (RestCall restCall : service.getRestCalls()) {
-                    RestCall updatedRestCall = updateRestCallDest(restCall);
-
-                    links.add(new Link(updatedRestCall));
-
-                }
+            for (RestCall restCall : service.getRestCalls()) {
+                links.add(new Link(restCall));
             }
         }
 

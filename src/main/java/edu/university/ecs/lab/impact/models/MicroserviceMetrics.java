@@ -11,9 +11,12 @@ import java.util.List;
 public class MicroserviceMetrics {
 
     private String name;
-    private double sidc2Score;
-    private double siucScore;
-    private double adsScore;
+    private double oldSidc2Score;
+    private double oldSiucScore;
+    private double oldAdsScore;
+    private double newSidc2Score;
+    private double newSiucScore;
+    private double newAdsScore;
     private DependencyMetrics dependencyMetrics;
 
 

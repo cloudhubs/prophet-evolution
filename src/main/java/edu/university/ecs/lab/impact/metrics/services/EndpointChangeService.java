@@ -1,27 +1,21 @@
 package edu.university.ecs.lab.impact.metrics.services;
 
 import edu.university.ecs.lab.common.models.*;
-import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
-import edu.university.ecs.lab.impact.models.change.CallChange;
 import edu.university.ecs.lab.impact.models.change.EndpointChange;
 import edu.university.ecs.lab.impact.models.change.Link;
 import edu.university.ecs.lab.impact.models.enums.EndpointImpact;
-import org.checkerframework.checker.units.qual.A;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static edu.university.ecs.lab.common.utils.FlowUtils.buildFlows;
 
 public class EndpointChangeService {
     Map<String, Microservice> oldMicroserviceMap;
     Map<String, Microservice> newMicroserviceMap;
-
     SystemChange systemChange;
 
     public EndpointChangeService(Map<String, Microservice> oldMicroserviceMap, Map<String, Microservice> newMicroserviceMap, SystemChange systemChange) {
