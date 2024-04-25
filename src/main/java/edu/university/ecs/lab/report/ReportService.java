@@ -35,10 +35,12 @@ public class ReportService {
 
   /** Destination branch (branch where we are merging INTO, usually main/master) */
   private final String baseBranch;
+  private final String baseCommit;
 
 
   /** Source branch (branch where pull request is being made FROM)_ */
   private final String compareBranch;
+  private final String compareCommit;
 
   /** The path to the original system IR */
   private final String intermediatePath;
@@ -52,7 +54,9 @@ public class ReportService {
    * Constructor for ReportService
    *
    * @param baseBranch branch merging into, usually main/master
+   * @param baseCommit commit merging into, on baseBranch
    * @param compareBranch base comparing from, usually feature branch
+   * @param compareCommit commit comparing from, on compareBranch
    * @param intermediatePath path to the original system IR
    * @param deltaPath path to the system delta
    * @throws NullPointerException if either path is null
@@ -70,6 +74,9 @@ public class ReportService {
     this.metricsService = new MetricsService(intermediatePath, deltaPath);
     this.baseBranch = baseBranch;
     this.compareBranch = compareBranch;
+    this.baseCommit = baseCommit;
+    this.compareCommit = baseCommit;
+
   }
 
   /** Generate freemarker report, should be put into /out by default */
@@ -86,9 +93,10 @@ public class ReportService {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a");
     root.put("dateTime", LocalDateTime.now().format(formatter));
 
-    // TODO make this dynamic from config file
     root.put("branch1", baseBranch);
+    root.put("commit1", baseCommit);
     root.put("branch2", compareBranch);
+    root.put("commit2", compareCommit);
 
     /* Metrics */
     SystemMetrics systemMetrics = metricsService.generateSystemMetrics();
