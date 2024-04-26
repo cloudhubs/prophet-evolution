@@ -25,7 +25,7 @@ public class EntityDependencyLocator {
 
     for (Delta d : systemChange.getEntities()) {
 
-      Microservice model = msSystem.getServiceMap().get(d.getMsName());
+      Microservice model = msSystem.getServiceMap().get(d.getMsId());
 
       if (Objects.isNull(model)) {
         throw new RuntimeException("Error");
