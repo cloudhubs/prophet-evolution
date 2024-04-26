@@ -56,7 +56,7 @@ public class IRExtractionService {
             return this.writeToFile(msDataMap);
         } catch (IOException e) {
             System.err.println("Error writing to IR json: " + e.getMessage());
-            System.exit(BAD_IR_WRITE.ordinal());
+            System.exit(JSON_FILE_WRITE_ERROR.ordinal());
             return null;
         }
     }
@@ -92,7 +92,7 @@ public class IRExtractionService {
                         RestModelService.recursivelyScanFiles(clonePath, msPath.substring(clonePath.length()));
                 if (Objects.isNull(model)) {
                     System.err.println("Error scanning repository: " + msPath);
-                    System.exit(MS_SCAN_FAIL.ordinal());
+                    System.exit(IR_EXTRACTION_FAIL.ordinal());
                 }
 
                 model.setCommit(inputRepository.getBaseCommit());

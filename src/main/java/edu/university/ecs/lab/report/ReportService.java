@@ -19,12 +19,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static edu.university.ecs.lab.common.models.enums.ErrorCodes.FREEMARKER_CONFIG_ERROR;
+import static edu.university.ecs.lab.common.models.enums.ErrorCodes.TEMPLATE_PROCESS_ERROR;
+
 /** To use this class, simply call the constructor and then run generateReport() */
 public class ReportService {
-
-  private static final int FREEMARKER_CONFIG_ERROR = 2;
-  private static final int IO_EXCEPTION = 3;
-  private static final int TEMPLATE_PROCESS_ERROR = 4;
+  // TODO get this from the config.json file
   private static final String OUTPUT_PATH = "./out/";
   private static final String TEMPLATE_NAME = "report.ftl";
   private static Configuration config;
@@ -45,9 +45,6 @@ public class ReportService {
   /** The path to the original system IR */
   private final String intermediatePath;
 
-  /** The path to the system delta */
-  private final String deltaPath;
-
   private final MetricsService metricsService;
 
   /**
@@ -59,7 +56,6 @@ public class ReportService {
    * @param compareCommit commit comparing from, on compareBranch
    * @param intermediatePath path to the original system IR
    * @param newIntermediatePath path to the new system IR
-   * @param deltaPath path to the system delta
    * @throws NullPointerException if either path is null
    */
   ReportService(
@@ -72,13 +68,11 @@ public class ReportService {
       String deltaPath)
       throws NullPointerException, IOException {
     this.intermediatePath = Objects.requireNonNull(intermediatePath);
-    this.deltaPath = Objects.requireNonNull(deltaPath);
-    this.metricsService = new MetricsService(intermediatePath, newIntermediatePath, deltaPath);
     this.baseBranch = baseBranch;
     this.compareBranch = compareBranch;
     this.baseCommit = baseCommit;
-    this.compareCommit = baseCommit;
-
+    this.compareCommit = compareCommit;
+    this.metricsService = new MetricsService(intermediatePath, newIntermediatePath, deltaPath);
   }
 
   /** Generate freemarker report, should be put into /out by default */
@@ -112,12 +106,9 @@ public class ReportService {
       Writer out = new FileWriter(OUTPUT_PATH + getReportFileName());
       template.process(root, out);
       out.close();
-    } catch (IOException e) {
-      System.err.println("Error reading template: " + e.getMessage());
-      System.exit(IO_EXCEPTION);
-    } catch (TemplateException e) {
+    } catch (IOException | TemplateException e) {
       System.err.println("Error processing template: " + e.getMessage());
-      System.exit(TEMPLATE_PROCESS_ERROR);
+      System.exit(TEMPLATE_PROCESS_ERROR.ordinal());
     }
   }
 
@@ -144,7 +135,7 @@ public class ReportService {
       config.setSQLDateAndTimeTimeZone(TimeZone.getDefault());
     } catch (IOException e) {
       System.err.println("Error configuring Freemarker: " + e.getMessage());
-      System.exit(FREEMARKER_CONFIG_ERROR);
+      System.exit(FREEMARKER_CONFIG_ERROR.ordinal());
     }
   }
 }

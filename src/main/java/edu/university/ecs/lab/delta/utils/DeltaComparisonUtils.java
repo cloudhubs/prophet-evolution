@@ -11,10 +11,12 @@ import javax.json.*;
 import java.io.File;
 import java.io.IOException;
 
-import static edu.university.ecs.lab.common.models.enums.ErrorCodes.DELTA_EXTRACT_FAIL;
+import static edu.university.ecs.lab.common.models.enums.ErrorCodes.DELTA_EXTRACTION_FAIL;
 
 /** Utility class for comparing differences between two files. */
 public class DeltaComparisonUtils {
+    /** Private constructor to prevent instantiation */
+    private DeltaComparisonUtils() {}
 
   /**
    * Extract a representation of an JClass from the given classFile
@@ -31,27 +33,27 @@ public class DeltaComparisonUtils {
       } catch (IOException e) {
         System.err.println("Error parsing class file: " + classFile.getAbsolutePath());
         System.err.println(e.getMessage());
-        System.exit(DELTA_EXTRACT_FAIL.ordinal());
+        System.exit(DELTA_EXTRACTION_FAIL.ordinal());
       }
 
-      // TODO debug Austin v
+      // TODO debug Austin, if this fails then I messed up :)
       assert jClass != null;
       if (jClass.getClassRole() == ClassRole.CONTROLLER && !(jClass instanceof JController)) {
         throw new RuntimeException("ClassRole is CONTROLLER but class is not JController");
       }
       if (jClass.getClassRole() == ClassRole.SERVICE && !(jClass instanceof JService)) {
-        throw new RuntimeException("ClassRole is CONTROLLER but class is not JController");
+        throw new RuntimeException("ClassRole is CONTROLLER but class is not JService");
       }
-      // DEBUG ^
+      // DEBUG ^^^^^ can remove later
 
-    if (jClass.getClassRole() == ClassRole.CONTROLLER) {
-        return ObjectToJsonUtils.buildRestController("", (JController) jClass);
-    } else if (jClass.getClassRole() == ClassRole.SERVICE) {
-        return ObjectToJsonUtils.buildRestService((JService) jClass);
-    }
+        if (jClass.getClassRole() == ClassRole.CONTROLLER) {
+            return ObjectToJsonUtils.buildRestController("", (JController) jClass);
+        } else if (jClass.getClassRole() == ClassRole.SERVICE) {
+            return ObjectToJsonUtils.buildRestService((JService) jClass);
+        }
 
-    // TODO implement the rest of the class roles
+        // TODO implement the rest of the class roles
 
-    return ObjectToJsonUtils.buildJavaClass(jClass);
+        return ObjectToJsonUtils.buildJavaClass(jClass);
   }
 }
