@@ -115,7 +115,7 @@ public class DeltaExtractionService {
         controllers.add(
             constructObjectFromDelta(
                 ClassRole.CONTROLLER,
-                getDeltaChanges(entry, file, ClassRole.CONTROLLER, localPath, path),
+                getDeltaChanges(entry, localPath, path),
                 entry,
                 localPath));
 
@@ -130,7 +130,7 @@ public class DeltaExtractionService {
         services.add(
             constructObjectFromDelta(
                 ClassRole.SERVICE,
-                getDeltaChanges(entry, file, ClassRole.SERVICE, localPath, path),
+                getDeltaChanges(entry, localPath, path),
                 entry,
                 localPath));
       } else if (file.getName().toLowerCase().contains("dto")) {
@@ -144,7 +144,7 @@ public class DeltaExtractionService {
         dtos.add(
             constructObjectFromDelta(
                 ClassRole.DTO,
-                getDeltaChanges(entry, file, ClassRole.DTO, localPath, path),
+                getDeltaChanges(entry, localPath, path),
                 entry,
                 localPath));
       } else if (file.getName().contains("Repository")) {
@@ -158,7 +158,7 @@ public class DeltaExtractionService {
         repositories.add(
             constructObjectFromDelta(
                 ClassRole.REPOSITORY,
-                getDeltaChanges(entry, file, ClassRole.REPOSITORY, localPath, path),
+                getDeltaChanges(entry, localPath, path),
                 entry,
                 localPath));
       } else if (file.getParent().toLowerCase().contains("entity")
@@ -173,7 +173,7 @@ public class DeltaExtractionService {
         entities.add(
             constructObjectFromDelta(
                 ClassRole.ENTITY,
-                getDeltaChanges(entry, file, ClassRole.ENTITY, localPath, path),
+                getDeltaChanges(entry, localPath, path),
                 entry,
                 localPath));
       }
@@ -197,18 +197,16 @@ public class DeltaExtractionService {
   }
 
   private static JsonObject getDeltaChanges(
-      DiffEntry entry, File file, ClassRole classRole, String localPath, String rootPath) {
+          DiffEntry entry, String localPath, String rootPath) {
+    File classFile = new File(rootPath + localPath.substring(1));
     switch (entry.getChangeType()) {
       case MODIFY:
-        return DeltaComparisonUtils.extractDeltaChanges(
-            new File(rootPath + localPath.substring(1)), classRole);
+      case RENAME:
+      case ADD:
+        return DeltaComparisonUtils.extractDeltaChanges(classFile);
       case COPY:
       case DELETE:
         break;
-      case RENAME:
-      case ADD:
-        return DeltaComparisonUtils.extractDeltaChanges(
-            new File(rootPath + localPath.substring(1)), classRole);
       default:
         break;
     }

@@ -1,16 +1,14 @@
 package edu.university.ecs.lab.impact.models;
 
-import lombok.AllArgsConstructor;
+import edu.university.ecs.lab.common.models.Microservice;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @NoArgsConstructor
 @Data
 public class MicroserviceMetrics {
 
-    private String name;
+    private String id;
     private double oldSidc2Score;
     private double oldSiucScore;
     private double oldAdsScore;
@@ -20,4 +18,7 @@ public class MicroserviceMetrics {
     private DependencyMetrics dependencyMetrics;
 
 
+    public MicroserviceMetrics(Microservice microservice) {
+        this.id = microservice.getId();
+    }
 }

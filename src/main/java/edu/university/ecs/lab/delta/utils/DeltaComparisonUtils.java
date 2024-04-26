@@ -4,37 +4,55 @@ import edu.university.ecs.lab.common.models.JClass;
 import edu.university.ecs.lab.common.models.JController;
 import edu.university.ecs.lab.common.models.JService;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
-import edu.university.ecs.lab.common.utils.JsonConvertUtils;
-import org.eclipse.jgit.diff.DiffEntry;
+import edu.university.ecs.lab.common.utils.JsonToObjectUtils;
+import edu.university.ecs.lab.common.utils.ObjectToJsonUtils;
 
 import javax.json.*;
 import java.io.File;
 import java.io.IOException;
 
-import static edu.university.ecs.lab.intermediate.create.services.RestModelService.scanFileForClassModel;
+import static edu.university.ecs.lab.common.models.enums.ErrorCodes.DELTA_EXTRACT_FAIL;
 
 /** Utility class for comparing differences between two files. */
 public class DeltaComparisonUtils {
 
   /**
-   * Extract the differences between the decoded file from {@link
-   * GitFetchUtils#fetchAndDecodeFile(String)} and the local file (serviceTLD/{@link
-   * DiffEntry#getOldPath()}).
+   * Extract a representation of an JClass from the given classFile
+   * and return a Json representing the class object.
    *
-   * @param pathToLocal the path to the local file (serviceTLD/{@link DiffEntry#getOldPath()})
+   * @param classFile file to scan for differences
    * @return the differences between the two files as a JSON array
    * @throws IOException if an I/O error occurs
    */
-  public static JsonObject extractDeltaChanges(File classFile, ClassRole classRole) {
-    JClass jClass = scanFileForClassModel(classFile);
+  public static JsonObject extractDeltaChanges(File classFile) {
+      JClass jClass = null;
+      try {
+          jClass = JsonToObjectUtils.parseClass(classFile);
+      } catch (IOException e) {
+        System.err.println("Error parsing class file: " + classFile.getAbsolutePath());
+        System.err.println(e.getMessage());
+        System.exit(DELTA_EXTRACT_FAIL.ordinal());
+      }
 
-    if (classRole == ClassRole.CONTROLLER && jClass instanceof JController) {
-      return JsonConvertUtils.buildRestController("", (JController) jClass);
-    } else if (classRole == ClassRole.SERVICE && jClass instanceof JService) {
-      return JsonConvertUtils.buildRestService((JService) jClass);
+      // TODO debug Austin v
+      assert jClass != null;
+      if (jClass.getClassRole() == ClassRole.CONTROLLER && !(jClass instanceof JController)) {
+        throw new RuntimeException("ClassRole is CONTROLLER but class is not JController");
+      }
+      if (jClass.getClassRole() == ClassRole.SERVICE && !(jClass instanceof JService)) {
+        throw new RuntimeException("ClassRole is CONTROLLER but class is not JController");
+      }
+      // DEBUG ^
+
+    if (jClass.getClassRole() == ClassRole.CONTROLLER) {
+        return ObjectToJsonUtils.buildRestController("", (JController) jClass);
+    } else if (jClass.getClassRole() == ClassRole.SERVICE) {
+        return ObjectToJsonUtils.buildRestService((JService) jClass);
     }
 
-    return JsonConvertUtils.buildJavaClass(jClass);
+    // TODO implement the rest of the class roles
+
+    return ObjectToJsonUtils.buildJavaClass(jClass);
   }
 
   //  public static JClass extractFileClassModel(File classFile) {

@@ -27,23 +27,23 @@ public class EndpointChangeService {
     /**
      * Get a list of all changed rest calls for a single delta
      *
-     * @param delta delta object representing changes to a system
+     * @param msId id of the microservice in the map
      * @return list of rest call changes from the given delta
      */
-    public List<EndpointChange> getAllMsEndpointChanges(String microserviceName) {
+    public List<EndpointChange> getAllMsEndpointChanges(String msId) {
 
         // Find the microservices
-        Microservice oldMicroservice = oldMicroserviceMap.get(microserviceName);
-        Microservice newMicroservice = newMicroserviceMap.get(microserviceName);
+        Microservice oldMicroservice = oldMicroserviceMap.get(msId);
+        Microservice newMicroservice = newMicroserviceMap.get(msId);
 
         // Ensure non null
+        // TODO, This will cause crash if there is a new or deleted service. Handle these cases
         assert Objects.nonNull(oldMicroservice) && Objects.nonNull(newMicroservice);
-
 
 
         // Find all their endpoints
         List<JController> oldControllers = oldMicroservice.getControllers();
-        List<JController> newControllers = oldMicroservice.getControllers();
+        List<JController> newControllers = newMicroservice.getControllers();
 
 
         // Build endpoint changes
@@ -51,13 +51,14 @@ public class EndpointChangeService {
 
         // Handle deleted classes
         for (JController oldController : oldControllers) {
+            // TODO searching for controller by classpath is unsafe, we should be searching by something else
             if(newControllers.stream().filter(jController -> jController.getClassPath().equals(oldController.getClassPath())).findFirst().isEmpty()) {
                 for(Endpoint oldEndpoint : oldController.getEndpoints()) {
                     // Add the new endpoint change of delete
                     endpointChanges.add(new EndpointChange(
                             oldEndpoint,
                             null,
-                            getEndpointLinks(oldEndpoint, microserviceName, true),
+                            getEndpointLinks(oldEndpoint, msId, true),
                             new ArrayList<>(),
                             ChangeType.DELETE));
                 }
@@ -73,7 +74,7 @@ public class EndpointChangeService {
                             null,
                             newEndpoint,
                             new ArrayList<>(),
-                            getEndpointLinks(newEndpoint, microserviceName, false),
+                            getEndpointLinks(newEndpoint, msId, false),
                             ChangeType.ADD));
                 }
             }
@@ -95,7 +96,7 @@ public class EndpointChangeService {
                         endpointChanges.add(new EndpointChange(
                                 oldEndpoint,
                                 null,
-                                getEndpointLinks(oldEndpoint, microserviceName, true),
+                                getEndpointLinks(oldEndpoint, msId, true),
                                 new ArrayList<>(),
                                 ChangeType.MODIFY));
                     }
@@ -109,7 +110,7 @@ public class EndpointChangeService {
                                 null,
                                 newEndpoint,
                                 new ArrayList<>(),
-                                getEndpointLinks(newEndpoint, microserviceName, false),
+                                getEndpointLinks(newEndpoint, msId, false),
                                 ChangeType.MODIFY));
                     }
                 }
@@ -122,8 +123,8 @@ public class EndpointChangeService {
                         endpointChanges.add(new EndpointChange(
                                 oldEndpoint,
                                 newEndpoint,
-                                getEndpointLinks(oldEndpoint, microserviceName, true),
-                                getEndpointLinks(newEndpoint, microserviceName, false),
+                                getEndpointLinks(oldEndpoint, msId, true),
+                                getEndpointLinks(newEndpoint, msId, false),
                                 ChangeType.MODIFY));
                     }
                 }
@@ -131,7 +132,7 @@ public class EndpointChangeService {
             }
         }
 
-        updateEndpointChangeImpact(endpointChanges, microserviceName);
+        updateEndpointChangeImpact(endpointChanges, msId);
 
         return filterNoImpact(endpointChanges);
     }

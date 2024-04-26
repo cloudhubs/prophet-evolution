@@ -2,7 +2,7 @@ package edu.university.ecs.lab.intermediate.merge;
 
 import edu.university.ecs.lab.common.models.Microservice;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
-import edu.university.ecs.lab.common.utils.JsonConvertUtils;
+import edu.university.ecs.lab.common.utils.ObjectToJsonUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.common.models.MsSystem;
@@ -51,7 +51,7 @@ public class IRMergeRunner {
 
   private static void writeNewIntermediate(
       String systemname, String version, Map<String, Microservice> msModelMap) throws IOException {
-    JsonObject jout = JsonConvertUtils.buildSystem(systemname, version, msModelMap);
+    JsonObject jout = ObjectToJsonUtils.buildSystem(systemname, version, msModelMap);
 
     String outputPath = System.getProperty("user.dir") + File.separator + "out";
 

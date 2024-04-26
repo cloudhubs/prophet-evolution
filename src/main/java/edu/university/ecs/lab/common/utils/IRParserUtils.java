@@ -28,12 +28,4 @@ public class IRParserUtils {
 
     return systemChange;
   }
-
-  public static String getClassNameFromLocalPath(String localPath) {
-    return localPath.substring(localPath.lastIndexOf("/") + 1, localPath.length() - 5);
-  }
-
-  public static String getServiceFromLocalPath(String localPath) {
-    return localPath.substring(localPath.indexOf('/', 3) + 1, localPath.indexOf('/', 4));
-  }
 }
