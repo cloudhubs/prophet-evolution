@@ -1,21 +1,20 @@
 package edu.university.ecs.lab.impact.metrics.services;
 
+import com.google.common.util.concurrent.Service;
 import edu.university.ecs.lab.common.models.*;
 import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import edu.university.ecs.lab.impact.models.change.CallChange;
 import edu.university.ecs.lab.impact.models.enums.RestCallImpact;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CallChangeService {
 
-    Map<String, Microservice> oldMicroserviceMap;
-    Map<String, Microservice> newMicroserviceMap;
+    private Map<String, Microservice> oldMicroserviceMap;
+    private Map<String, Microservice> newMicroserviceMap;
+    private Map<Microservice, List<Microservice>> dependencyGraph;
 
     SystemChange systemChange;
 
@@ -23,6 +22,31 @@ public class CallChangeService {
         this.oldMicroserviceMap = oldMicroserviceMap;
         this.newMicroserviceMap = newMicroserviceMap;
         this.systemChange = systemChange;
+        this.dependencyGraph = new HashMap<>(newMicroserviceMap.size());
+    }
+
+    private void initializeGraph() {
+        for(Microservice microservice : newMicroserviceMap.values()) {
+            dependencyGraph.put(microservice, new ArrayList<>());
+        }
+
+        for(Microservice microservice : newMicroserviceMap.values()) {
+            for(JService service : microservice.getServices()) {
+                for(RestCall restCall : service.getRestCalls()) {
+                    if(Objects.nonNull(restCall.getDestFile()) && !restCall.getDestFile().isEmpty()) {
+                        String destMicroserviceName = restCall.getDestFile().substring(2).substring(restCall.getDestFile().indexOf('/') + 1);
+                        Microservice destMicroservice = oldMicroserviceMap.get(destMicroserviceName);
+                        if(Objects.nonNull(destMicroservice)) {
+                            dependencyGraph.get(microservice).add(destMicroservice);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void detectCycle() {
+
     }
 
     /**
@@ -62,17 +86,18 @@ public class CallChangeService {
             }
         }
 
-        updateCallChangeImpact(callChanges);
+        updateCallChangeImpact(callChanges, microserviceName);
 
         return callChanges;
     }
 
-    private void updateCallChangeImpact(List<CallChange> callChangeList) {
-        // Check for CALL_TO_DEPRECATED_ENDPOINT
+    private void updateCallChangeImpact(List<CallChange> callChangeList, String microserviceName) {
         for(CallChange callChange : callChangeList) {
             if(checkCallToDeprecatedEndpoint(callChange)) {
                 break;
             } else if(checkUnusedEndpoint(callChange)) {
+                break;
+            } else if(checkAboveCouplingThreshold(callChange, microserviceName)) {
                 break;
             }
 
@@ -127,6 +152,26 @@ public class CallChangeService {
 
         // If no matching url is found, we are calling deprecated/nonexistent endpoint
         callChange.setImpact(RestCallImpact.CALL_TO_DEPRECATED_ENDPOINT);
+        return true;
+    }
+
+    public boolean checkAboveCouplingThreshold(CallChange callChange, String microserviceName) {
+        if(callChange.getChangeType() != ChangeType.ADD) {
+            return false;
+        }
+
+        Microservice oldMicroservice = newMicroserviceMap.get(microserviceName);
+        Microservice newMicroservice = newMicroserviceMap.get(microserviceName);
+        int oldADS = MicroserviceMetricsService.calculateADS(oldMicroservice);
+        int newADS = MicroserviceMetricsService.calculateADS(newMicroservice);
+
+        // If our ADS (# of links) went down or remains the same
+        if (oldADS >= newADS || MicroserviceMetricsService.THRESHOLD > newADS) {
+            return false;
+        }
+
+        // Otherwise if our ADS went up, and it's now above the threshold, we will blame all new valid add's
+        callChange.setImpact(RestCallImpact.HIGH_COUPLING);
         return true;
     }
 }

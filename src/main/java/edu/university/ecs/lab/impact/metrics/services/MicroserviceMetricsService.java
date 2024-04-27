@@ -11,6 +11,8 @@ import edu.university.ecs.lab.impact.models.change.Link;
 import java.util.*;
 
 public class MicroserviceMetricsService {
+    public static final int THRESHOLD = 5;
+
     Map<String, Microservice> oldMicroserviceMap;
     Map<String, Microservice> newMicroserviceMap;
 
@@ -53,6 +55,7 @@ public class MicroserviceMetricsService {
             microserviceMetrics.setNewSiucScore(calculateSIUCScore(newMicroserviceMap,newMicroserviceMap.get(microservice.getId())));
             microserviceMetrics.setOldSidc2Score(calculateSIDC2Score(microservice));
             microserviceMetrics.setNewSidc2Score(calculateSIDC2Score(newMicroserviceMap.get(microservice.getId())));
+            microserviceMetrics.setHighCoupling(calculateADS(microservice) > THRESHOLD);
 
             microserviceMetricsList.add(microserviceMetrics);
         }
@@ -127,10 +130,6 @@ public class MicroserviceMetricsService {
         return (double) (commonParams + commonReturns) / (totalEndpoints * 2);
     }
 
-    public boolean aboveThreshold(Map<String, Microservice> microserviceMap, Microservice microservice) {
-        return (calculateADS(microservice) > 5);
-    }
-
     /*
         https://drive.google.com/drive/folders/1nEknAyMAsw-aUze0_ot9_lER2yNV-HOx
 
@@ -179,8 +178,10 @@ public class MicroserviceMetricsService {
         service depends. In other words, ADS is the number of services that S1 calls for its
         operation to be complete. The higher the ADS, the more this service depends on other
         services, i.e., it is more vulnerable to the side effects of failures in the services invoked.
+
+        In other words this is the coupling degree with other services
      */
-    public int calculateADS(Microservice microservice) {
+    public static int calculateADS(Microservice microservice) {
         Set<Link> links = new HashSet<>();
         for(JService service : microservice.getServices()) {
             for (RestCall restCall : service.getRestCalls()) {
@@ -190,6 +191,7 @@ public class MicroserviceMetricsService {
 
         return links.size();
     }
+
 
 
 }

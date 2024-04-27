@@ -17,6 +17,7 @@ public class MicroserviceMetrics {
     private double newSidc2Score;
     private double newSiucScore;
     private double newAdsScore;
+    private boolean highCoupling;
     private DependencyMetrics dependencyMetrics;
 
 
