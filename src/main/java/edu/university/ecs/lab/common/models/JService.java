@@ -13,14 +13,16 @@ import java.util.List;
 @AllArgsConstructor
 public class JService extends JClass {
   public JService(@NonNull JClass jClass) {
-    classPath = jClass.getClassPath();
-    packageName = jClass.getPackageName();
-    className = jClass.getClassName();
-    methods = jClass.getMethods();
-    fields = jClass.getFields();
-    methodCalls = jClass.getMethodCalls();
-
-    restCalls = new ArrayList<>();
+    super(
+        jClass.getClassName(),
+        jClass.getClassPath(),
+        jClass.getPackageName(),
+        jClass.getClassRole(),
+        jClass.getMethods(),
+        jClass.getFields(),
+        jClass.getMethodCalls(),
+        jClass.getMsId()
+    );
   }
 
   private List<RestCall> restCalls;

@@ -29,11 +29,11 @@
             <ul class="space-y-1">
                 <li class="flex items-center gap-4">
                     <div class="font-semibold text-emerald-600">Base Branch:</div>
-                    <div>${branch1}/{$commit1}</div>
+                    <div>${branch1}/${commit1}</div>
                 </li>
                 <li class="flex items-center gap-4">
                     <div class="font-semibold text-emerald-600">Compare Branch:</div>
-                    <div>${branch2}/{$commit2}</div>
+                    <div>${branch2}/${commit2}</div>
                 </li>
             </ul>
             <hr class="mt-4" />
@@ -41,9 +41,9 @@
             <div>
                 <h2 class="mb-2 text-xl font-semibold text-sky-600">Overall System Metrics</h2>
                 <div class="mb-4 text-sm">
-                    <div><span class="font-semibold text-sky-800">ADCS Score:</span> {$systemMetrics.getAdcsScore()}</div>
+                    <div><span class="font-semibold text-sky-800">ADCS Score:</span> ${systemMetrics.getNewAdcsScore()}</div>
                     <div class="text-xs mb-2 text-gray-400">Average number of directly connected services (ADCS): the average of ADS metric of all services.</div>
-                    <div><span class="font-semibold text-sky-800">SCF Score:</span> {$systemMetrics.getScfScore()}</div>
+                    <div><span class="font-semibold text-sky-800">SCF Score:</span> ${systemMetrics.getNewScfScore()}</div>
                     <div class="text-xs mb-2 text-gray-400">Service Coupling Factor (SCF): measure of the density of a graph's connectivity. SCF = SC/(N2 - N)</div>
                 </div>
                 <div class="space-y-2">
@@ -92,26 +92,26 @@
                 <ul class="space-y-1">
                     <#list systemMetrics.getMicroserviceMetrics() as service>
                         <li class="rounded-lg bg-gray-100 px-4 py-2">
-                            <div class="font-semibold text-violet-900 mb-2">${service.name()}</div>
+                            <div class="font-semibold text-violet-900 mb-2">${service.getName()}</div>
                             <div class="text-sm">
-                                <div><span class="font-semibold font-sans text-gray-800">ADS Score:</span> {$service.getAdsScore()}</div>
-                                <div><span class="font-semibold font-sans text-gray-800">SIUC Score:</span> {$service.getSiucScore()}</div>
-                                <div><span class="font-semibold font-sans text-gray-800">SIDC Score:</span> {$service.getSidc2Score()}</div>
+                                <div><span class="font-semibold font-sans text-gray-800">ADS Score:</span> ${service.getNewAdsScore()}</div>
+                                <div><span class="font-semibold font-sans text-gray-800">SIUC Score:</span> ${service.getNewSiucScore()}</div>
+                                <div><span class="font-semibold font-sans text-gray-800">SIDC Score:</span> ${service.getNewSidc2Score()}</div>
                             </div>
                             <div class="mt-2 mb-1 font-semibold text-teal-600">Call Changes:</div>
                             <ul class="text-sm">
                                 <#list service.getDependencyMetrics().getCallChanges() as change>
                                     <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">
                                         <div class="mb-4">
-                                            <div><span class="font-semibold font-sans text-teal-800">Dest. Service:</span> {$change.getNewLink().getMsDestination()}</div>
-                                            <div><span class="font-semibold font-sans text-teal-800">Dest. Route:</span> {$change.getNewCall().getApi()}</div>
-                                            <div class="font-mono uppercase"><span class="font-semibold font-sans text-teal-800 normal-case">HttpMethod:</span> {$change.getNewCall().getHttpMethod()}</div>
+                                            <div><span class="font-semibold font-sans text-teal-800">Dest. Service:</span> ${change.getNewLink().getMsDestination()}</div>
+                                            <div><span class="font-semibold font-sans text-teal-800">Dest. Route:</span> ${change.getNewCall().getApi()}</div>
+                                            <div class="font-mono uppercase"><span class="font-semibold font-sans text-teal-800 normal-case">HttpMethod:</span> ${change.getNewCall().getHttpMethod()}</div>
                                         </div>
                                         <div ><span class="font-semibold font-sans text-violet-800">Method Name:</span> {$change.getNewCall().getMethodName()}</div>
-                                        <div class="mb-2 italic text-gray-500"><span class="font-semibold font-sans not-italic text-violet-800">FilePath:</span> {$change.getNewCall().getSourceFile()}</div>
+                                        <div class="mb-2 italic text-gray-500"><span class="font-semibold font-sans not-italic text-violet-800">FilePath:</span> ${change.getNewCall().getSourceFile()}</div>
 
-                                        <div><span class="font-semibold text-red-800">Change:</span> {$change.getChangeType().getName()}</div>
-                                        <div><span class="font-semibold text-red-800">Impact:</span> {$change.getImpact().getName()}</div>
+                                        <div><span class="font-semibold text-red-800">Change:</span> ${change.getChangeType().name()}</div>
+                                        <div><span class="font-semibold text-red-800">Impact:</span> ${change.getImpact().name()}</div>
                                         <div><span class="font-semibold text-red-800">Risk:</span> [TODO]</div>
                                     </li>
                                 </#list>
@@ -120,25 +120,61 @@
                             <ul class="text-sm">
                                 <#list service.getDependencyMetrics().getEndpointChanges() as change>
                                     <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">
-                                        <div class="font-mono"><span class="font-semibold font-sans text-teal-800">Endpoint:</span> {$change.getNewEndpoint().getUrl()}</div>
-                                        <div class="font-mono"><span class="font-semibold font-sans text-teal-800">HttpMethod:</span> {$change.getNewEndpoint().getHttpMethod()}</div>
-                                        <div class="font-mono"><span class="font-semibold font-sans text-teal-800">Parameters:</span> {$change.getNewEndpoint().getParameterList()}</div>
-                                        <div class="font-mono mb-2"><span class="font-semibold font-sans text-teal-800">Return:</span> {$change.getNewEndpoint().getReturnType()}</div>
-                                        <div class="mb-2"><span class="font-semibold font-sans text-violet-800">Method Name:</span> {$change.getNewEndpoint().getMethodName()}</div>
-                                        <div><span class="font-semibold text-red-800">Change:</span> {$change.getChangeType().name()}</div>
-                                        <div><span class="font-semibold text-red-800">Impact:</span> {$change.getImpact().getName()}</div>
+                                        <#assign old = change.getNewEndpoint()>
+                                        <#assign new = change.getOldEndpoint()>
+                                        <div class="font-mono"><span class="font-semibold font-sans text-teal-800">Endpoint:</span>
+                                            <#if old.getUrl() != new.getUrl()>
+                                                <span class="text-red-800 font-semibold">${old.getUrl()} &rarr; ${new.getUrl()}</span>
+                                            <#else>
+                                                ${new.getUrl()}
+                                            </#if>
+                                        </div>
+                                        <div class="font-mono"><span class="font-semibold font-sans text-teal-800">HttpMethod:</span>
+                                            <#if old.getHttpMethod() != new.getHttpMethod()>
+                                                <span class="text-red-800 font-semibold">${old.getHttpMethod()} &rarr; ${new.getHttpMethod()}</span>
+                                            <#else>
+                                                ${new.getHttpMethod()}
+                                            </#if>
+                                        </div>
+                                        <div class="font-mono"><span class="font-semibold font-sans text-teal-800">Parameters:</span>
+                                            <#if old.getParameterList() != new.getParameterList()>
+                                                <span class="text-red-800 font-semibold">${old.getParameterList()} &rarr; ${new.getParameterList()}</span>
+                                            <#else>
+                                                ${new.getParameterList()}
+                                            </#if>
+                                        </div>
+                                        <div class="font-mono mb-2"><span class="font-semibold font-sans text-teal-800">Return:</span>
+                                            <#if old.getReturnType() != new.getReturnType()>
+                                                <span class="text-red-800 font-semibold">${old.getReturnType()} &rarr; ${new.getReturnType()}</span>
+                                            <#else>
+                                                ${new.getReturnType()}
+                                            </#if>
+                                        </div>
+                                        <div class="mb-2"><span class="font-semibold font-sans text-violet-800">Method Name:</span>
+                                            <#if old.getMethodName() != new.getMethodName()>
+                                                <span class="text-red-800 font-semibold">${old.getMethodName()} &rarr; ${new.getMethodName()}</span>
+                                            <#else>
+                                                ${new.getMethodName()}
+                                            </#if>
+                                        </div>
+                                        <div><span class="font-semibold text-red-800">Change:</span>
+                                            ${change.getChangeType().name()}
+                                        </div>
+                                        <div><span class="font-semibold text-red-800">Impact:</span>
+                                            ${change.getImpact().name()}
+                                        </div>
                                         <div><span class="font-semibold text-red-800">Risk:</span> [TODO]</div>
                                     </li>
                                 </#list>
                             </ul>
                             <div class="mt-2 mb-1 font-semibold text-blue-700">Entity Changes:</div>
-                            <ul class="text-sm">
-                                <#list service.getEntityChangeList() as change>
-                                    <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">
+<#--                            <ul class="text-sm">-->
+<#--                                <#list service.getEntityChangeList() as change>-->
+<#--                                    <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">-->
 
-                                    </li>
-                                </#list>
-                            </ul>
+<#--                                    </li>-->
+<#--                                </#list>-->
+<#--                            </ul>-->
                         </li>
                     </#list>
                 </ul>

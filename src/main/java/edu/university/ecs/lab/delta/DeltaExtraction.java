@@ -14,8 +14,7 @@ public class DeltaExtraction {
    * @param args [branch] [list containing /path/to/repo(s)]
    */
   public static void main(String[] args) throws Exception {
-    DeltaExtractionService deltaService = new DeltaExtractionService();
-    args = new String[]{"main", "./repos/train-ticket-microservices-test"};
+    args = new String[]{"main", "./repos/train-ticket-microservices"};
     if (args.length < 2) {
       System.err.println("Required arguments <branch> <list of paths...>");
     }
@@ -23,19 +22,7 @@ public class DeltaExtraction {
     String branch = args[0];
     String[] paths = Arrays.copyOfRange(args, 1, args.length);
 
-    // iterate through each repository path
-    for (String path : paths) {
-      // point to local repository
-      Repository localRepo = deltaService.establishLocalEndpoint(path);
-
-      // extract remote differences with local
-      List<DiffEntry> differences = deltaService.fetchRemoteDifferences(localRepo, branch);
-
-      // process/write differences to delta output
-      deltaService.processDifferences(path, localRepo, differences, path);
-
-      // close repository after use
-      localRepo.close();
-    }
+    DeltaExtractionService deltaService = new DeltaExtractionService(branch, paths);
+    deltaService.generateDelta();
   }
 }

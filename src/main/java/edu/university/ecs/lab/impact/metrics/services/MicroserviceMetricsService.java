@@ -1,9 +1,7 @@
 package edu.university.ecs.lab.impact.metrics.services;
 
 import edu.university.ecs.lab.common.models.*;
-import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
-import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import edu.university.ecs.lab.impact.models.DependencyMetrics;
 import edu.university.ecs.lab.impact.models.MicroserviceMetrics;
 import edu.university.ecs.lab.impact.models.change.Link;
@@ -36,12 +34,11 @@ public class MicroserviceMetricsService {
         MicroserviceMetrics microserviceMetrics;
         DependencyMetrics dependencyMetrics;
 
-        // TODO technically not scalable to newly added microservices
+        // Go through the OLD map and determine changed services
         for(Microservice microservice : oldMicroserviceMap.values()) {
-            microserviceMetrics = new MicroserviceMetrics();
+            microserviceMetrics = new MicroserviceMetrics(microservice);
             dependencyMetrics = new DependencyMetrics();
 
-            microserviceMetrics.setName(microservice.getId());
 
             // Dependency Metrics
             dependencyMetrics.setCallChanges(callChangeService.getAllMsRestCallChanges(microservice.getId()));
@@ -51,14 +48,18 @@ public class MicroserviceMetricsService {
             // Numeric Metrics
             microserviceMetrics.setOldAdsScore(calculateADS(microservice));
             microserviceMetrics.setNewAdsScore(calculateADS(newMicroserviceMap.get(microservice.getId())));
+
             microserviceMetrics.setOldSiucScore(calculateSIUCScore(oldMicroserviceMap, microservice));
             microserviceMetrics.setNewSiucScore(calculateSIUCScore(newMicroserviceMap,newMicroserviceMap.get(microservice.getId())));
+
             microserviceMetrics.setOldSidc2Score(calculateSIDC2Score(microservice));
             microserviceMetrics.setNewSidc2Score(calculateSIDC2Score(newMicroserviceMap.get(microservice.getId())));
             microserviceMetrics.setHighCoupling(calculateADS(microservice) > THRESHOLD);
 
             microserviceMetricsList.add(microserviceMetrics);
         }
+
+        // TODO here add new services from new map that are not in old map
 
 
         return microserviceMetricsList;

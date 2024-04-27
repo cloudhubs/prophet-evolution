@@ -16,7 +16,7 @@ public class Delta {
   private String localPath;
   private ChangeType changeType;
   private String commitId;
-  private String msName;
+  private String msId;
 
   @SerializedName("changes")
   private JClass change;

@@ -2,7 +2,7 @@ package edu.university.ecs.lab.intermediate.create.services;
 
 import edu.university.ecs.lab.common.models.JController;
 import edu.university.ecs.lab.common.models.JService;
-import edu.university.ecs.lab.common.utils.JParserUtils;
+import edu.university.ecs.lab.common.utils.JsonToObjectUtils;
 import edu.university.ecs.lab.common.models.JClass;
 import edu.university.ecs.lab.common.models.Microservice;
 
@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /** Service for extracting REST endpoints and dependencies for a given microservice. */
 public class RestModelService {
@@ -18,8 +17,8 @@ public class RestModelService {
    * Recursively scan the files in the given repository path and extract the endpoints and
    * dependencies for a single microservice.
    *
-   * @param rootPath root path to cloned repository folder
-   * @param pathToMs the path to the microservice TLD
+   * @param rootPath clonePath specified by {@link edu.university.ecs.lab.common.config.models.InputConfig}
+   * @param pathToMs the path to the microservice directory NOT including the clonePath ("\sysName\...\msName")
    * @return model of a single service containing the extracted endpoints and dependencies
    */
   public static Microservice recursivelyScanFiles(String rootPath, String pathToMs) {
@@ -38,6 +37,9 @@ public class RestModelService {
       System.err.println("Invalid path given: " + repoPath);
       return null;
     }
+
+    // Set the id of the microservice to the last part of the msPath
+    model.setId(repoPath.substring(repoPath.lastIndexOf(File.separator) + 1));
 
     scanDirectory(localDir, controllers, services, dtos, repositories, entities);
 
@@ -80,6 +82,8 @@ public class RestModelService {
    * Scan the given file for endpoints and calls to other services.
    *
    * @param file the file to scan
+   * @apiNote CURRENT LIMITATION: We detect controllers/services/dtos/repositories/entities based on literally
+   * having that string within the file name. This is a naive approach and should be improved.
    */
   public static void scanFile(
       File file,
@@ -89,74 +93,35 @@ public class RestModelService {
       List<JClass> repositories,
       List<JClass> entities) {
     try {
-      if (file.getName().contains("Controller")) {
-        JController controller = JParserUtils.parseController(file);
-        if (Objects.nonNull(controller)) {
-          controllers.add(controller);
-        }
-      } else if (file.getName().contains("Service")) {
-        JService jService = JParserUtils.parseService(file);
-        if (Objects.nonNull(jService)) {
-          services.add(jService);
-        }
-      } else if (file.getName().toLowerCase().contains("dto")) {
-        JClass jClass = JParserUtils.parseClass(file);
-        if (Objects.nonNull(jClass)) {
-          dtos.add(jClass);
-        }
-      } else if (file.getName().contains("Repository")) {
-        JClass jClass = JParserUtils.parseClass(file);
-        if (Objects.nonNull(jClass)) {
-          repositories.add(jClass);
-        }
-      } else if (file.getParent().toLowerCase().contains("entity")
-          || file.getParent().toLowerCase().contains("model")) {
-        JClass jClass = JParserUtils.parseClass(file);
-        if (Objects.nonNull(jClass)) {
-          entities.add(jClass);
-        }
+      JClass jClass = JsonToObjectUtils.parseClass(file);
+
+      if (jClass == null) {
+        return;
       }
 
-      // todo: configs? utils? (everything else? -_-)
+      // Switch through class roles and handle additional logic if needed
+      switch (jClass.getClassRole()) {
+          case CONTROLLER:
+            controllers.add((JController) jClass);
+            break;
+          case SERVICE:
+            services.add((JService) jClass);
+            break;
+          case DTO:
+            dtos.add(jClass);
+            break;
+          case REPOSITORY:
+            repositories.add(jClass);
+            break;
+          case ENTITY:
+            entities.add(jClass);
+            break;
+          default:
+            break;
+      }
     } catch (IOException e) {
-      System.err.println("Could not parse file: " + e.getMessage());
+      System.err.println("Could not parse file due to unrecognized type: " + e.getMessage());
     }
   }
 
-  public static JClass scanFileForClassModel(File file) {
-    try {
-      if (file.getName().contains("Controller")) {
-        JController controller = JParserUtils.parseController(file);
-        if (Objects.nonNull(controller)) {
-          return controller;
-        }
-      } else if (file.getName().contains("Service")) {
-        JService jService = JParserUtils.parseService(file);
-        if (Objects.nonNull(jService)) {
-          return jService;
-        }
-      } else if (file.getName().toLowerCase().contains("dto")) {
-        JClass jClass = JParserUtils.parseClass(file);
-        if (Objects.nonNull(jClass)) {
-          return jClass;
-        }
-      } else if (file.getName().contains("Repository")) {
-        JClass jClass = JParserUtils.parseClass(file);
-        if (Objects.nonNull(jClass)) {
-          return jClass;
-        }
-      } else if (file.getParent().toLowerCase().contains("entity")
-          || file.getParent().toLowerCase().contains("model")) {
-        JClass jClass = JParserUtils.parseClass(file);
-        if (Objects.nonNull(jClass)) {
-          return jClass;
-        }
-      }
-
-      // todo: configs? utils? (everything else? -_-)
-    } catch (IOException e) {
-      System.err.println("Could not parse file: " + e.getMessage());
-    }
-    return null;
-  }
 }

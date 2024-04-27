@@ -5,6 +5,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
+import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.intermediate.create.utils.StringParserUtils;
 import edu.university.ecs.lab.common.models.*;
 
@@ -15,32 +16,16 @@ import java.util.List;
 import java.util.Objects;
 
 /** Static utility class for parsing a file and returning associated models from code structure. */
-public class JParserUtils {
+public class JsonToObjectUtils {
 
-  public static JController parseController(File sourceFile) throws IOException {
-    JClass jClass = parseClass(sourceFile);
-    if (Objects.isNull(jClass)) {
-      return null;
-    }
-
-    JController controller = new JController(jClass);
-    controller.setEndpoints(parseEndpoints(sourceFile));
-    return controller;
-  }
-
-  public static JService parseService(File sourceFile) throws IOException {
-    JClass jClass = parseClass(sourceFile);
-    if (Objects.isNull(jClass)) {
-      return null;
-    }
-
-    JService service = new JService(jClass);
-
-    service.setRestCalls(parseRestCalls(sourceFile));
-
-    return service;
-  }
-
+  /**
+   * Parse a Java class file and return a JClass object. This WILL NOT include the msId field.
+   * The class role will be determined by {@link #parseClassRole(File)} and the returned object
+   * will be of correct {@link JClass} subclass type.
+   * @param sourceFile the file to parse
+   * @return the JClass object representing the file
+   * @throws IOException on parse error
+   */
   public static JClass parseClass(File sourceFile) throws IOException {
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
@@ -49,19 +34,41 @@ public class JParserUtils {
       return null;
     }
 
-    JClass jClass = new JClass();
+    JClass jClass = JClass.builder()
+            .classPath(getRelativePath(sourceFile))
+            .className(sourceFile.getName().replace(".java", ""))
+            .packageName(packageName)
+            .methods(parseMethods(cu))
+            .fields(parseFields(sourceFile))
+            .methodCalls(parseMethodCalls(sourceFile))
+            .msId(null)
+            .classRole(parseClassRole(sourceFile))
+            .build();
 
-    jClass.setClassPath("." + File.separator + sourceFile.getPath().split("\\\\", 4)[3]);
-    jClass.setClassName(sourceFile.getName().replace(".java", ""));
-    jClass.setPackageName(packageName);
-
-    //    jClass.setClassRole(ClassRole.CONTROLLER);
-
-    jClass.setMethods(parseMethods(cu));
-    jClass.setFields(parseFields(sourceFile));
-    jClass.setMethodCalls(parseMethodCalls(sourceFile));
+    // Handle special class roles
+    if (jClass.getClassRole() == ClassRole.CONTROLLER) {
+      JController controller = new JController(jClass);
+      controller.setEndpoints(parseEndpoints(sourceFile));
+      return controller;
+    } else if (jClass.getClassRole() == ClassRole.SERVICE) {
+      JService service = new JService(jClass);
+      service.setRestCalls(parseRestCalls(sourceFile));
+      return service;
+    }
 
     return jClass;
+  }
+
+  /**
+   * Get the relative path of the file from the root directory. This will cut off
+   * the first 2 directories in the path, assuming .\repos\SYSTEM_NAME\rest-of-path
+   * @param sourceFile the file to get the relative path of
+   * @return the relative path of the file after .\repos\SYSTEM_NAME
+   * @apiNote CURRENT LIMITATION: only works for paths of this length. If the config file has a different path length for either
+   * the clonePath or the repositoryPaths, this will not work.
+   */
+  private static String getRelativePath(File sourceFile) {
+    return "." + File.separator + sourceFile.getPath().split("\\\\", 4)[3];
   }
 
   public static List<Method> parseMethods(CompilationUnit cu) {
@@ -200,7 +207,7 @@ public class JParserUtils {
             restCall.setParentMethod(parentMethodName);
             restCall.setCalledFieldName(getCalledServiceName(scope));
             restCall.setSourceFile(
-                "." + File.separator + sourceFile.getPath().split("\\\\", 4)[3]);
+                    getRelativePath(sourceFile));
 
             restCalls.add(restCall);
             // System.out.println(restCall);
@@ -265,6 +272,30 @@ public class JParserUtils {
     }
 
     return javaFields;
+  }
+
+  /**
+   * Parse the class role of the given file. This is determined by the file name and parent path.
+   * @param sourceFile the file to parse
+   * @return the {@link ClassRole} of the file
+   */
+  private static ClassRole parseClassRole(File sourceFile) {
+    String fileName = sourceFile.getName().toLowerCase();
+    String parentPath = sourceFile.getParent().toLowerCase();
+
+    if (fileName.contains("controller")) {
+      return ClassRole.CONTROLLER;
+    } else if (fileName.contains("service")) {
+      return ClassRole.SERVICE;
+    } else if (fileName.contains("dto")) {
+      return ClassRole.DTO;
+    } else if (fileName.contains("repository")) {
+      return ClassRole.REPOSITORY;
+    } else if (parentPath.contains("entity") || parentPath.contains("model")) {
+      return ClassRole.ENTITY;
+    } else {
+      return ClassRole.UNKNOWN;
+    }
   }
 
   private static String pathFromAnnotation(AnnotationExpr ae) {

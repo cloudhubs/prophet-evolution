@@ -2,10 +2,7 @@ package edu.university.ecs.lab.common.models;
 
 import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
@@ -17,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class JClass {
   protected String className;
   protected String classPath;
@@ -28,4 +26,14 @@ public class JClass {
   protected List<Field> fields;
 
   protected List<MethodCall> methodCalls;
+
+  /** The associated microservice object for this class */
+  protected String msId;
+
+  /** Uniquely identify a class as an object of a given service */
+  @SerializedName("id")
+  public String getId() {
+    return classRole.name() + ":" + msId + "#" + className;
+  }
+
 }

@@ -3,14 +3,13 @@ package edu.university.ecs.lab.common.utils;
 import edu.university.ecs.lab.common.models.*;
 
 import javax.json.*;
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 /** Utility class for converting objects to JSON. */
-public class JsonConvertUtils {
+public class ObjectToJsonUtils {
   /** Private constructor to prevent instantiation. */
-  private JsonConvertUtils() {}
+  private ObjectToJsonUtils() {}
 
   /**
    * Construct a JSON object representing the given ms system name, version, and microservice data
@@ -26,31 +25,26 @@ public class JsonConvertUtils {
     JsonObjectBuilder parentBuilder = Json.createObjectBuilder();
 
     parentBuilder.add("systemName", systemName);
+
+    // TODO version number is static rn, check IRExtractionService
     parentBuilder.add("version", version);
 
     JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
 
-    for (Map.Entry<String, Microservice> microservice : msDataMap.entrySet()) {
+    for (Microservice microservice : msDataMap.values()) {
       JsonObjectBuilder msObjectBuilder = Json.createObjectBuilder();
-      String msName = microservice.getKey();
 
-      if (microservice.getKey().contains(File.separator)) {
-        msName =
-            microservice.getKey().substring(microservice.getKey().lastIndexOf(File.separator) + 1);
-      }
-
-      msObjectBuilder.add("id", microservice.getValue().getId().replaceAll("\\\\", "/"));
-      msObjectBuilder.add("msName", msName);
-      msObjectBuilder.add("commitId", microservice.getValue().getCommit());
+      msObjectBuilder.add("id", microservice.getId());
+      msObjectBuilder.add("commitId", microservice.getCommit());
 
       msObjectBuilder.add(
-          "controllers", buildRestControllers(msName, microservice.getValue().getControllers()));
+          "controllers", buildRestControllers(microservice.getId(), microservice.getControllers()));
 
-      msObjectBuilder.add("services", buildRestServices(microservice.getValue().getServices()));
-      msObjectBuilder.add("dtos", buildJavaClasses(microservice.getValue().getDtos()));
+      msObjectBuilder.add("services", buildRestServices(microservice.getServices()));
+      msObjectBuilder.add("dtos", buildJavaClasses(microservice.getDtos()));
       msObjectBuilder.add(
-          "repositories", buildJavaClasses(microservice.getValue().getRepositories()));
-      msObjectBuilder.add("entities", buildJavaClasses(microservice.getValue().getEntities()));
+          "repositories", buildJavaClasses(microservice.getRepositories()));
+      msObjectBuilder.add("entities", buildJavaClasses(microservice.getEntities()));
 
       jsonArrayBuilder.add(msObjectBuilder.build());
     }
@@ -122,9 +116,6 @@ public class JsonConvertUtils {
    */
   public static JsonObject buildRestService(JService service) {
     JsonObjectBuilder serviceBuilder = Json.createObjectBuilder(buildJavaClass(service));
-    if (service.getClassName() == null) {
-      System.out.println("here");
-    }
 
     serviceBuilder.add("restCalls", buildRestCalls(service.getRestCalls()));
 
@@ -158,6 +149,7 @@ public class JsonConvertUtils {
 
     jClassBuilder.add("className", jClass.getClassName());
     jClassBuilder.add("classPath", jClass.getClassPath().replaceAll("\\\\", "/"));
+    jClassBuilder.add("id", jClass.getId());
     jClassBuilder.add("methods", buildMethodArray(jClass.getMethods()));
     jClassBuilder.add("variables", buildFieldArray(jClass.getFields()));
     jClassBuilder.add("methodCalls", buildMethodCallArray(jClass.getMethodCalls()));
@@ -231,8 +223,8 @@ public class JsonConvertUtils {
   /**
    * Constructs a list of Method objects as a JsonArray
    *
-   * @param methodList list of Method objects to be converted
-   * @return Converted JsonArray of Method objects
+   * @param method method to write to JSON
+   * @return Converted {@link JsonObject} of Method
    */
   public static JsonObject buildMethod(Method method) {
     // TODO find cause of this
@@ -299,105 +291,6 @@ public class JsonConvertUtils {
 
     return variableArrayBuilder.build();
   }
-
-  /**
-   * Construct a JSON object representing the given ms system name, version, and microservice data
-   * map.
-   *
-   * @param systemName the name of the system
-   * @param version the version of the system
-   * @param clonesMap the map of microservices to their clones
-   * @return the constructed JSON object
-   */
-  //  public static JsonObject constructJsonClonesSystem(
-  //      String systemName, String version, Map<String, List<CodeClone>> clonesMap) {
-  //    JsonObjectBuilder parentBuilder = Json.createObjectBuilder();
-  //
-  //    parentBuilder.add("systemName", systemName);
-  //    parentBuilder.add("version", version);
-  //
-  //    JsonArrayBuilder microserviceArrayBuilder = Json.createArrayBuilder();
-  //
-  //    for (Map.Entry<String, List<CodeClone>> microservice : clonesMap.entrySet()) {
-  //
-  //      JsonObjectBuilder microserviceBuilder = Json.createObjectBuilder();
-  //      String msName = microservice.getKey();
-  //      if (microservice.getKey().contains(File.separator)) {
-  //        msName =
-  //            microservice.getKey().substring(microservice.getKey().lastIndexOf(File.separator) +
-  // 1);
-  //      }
-  //      microserviceBuilder.add("msName", msName);
-  //
-  //      JsonArrayBuilder cloneArrayBuilder = Json.createArrayBuilder();
-  //      boolean hasClones = false;
-  //
-  //      for (CodeClone clone : microservice.getValue()) {
-  //        JsonObjectBuilder cloneBuilder = Json.createObjectBuilder();
-  //
-  //        cloneBuilder.add("global-similarity", clone.getGlobalSimilarity());
-  //        cloneBuilder.add("controller-similarity", clone.getSimilarityController());
-  //        cloneBuilder.add("service-similarity", clone.getSimilarityService());
-  //        cloneBuilder.add("repository-similarity", clone.getSimilarityRepository());
-  //        cloneBuilder.add("restCalls-similarity", clone.getSimilarityRestCalls());
-  //        cloneBuilder.add("flowA", constructFlowJson(clone.getFlowA()));
-  //        cloneBuilder.add("flowB", constructFlowJson(clone.getFlowB()));
-  //
-  //        cloneArrayBuilder.add(cloneBuilder.build());
-  //        hasClones = true;
-  //      }
-  //      microserviceBuilder.add("clones", cloneArrayBuilder.build());
-  //
-  //      if (hasClones) {
-  //        microserviceArrayBuilder.add(microserviceBuilder.build());
-  //      }
-  //    }
-  //
-  //    parentBuilder.add("services", microserviceArrayBuilder.build());
-  //
-  //    return parentBuilder.build();
-  //  }
-
-  //  private static JsonObject constructFlowJson(Flow flow) {
-  //    JsonObjectBuilder flowBuilder = Json.createObjectBuilder();
-  //
-  //    // add Controller to Json
-  //    if (Objects.nonNull(flow.getController())) {
-  //      flowBuilder.add("microservice", flow.getController().getId().getProject());
-  //      flowBuilder.add("controller", flow.getController().getClassName());
-  //      flowBuilder.add("controller-method", flow.getControllerMethod().getMethodName());
-  //    }
-  //
-  //    // Add service to Json
-  //    if (Objects.nonNull(flow.getService())) {
-  //      flowBuilder.add("service", flow.getService().getClassName());
-  //      flowBuilder.add("service-method", flow.getServiceMethod().getMethodName());
-  //    }
-  //
-  //    // Add repository to Json
-  //    if (Objects.nonNull(flow.getRepository())) {
-  //      flowBuilder.add("repository", flow.getRepository().getClassName());
-  //      flowBuilder.add("repository-method", flow.getRepositoryMethod().getMethodName());
-  //    }
-  //
-  //    // Add Rest calls to Json
-  //    if (Objects.nonNull(flow.getRestCalls())) {
-  //      JsonArrayBuilder restCallArrayBuilder = Json.createArrayBuilder();
-  //
-  //      for (edu.university.ecs.lab.semantics.models.RestCall restCall : flow.getRestCalls()) {
-  //        JsonObjectBuilder restCallBuilder = Json.createObjectBuilder();
-  //        restCallBuilder.add("api-endpoint", restCall.getApiEndpoint());
-  //        restCallBuilder.add("http-method", restCall.getHttpMethod());
-  //        restCallBuilder.add("return-type", restCall.getReturnType());
-  //
-  //        restCallArrayBuilder.add(restCallBuilder.build());
-  //      }
-  //
-  //      flowBuilder.add("rest-calls", restCallArrayBuilder.build());
-  //    }
-  //
-  //    return flowBuilder.build();
-  //  }
 
   /**
    * Constructs a String endpointId from an Endpoint object and name of microservice

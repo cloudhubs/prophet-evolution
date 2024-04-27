@@ -13,61 +13,66 @@ import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
 
+import static edu.university.ecs.lab.common.models.enums.ErrorCodes.DELTA_EXTRACTION_FAIL;
+
 /**
  * Service for extracting the differences between a local and remote repository and generating delta
- * son.
  */
 public class DeltaExtractionService {
-  /** The GitFetchUtils object for fetching git differences */
-  private final GitFetchUtils gitFetchUtils = new GitFetchUtils();
 
-  /** Service to compare service dependency model to the git differences */
-  private final DeltaComparisonUtils comparisonUtils = new DeltaComparisonUtils();
+  /** The branch to compare to */
+  private final String branch;
+
+  /** The list of paths to the repositories */
+  private final String[] paths;
 
   /**
-   * Wrapper of {@link GitFetchUtils#establishLocalEndpoint(String)} a local endpoint for the given
-   * repository path.
+   * Constructor for the delta extraction service.
    *
-   * @param path the path to the repository
-   * @return the repository object
-   * @throws IOException if an I/O error occurs
+   * @param branch the branch to compare to
+   * @param paths the list of paths to the repositories
    */
-  public Repository establishLocalEndpoint(String path) throws IOException {
-    return gitFetchUtils.establishLocalEndpoint(path);
+  public DeltaExtractionService(String branch, String[] paths) {
+    this.branch = branch;
+    this.paths = paths;
   }
 
   /**
-   * Wrapper of {@link GitFetchUtils#fetchRemoteDifferences(Repository, String)} fetch the
-   * differences between the local repository (established from {@link
-   * #establishLocalEndpoint(String)} and remote repository.
-   *
-   * @param repo the repository object established by {@link #establishLocalEndpoint(String)}
-   * @param branch the branch name to compare to the local repository
-   * @return the list of differences
-   * @throws Exception if an error from {@link GitFetchUtils#fetchRemoteDifferences(Repository,
-   *     String)}
+   * Top level generate the delta between the local and remote repository.
    */
-  public List<DiffEntry> fetchRemoteDifferences(Repository repo, String branch) throws Exception {
-    return gitFetchUtils.fetchRemoteDifferences(repo, branch);
+  public void generateDelta() {
+    // iterate through each repository path
+    for (String path : paths) {
+        try (Repository localRepo = GitFetchUtils.establishLocalEndpoint(path)) {
+            // point to local repository
+
+            // extract remote differences with local
+            List<DiffEntry> differences = GitFetchUtils.fetchRemoteDifferences(localRepo, branch);
+
+            // process/write differences to delta output
+            this.processDifferences(differences, path);
+
+        } catch (Exception e) {
+            System.err.println("Error extracting delta: " + e.getMessage());
+            System.exit(DELTA_EXTRACTION_FAIL.ordinal());
+        }
+    }
   }
 
   /**
    * Process the differences between the local and remote repository and write the differences to a
-   * file. Differences can be generated from {@link #fetchRemoteDifferences(Repository, String)}
+   * file. Differences can be generated from {@link GitFetchUtils#fetchRemoteDifferences(Repository, String)}
    *
-   * @param path the path to the microservice TLD
-   * @param repo the repository object established by {@link #establishLocalEndpoint(String)}
-   * @param diffEntries the list of differences extracted from {@link
-   *     #fetchRemoteDifferences(Repository, String)}
+   * @param path the path to the local repo
+   * @param diffEntries the list of differences extracted
    * @throws IOException if an I/O error occurs
+   * @throws InterruptedException if an I/O error occurs
    */
-  public void processDifferences(
-      String msPath, Repository repo, List<DiffEntry> diffEntries, String path)
+  public void processDifferences(List<DiffEntry> diffEntries, String path)
       throws IOException, InterruptedException {
 
+    // Set local repo to latest commit
     advanceLocalRepo(path);
-
-    JsonObjectBuilder finalOutputBuilder = Json.createObjectBuilder();
 
     // Lists for changed objects aka files
     List<JsonObject> controllers = new ArrayList<>();
@@ -90,15 +95,11 @@ public class DeltaExtractionService {
         continue;
       }
 
-      // String changeURL = gitFetchUtils.getGithubFileUrl(repo, entry);
-      System.out.println("Extracting changes from: " + msPath);
-      String oldPath = msPath + "/" + entry.getOldPath();
-      String newPath = msPath + "/" + entry.getNewPath();
+      System.out.println("Extracting changes from: " + path);
+      String oldPath = path + "/" + entry.getOldPath();
+      String newPath = path + "/" + entry.getNewPath();
 
-      JsonObject deltaChanges = JsonValue.EMPTY_JSON_OBJECT;
-
-      ClassRole classRole = null;
-      // If the new path is null, it is a delete and we use old path to parse classtype, otherwise
+      // If the new path is null, it is deleted, and we use old path to parse classtype, otherwise
       // we use newpath
       String localPath =
           "./" + (entry.getNewPath().equals("/dev/null") ? entry.getOldPath() : entry.getNewPath());
@@ -115,7 +116,7 @@ public class DeltaExtractionService {
         controllers.add(
             constructObjectFromDelta(
                 ClassRole.CONTROLLER,
-                getDeltaChanges(entry, file, ClassRole.CONTROLLER, localPath, path),
+                getDeltaChanges(entry, localPath, path),
                 entry,
                 localPath));
 
@@ -130,7 +131,7 @@ public class DeltaExtractionService {
         services.add(
             constructObjectFromDelta(
                 ClassRole.SERVICE,
-                getDeltaChanges(entry, file, ClassRole.SERVICE, localPath, path),
+                getDeltaChanges(entry, localPath, path),
                 entry,
                 localPath));
       } else if (file.getName().toLowerCase().contains("dto")) {
@@ -144,7 +145,7 @@ public class DeltaExtractionService {
         dtos.add(
             constructObjectFromDelta(
                 ClassRole.DTO,
-                getDeltaChanges(entry, file, ClassRole.DTO, localPath, path),
+                getDeltaChanges(entry, localPath, path),
                 entry,
                 localPath));
       } else if (file.getName().contains("Repository")) {
@@ -158,7 +159,7 @@ public class DeltaExtractionService {
         repositories.add(
             constructObjectFromDelta(
                 ClassRole.REPOSITORY,
-                getDeltaChanges(entry, file, ClassRole.REPOSITORY, localPath, path),
+                getDeltaChanges(entry, localPath, path),
                 entry,
                 localPath));
       } else if (file.getParent().toLowerCase().contains("entity")
@@ -173,7 +174,7 @@ public class DeltaExtractionService {
         entities.add(
             constructObjectFromDelta(
                 ClassRole.ENTITY,
-                getDeltaChanges(entry, file, ClassRole.ENTITY, localPath, path),
+                getDeltaChanges(entry, localPath, path),
                 entry,
                 localPath));
       }
@@ -183,6 +184,7 @@ public class DeltaExtractionService {
     }
 
     // write differences to output file
+    JsonObjectBuilder finalOutputBuilder = Json.createObjectBuilder();
     finalOutputBuilder.add("controllers", convertListToJsonArray(controllers));
     finalOutputBuilder.add("services", convertListToJsonArray(services));
     finalOutputBuilder.add("repositories", convertListToJsonArray(repositories));
@@ -190,25 +192,25 @@ public class DeltaExtractionService {
     finalOutputBuilder.add("entities", convertListToJsonArray(entities));
 
     String outputName = "./out/delta-changes-[" + (new Date()).getTime() + "].json";
+    // TODO move to runner
     FullCimetUtils.pathToDelta = outputName;
+
     MsJsonWriter.writeJsonToFile(finalOutputBuilder.build(), outputName);
 
     System.out.println("Delta extracted: " + outputName);
   }
 
   private static JsonObject getDeltaChanges(
-      DiffEntry entry, File file, ClassRole classRole, String localPath, String rootPath) {
+          DiffEntry entry, String localPath, String rootPath) {
+    File classFile = new File(rootPath + localPath.substring(1));
     switch (entry.getChangeType()) {
       case MODIFY:
-        return DeltaComparisonUtils.extractDeltaChanges(
-            new File(rootPath + localPath.substring(1)), classRole);
+      case RENAME:
+      case ADD:
+        return DeltaComparisonUtils.extractDeltaChanges(classFile);
       case COPY:
       case DELETE:
         break;
-      case RENAME:
-      case ADD:
-        return DeltaComparisonUtils.extractDeltaChanges(
-            new File(rootPath + localPath.substring(1)), classRole);
       default:
         break;
     }
