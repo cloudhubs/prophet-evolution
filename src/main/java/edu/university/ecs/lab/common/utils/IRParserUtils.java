@@ -20,6 +20,7 @@ public class IRParserUtils {
     return msSystem;
   }
 
+  // TODO this is likely broken due to systemchange class not holding lists anymore
   public static SystemChange parseSystemChange(String deltaFileName) throws IOException {
     Reader deltaReader = new FileReader(deltaFileName);
 

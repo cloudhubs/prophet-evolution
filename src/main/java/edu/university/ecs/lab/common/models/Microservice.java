@@ -22,11 +22,15 @@ public class Microservice {
   @SerializedName("commitId")
   private String commit;
 
-  /** List of classes */
+  /** Controller classes belonging to the microservice. */
   private List<JController> controllers;
+  /** Service classes to the microservice. */
   private List<JService> services;
+  /** DTO classes belonging to the microservice. */
   private List<JClass> dtos;
+  /** Repository classes belonging to the microservice. */
   private List<JClass> repositories;
+  /** Entity classes belonging to the microservice. */
   private List<JClass> entities;
 
   public void setId(String id) {
@@ -75,6 +79,17 @@ public class Microservice {
     classes.forEach(c -> c.setMsId(id));
   }
 
+  /**
+   * Constructor for the microservice object
+   *
+   * @param id the name of the service
+   * @param commit the commit id of the service
+   * @param controllers the controllers in the service
+   * @param services the services in the service
+   * @param dtos the dtos in the service
+   * @param repositories the repositories in the service
+   * @param entities the entities in the service
+   */
   public Microservice(String id,
                       String commit,
                       List<JController> controllers,
@@ -90,7 +105,4 @@ public class Microservice {
     this.setRepositories(repositories);
     this.setEntities(entities);
   }
-
-  /** Default constructor, init lists as empty */
-  public Microservice() {}
 }

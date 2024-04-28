@@ -2,10 +2,7 @@ package edu.university.ecs.lab.report;
 
 import edu.university.ecs.lab.common.models.MsSystem;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
-import edu.university.ecs.lab.delta.models.SystemChange;
-import edu.university.ecs.lab.impact.metrics.services.MetricsService;
 import edu.university.ecs.lab.impact.models.SystemMetrics;
-import edu.university.ecs.lab.impact.models.change.Metric;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;

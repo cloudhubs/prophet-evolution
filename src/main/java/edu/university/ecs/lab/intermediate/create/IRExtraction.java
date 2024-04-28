@@ -25,14 +25,14 @@ public class IRExtraction {
    * @apiNote defaults to config.json in the project directory.
    */
   public static void main(String[] args) throws Exception {
-    // Get input config
-    String jsonFilePath = (args.length == 1) ? args[0] : "config.json";
     if (args.length > 1) {
         System.err.println("Usage: java -jar IRExtraction.jar [/path/to/config/file]");
         System.exit(BAD_ARGS.ordinal());
 
     }
-    InputConfig inputConfig = ConfigUtil.validateConfig(jsonFilePath);
+
+    // Get input config
+    InputConfig inputConfig = ConfigUtil.validateConfig((args.length == 1) ? args[0] : "config.json");
 
     IRExtractionService irExtractionService = new IRExtractionService(inputConfig);
     String outputFileName = irExtractionService.generateSystemIntermediate();

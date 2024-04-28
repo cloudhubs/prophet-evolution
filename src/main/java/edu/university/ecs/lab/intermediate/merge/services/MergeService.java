@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -73,9 +72,9 @@ public class MergeService {
   }
 
   private void updateModelMap(ClassRole classRole, Map<String, Microservice> msModelMap,
-                              List<? extends Delta> changeList) {
+                              Map<String, ? extends Delta> changeMap) {
 
-    for (Delta delta : changeList) {
+    for (Delta delta : changeMap.values()) {
       String localPath = delta.getLocalPath();
       String msId;
 
@@ -158,27 +157,25 @@ public class MergeService {
       msModel.setId(msId);
     }
 
-    //    msModel.setCommit(delta.getCommitId());
-
     if (classRole == ClassRole.SERVICE) {
-      updateApiDestinationsAdd(msModelMap, delta.getSChange(), msId);
+      updateApiDestinationsAdd(msModelMap, (JService) delta.getChangedClass(), msId);
     }
 
     switch (classRole) {
       case CONTROLLER:
-        msModel.getControllers().add(delta.getCChange());
+        msModel.getControllers().add((JController) delta.getChangedClass());
         break;
       case SERVICE:
-        msModel.getServices().add(delta.getSChange());
+        msModel.getServices().add((JService) delta.getChangedClass());
         break;
       case REPOSITORY:
-        msModel.getRepositories().add(delta.getChange());
+        msModel.getRepositories().add(delta.getChangedClass());
         break;
       case DTO:
-        msModel.getDtos().add(delta.getChange());
+        msModel.getDtos().add(delta.getChangedClass());
         break;
       case ENTITY:
-        msModel.getEntities().add(delta.getChange());
+        msModel.getEntities().add(delta.getChangedClass());
         break;
     }
 

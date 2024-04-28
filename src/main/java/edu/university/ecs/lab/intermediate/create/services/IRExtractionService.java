@@ -1,6 +1,5 @@
 package edu.university.ecs.lab.intermediate.create.services;
 
-import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.JController;
@@ -8,6 +7,7 @@ import edu.university.ecs.lab.common.models.JService;
 import edu.university.ecs.lab.common.models.Microservice;
 import edu.university.ecs.lab.common.utils.ObjectToJsonUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
+import javassist.NotFoundException;
 
 import javax.json.JsonObject;
 import java.io.File;
@@ -24,13 +24,23 @@ public class IRExtractionService {
     /** The input configuration file, defaults to config.json */
     private final InputConfig config;
     /** Relative path to clone repositories to, default: "./repos", specified in {@link InputConfig} */
-    private final String clonePath;
+    private final String baseBath;
+
+    /** Service to handle cloning from git */
     private final GitCloneService gitCloneService;
 
+    /** Service to handle parsing a git repo and extracting files */
+    private final RestModelService restModelService;
+
+    /**
+     *
+     * @param config
+     */
     public IRExtractionService(InputConfig config) {
         this.config = config;
-        clonePath = config.getClonePath();
+        baseBath = config.getClonePath();
         gitCloneService = new GitCloneService(config);
+        restModelService = new RestModelService(config);
     }
 
     /**
@@ -69,7 +79,7 @@ public class IRExtractionService {
     public Map<String, Microservice> cloneAndScanServices() {
         Map<String, Microservice> msModelMap = new HashMap<>();
 
-        this.validateOrCreateLocalDirectory(clonePath);
+        this.validateOrCreateLocalDirectory(baseBath);
 
         // For each git repository in the config file, clone the repository and scan through the downloaded repo
         // for the microservices as per the structure in the input config file
@@ -83,24 +93,23 @@ public class IRExtractionService {
             }
 
             // Get list of paths to local microservices as "./cloneDir/.../msName"
-            List<String> microservicePaths = getMicroservicePaths(inputRepository);
+            List<String> microservicePaths = config.getMicroservicePaths(inputRepository);
 
             // Scan through each local repo and extract endpoints/calls
             for (String msPath : microservicePaths) {
                 // Bulk of the work extracting the microservice from the cloned files
-                Microservice model =
-                        RestModelService.recursivelyScanFiles(clonePath, msPath.substring(clonePath.length()));
-                if (Objects.isNull(model)) {
+                Microservice model = null;
+                try {
+                    model = restModelService.recursivelyScanFiles(inputRepository, msPath);
+                } catch (NotFoundException e) {
                     System.err.println("Error scanning repository: " + msPath);
                     System.exit(IR_EXTRACTION_FAIL.ordinal());
                 }
 
-                model.setCommit(inputRepository.getBaseCommit());
-
                 // Remove clonePath from path
                 String path = msPath;
-                if (msPath.contains(clonePath) && msPath.length() > clonePath.length() + 1) {
-                    path = msPath.substring(clonePath.length() + 1);
+                if (msPath.contains(baseBath) && msPath.length() > baseBath.length() + 1) {
+                    path = msPath.substring(baseBath.length() + 1);
                 }
 
                 msModelMap.put(path, model);
@@ -127,45 +136,6 @@ public class IRExtractionService {
                 System.exit(COULD_NOT_CREATE_DIRECTORY.ordinal());
             }
         }
-    }
-
-    /**
-     * This method gets the paths to the microservices in the repository based on the config file structure
-     * @param inputRepository repository representation from the config file
-     * @return list of paths to the microservices in the repository
-     */
-    public List<String> getMicroservicePaths(InputRepository inputRepository) {
-        List<String> microservicePaths = new ArrayList<>();
-
-        // Path "./clonePath/repoName"
-        String relativeClonePath = ConfigUtil.getRepositoryClonePath(config, inputRepository);
-
-        if (Objects.nonNull(inputRepository.getPaths()) && inputRepository.getPaths().length > 0) {
-            for (String subPath : inputRepository.getPaths()) {
-                String path;
-
-                if (subPath.substring(0, 1).equals(File.separator)) {
-                    // Case: Subpath starts with a separator ("/ts-service")
-                    path = relativeClonePath + subPath;
-                } else {
-                    // Case: Subpath does not start with a separator ("ts-service")
-                    path = relativeClonePath + File.separator + subPath;
-                }
-
-                File f = new File(path);
-
-                if (f.isDirectory()) {
-                    microservicePaths.add(path);
-                } else {
-                    System.err.println("Invalid path given in config file, given path \"" + subPath + "\"  is not a directory, skipping service: " + path);
-                }
-            }
-        } else {
-            // Case: Single microservice in the repository as the top-level directory (msName = repoName)
-            microservicePaths.add(relativeClonePath);
-        }
-
-        return microservicePaths;
     }
 
     /**

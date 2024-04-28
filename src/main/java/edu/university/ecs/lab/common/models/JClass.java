@@ -17,6 +17,7 @@ import java.util.List;
 @Builder
 public class JClass {
   protected String className;
+  /** Path like repoName/.../serviceName/.../file.java */
   protected String classPath;
   protected String packageName;
   protected ClassRole classRole;

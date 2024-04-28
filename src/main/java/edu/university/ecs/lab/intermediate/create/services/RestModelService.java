@@ -1,10 +1,13 @@
 package edu.university.ecs.lab.intermediate.create.services;
 
+import edu.university.ecs.lab.common.config.models.InputConfig;
+import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.JController;
 import edu.university.ecs.lab.common.models.JService;
 import edu.university.ecs.lab.common.utils.JsonToObjectUtils;
 import edu.university.ecs.lab.common.models.JClass;
 import edu.university.ecs.lab.common.models.Microservice;
+import javassist.NotFoundException;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,18 +16,26 @@ import java.util.List;
 
 /** Service for extracting REST endpoints and dependencies for a given microservice. */
 public class RestModelService {
+
+  /** The input configuration file */
+  private final InputConfig inputConfig;
+
+  public RestModelService(InputConfig config) {
+    this.inputConfig = config;
+  }
+
   /**
    * Recursively scan the files in the given repository path and extract the endpoints and
    * dependencies for a single microservice.
    *
-   * @param rootPath clonePath specified by {@link edu.university.ecs.lab.common.config.models.InputConfig}
-   * @param pathToMs the path to the microservice directory NOT including the clonePath ("\sysName\...\msName")
+   * @param inputRepo repository as described in the config file
+   * @param localMicroservicePath the local path to the microservice directory
+   * @throws NotFoundException if the service name is not found in the repository paths
+   *
    * @return model of a single service containing the extracted endpoints and dependencies
    */
-  public static Microservice recursivelyScanFiles(String rootPath, String pathToMs) {
-    String repoPath = rootPath + pathToMs;
-    System.out.println("Scanning repository '" + repoPath + "'...");
-    Microservice model = new Microservice();
+  public Microservice recursivelyScanFiles(InputRepository inputRepo, String localMicroservicePath) throws NotFoundException {
+    System.out.println("Scanning repository '" + localMicroservicePath + "'...");
 
     List<JController> controllers = new ArrayList<>();
     List<JService> services = new ArrayList<>();
@@ -32,22 +43,18 @@ public class RestModelService {
     List<JClass> repositories = new ArrayList<>();
     List<JClass> entities = new ArrayList<>();
 
-    File localDir = new File(repoPath);
+    File localDir = new File(localMicroservicePath);
     if (!localDir.exists() || !localDir.isDirectory()) {
-      System.err.println("Invalid path given: " + repoPath);
-      return null;
+      throw new NotFoundException("Invalid path given: " + localMicroservicePath);
     }
-
-    // Set the id of the microservice to the last part of the msPath
-    model.setId(repoPath.substring(repoPath.lastIndexOf(File.separator) + 1));
 
     scanDirectory(localDir, controllers, services, dtos, repositories, entities);
 
-    model.setControllers(controllers);
-    model.setServices(services);
-    model.setDtos(dtos);
-    model.setRepositories(repositories);
-    model.setEntities(entities);
+    String id = inputRepo.getServiceNameFromPath(localMicroservicePath);
+    String commitId = inputRepo.getBaseCommit();
+
+    Microservice model = new Microservice(id, commitId,
+            controllers, services, dtos, repositories, entities);
 
     System.out.println("Done!");
     return model;
@@ -58,7 +65,7 @@ public class RestModelService {
    *
    * @param directory the directory to scan
    */
-  public static void scanDirectory(
+  public void scanDirectory(
       File directory,
       List<JController> controllers,
       List<JService> services,
@@ -85,7 +92,7 @@ public class RestModelService {
    * @apiNote CURRENT LIMITATION: We detect controllers/services/dtos/repositories/entities based on literally
    * having that string within the file name. This is a naive approach and should be improved.
    */
-  public static void scanFile(
+  public void scanFile(
       File file,
       List<JController> controllers,
       List<JService> services,
@@ -93,7 +100,7 @@ public class RestModelService {
       List<JClass> repositories,
       List<JClass> entities) {
     try {
-      JClass jClass = JsonToObjectUtils.parseClass(file);
+      JClass jClass = JsonToObjectUtils.parseClass(file, inputConfig);
 
       if (jClass == null) {
         return;

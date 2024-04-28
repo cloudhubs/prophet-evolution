@@ -25,6 +25,7 @@ public enum ErrorCodes {
     /** Issue generating freemarker report from template in {@link edu.university.ecs.lab.report.ReportService} */
     TEMPLATE_PROCESS_ERROR,
     /** Failure to set up freemarker template configuration in {@link }*/
-    FREEMARKER_CONFIG_ERROR
-
+    FREEMARKER_CONFIG_ERROR,
+    /** Error due to malformed {@link edu.university.ecs.lab.common.config.models.InputConfig} file */
+    BAD_CONFIG,
 }
