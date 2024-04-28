@@ -70,6 +70,7 @@ public class JsonToObjectUtils {
    * Get the service name from the given file. This is determined by the file path and config.
    * @param sourceFile the file to parse
    * @return the service name of the file, null if not found
+   * TODO this logic is now in {@link InputRepository#getServiceNameFromPath(String)}, refactor and delete
    */
   private static String getServiceName(File sourceFile, InputConfig config) {
     // Get the path beginning with repoName/serviceName/...
@@ -102,6 +103,7 @@ public class JsonToObjectUtils {
    * @param sourceFile the file to get the path of
    * @param config system input config file
    * @return the relative path of the file after ./clonePath/
+   * TODO this logic should be put in {@link InputRepository}, refactor and delete
    */
   private static String getRepositoryPath(File sourceFile, InputConfig config) {
     // Get the file path start from the clonePath directory
@@ -328,6 +330,7 @@ public class JsonToObjectUtils {
    * Parse the class role of the given file. This is determined by the file name and parent path.
    * @param sourceFile the file to parse
    * @return the {@link ClassRole} of the file
+   * TODO put this inside the ClassRole enum as a constructor
    */
   private static ClassRole parseClassRole(File sourceFile) {
     String fileName = sourceFile.getName().toLowerCase();

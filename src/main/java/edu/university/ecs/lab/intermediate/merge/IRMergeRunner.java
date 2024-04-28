@@ -1,6 +1,8 @@
 package edu.university.ecs.lab.intermediate.merge;
 
 
+import edu.university.ecs.lab.intermediate.merge.services.MergeService;
+
 import java.io.IOException;
 
 
