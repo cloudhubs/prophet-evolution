@@ -1,5 +1,6 @@
 package edu.university.ecs.lab.delta.models;
 
+import com.google.gson.*;
 import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.JClass;
 import edu.university.ecs.lab.common.models.JController;
@@ -16,11 +17,16 @@ import org.eclipse.jgit.diff.DiffEntry;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.lang.reflect.Type;
+
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class Delta implements JsonSerializable {
+public class Delta implements JsonSerializable, JsonDeserializer<Delta> {
+  /** JSON key for the changes field */
+  public static final String CHANGES = "changes";
+
   /** Relative path to the changed file. This DIFFERS from the jClass path as the jClass path starts at the repoName */
   private String localPath;
 
@@ -28,7 +34,7 @@ public class Delta implements JsonSerializable {
   private String commitId;
   private String msId;
 
-  @SerializedName("changes")
+  @SerializedName(CHANGES)
   private JClass changedClass;
 
   /**
@@ -74,26 +80,33 @@ public class Delta implements JsonSerializable {
    * Converts the delta object to a JSON object
    *
    * @return the JSON object representation of the delta
-   * @apiNote This will not include the localPath field in the JSON object for readability
    */
   public JsonObject toJsonObject() {
     JsonObjectBuilder jout = Json.createObjectBuilder();
 
     jout.add("changeType", changeType.name());
     jout.add("commitId", commitId);
-    jout.add("msName", msId);
-
-    JsonObject changeClassObj;
-    if (changedClass.getClassRole() == ClassRole.CONTROLLER) {
-      changeClassObj = ObjectToJsonUtils.buildRestController(msId, (JController) changedClass);
-    } else if (changedClass.getClassRole() == ClassRole.SERVICE) {
-      changeClassObj = ObjectToJsonUtils.buildRestService((JService) changedClass);
-    } else {
-      changeClassObj = ObjectToJsonUtils.buildJavaClass(changedClass);
-    }
-
-    jout.add("changes", changeClassObj);
+    jout.add("classRole", changedClass.getClassRole().name());
+    jout.add("msId", msId);
+    jout.add("localPath", localPath);
+    jout.add(CHANGES, changedClass.toJsonObject());
     return jout.build();
   }
 
+  @Override
+  public Delta deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+    com.google.gson.JsonObject deltaObj = jsonElement.getAsJsonObject();
+    String deltaType = deltaObj.get("classRole").getAsString();
+
+    Class<? extends JClass> classType = ClassRole.classFromRoleName(deltaType);
+    JClass changedClass = new Gson().fromJson(deltaObj.get(CHANGES), classType);
+
+    return new Delta(
+        deltaObj.get("localPath").getAsString(),
+        ChangeType.valueOf(deltaObj.get("changeType").getAsString()),
+        deltaObj.get("commitId").getAsString(),
+        deltaObj.get("msId").getAsString(),
+        changedClass
+    );
+  }
 }

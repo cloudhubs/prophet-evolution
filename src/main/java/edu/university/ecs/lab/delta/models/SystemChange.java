@@ -5,37 +5,39 @@ import edu.university.ecs.lab.common.models.JClass;
 import edu.university.ecs.lab.common.models.JsonSerializable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.eclipse.jgit.diff.DiffEntry;
 
-import javax.json.Json;
 import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import static edu.university.ecs.lab.common.utils.JsonToObjectUtils.convertListToJsonArray;
-
+/**
+ * Represents a system change in the system. It holds all changes made to the system in the form of deltas.
+ * Maps are of the form {@literal <localPath (./clonePath/repoName/service/path/to/file.java), Delta>}.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 public class SystemChange implements JsonSerializable {
+  /** Map of local path to changed controllers */
   @SerializedName("controllers")
   private Map<String, Delta> controllers;
 
+  /** Map of local path to changed services */
   @SerializedName("services")
   private Map<String, Delta> services;
 
+  /** Map of local path to changed dtos */
   @SerializedName("dtos")
   private Map<String, Delta> dtos;
 
+  /** Map of local path to changed repositories */
   @SerializedName("repositories")
   private Map<String, Delta> repositories;
 
+  /** Map of local path to changed entities */
   @SerializedName("entities")
   private Map<String, Delta> entities;
 
@@ -56,7 +58,7 @@ public class SystemChange implements JsonSerializable {
    * if the change was skipped due to unknown class type.
    * @param jClass class extracted from the CHANGED file
    * @param entry diff entry from git
-   * @param localPath path to the class file as repoName/service/path/to/file.java (local path would be ./clonePath/repoName/service/path/to/file.java)
+   * @param localPath path to the class file as ./clonePath/repoName/service/path/to/file.java
    * @return the delta created
    */
   public Delta addChange(JClass jClass, DiffEntry entry, String localPath) {
@@ -87,12 +89,6 @@ public class SystemChange implements JsonSerializable {
   }
 
   public JsonObject toJsonObject() {
-    JsonObjectBuilder finalOutputBuilder = Json.createObjectBuilder();
-    finalOutputBuilder.add("controllers", convertListToJsonArray(controllers.values().stream().map(Delta::toJsonObject).collect(Collectors.toList())));
-    finalOutputBuilder.add("services", convertListToJsonArray(services.values().stream().map(Delta::toJsonObject).collect(Collectors.toList())));
-    finalOutputBuilder.add("repositories", convertListToJsonArray(repositories.values().stream().map(Delta::toJsonObject).collect(Collectors.toList())));
-    finalOutputBuilder.add("dtos", convertListToJsonArray(dtos.values().stream().map(Delta::toJsonObject).collect(Collectors.toList())));
-    finalOutputBuilder.add("entities", convertListToJsonArray(entities.values().stream().map(Delta::toJsonObject).collect(Collectors.toList())));
-    return finalOutputBuilder.build();
+    return new SystemChangeDTO(this).toJsonObject();
   }
 }

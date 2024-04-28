@@ -3,7 +3,7 @@ package edu.university.ecs.lab.delta.services;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.JClass;
-import edu.university.ecs.lab.common.utils.JsonToObjectUtils;
+import edu.university.ecs.lab.common.utils.SourceToObjectUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.utils.GitFetchUtils;
@@ -105,7 +105,7 @@ public class DeltaExtractionService {
       JClass jClass = null;
       try {
         if (!Objects.equals(DiffEntry.ChangeType.DELETE, entry.getChangeType())) {
-          jClass = JsonToObjectUtils.parseClass(classFile, config);
+          jClass = SourceToObjectUtils.parseClass(classFile, config);
         } else {
           // TODO delete logic and remove the continue;
           System.out.println("Deleted file detected, not yet implemented: " + classFile.getAbsolutePath());

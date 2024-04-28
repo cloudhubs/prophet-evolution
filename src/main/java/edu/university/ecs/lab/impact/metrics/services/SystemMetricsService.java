@@ -1,9 +1,7 @@
 package edu.university.ecs.lab.impact.metrics.services;
 
 import edu.university.ecs.lab.common.models.*;
-import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
-import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import edu.university.ecs.lab.impact.models.change.Link;
 
 import java.util.HashSet;

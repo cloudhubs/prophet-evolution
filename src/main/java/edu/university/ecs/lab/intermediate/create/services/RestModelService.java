@@ -4,7 +4,7 @@ import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.JController;
 import edu.university.ecs.lab.common.models.JService;
-import edu.university.ecs.lab.common.utils.JsonToObjectUtils;
+import edu.university.ecs.lab.common.utils.SourceToObjectUtils;
 import edu.university.ecs.lab.common.models.JClass;
 import edu.university.ecs.lab.common.models.Microservice;
 import javassist.NotFoundException;
@@ -100,7 +100,7 @@ public class RestModelService {
       List<JClass> repositories,
       List<JClass> entities) {
     try {
-      JClass jClass = JsonToObjectUtils.parseClass(file, inputConfig);
+      JClass jClass = SourceToObjectUtils.parseClass(file, inputConfig);
 
       if (jClass == null) {
         return;

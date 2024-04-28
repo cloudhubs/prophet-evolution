@@ -5,15 +5,21 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonArray;
 
 /**
  * Represents the overarching structure of a microservice system. It is composed of classes which
  * hold all information in that class.
  */
 @Getter
-public class Microservice {
+public class Microservice implements JsonSerializable {
   /** The name of the service (ex: "ts-assurance-service") */
   @SerializedName("id")
   private String id;
@@ -36,6 +42,11 @@ public class Microservice {
   public void setId(String id) {
     Objects.requireNonNull(id, "id cannot be null");
     this.id = id.replaceAll("\\\\", "/");
+    propagateId(this.controllers);
+    propagateId(this.services);
+    propagateId(this.dtos);
+    propagateId(this.repositories);
+    propagateId(this.entities);
   }
 
   public void setCommit(String commit) {
@@ -75,7 +86,9 @@ public class Microservice {
 
   private <T extends JClass> void propagateId(List<T> classes) {
     Objects.requireNonNull(this.id);
-    Objects.requireNonNull(classes);
+    if (classes == null) {
+      return;
+    }
     classes.forEach(c -> c.setMsId(id));
   }
 
@@ -104,5 +117,36 @@ public class Microservice {
     this.setDtos(dtos);
     this.setRepositories(repositories);
     this.setEntities(entities);
+  }
+
+  /**
+   * Constructor for the microservice object with all lists as empty
+   *
+   * @param id the name of the service
+   * @param commit the commit # of the service
+   */
+  public Microservice(String id, String commit) {
+    this.setId(id);
+    this.setCommit(commit);
+    this.setControllers(new ArrayList<>());
+    this.setServices(new ArrayList<>());
+    this.setRepositories(new ArrayList<>());
+    this.setDtos(new ArrayList<>());
+    this.setEntities(new ArrayList<>());
+  }
+
+  @Override
+  public JsonObject toJsonObject() {
+    JsonObjectBuilder builder = Json.createObjectBuilder();
+
+    builder.add("id", id);
+    builder.add("commitId", commit);
+    builder.add("controllers", listToJsonArray(controllers));
+    builder.add("services", listToJsonArray(services));
+    builder.add("dtos", listToJsonArray(services));
+    builder.add("repositories", listToJsonArray(repositories));
+    builder.add("entities", listToJsonArray(entities));
+
+    return builder.build();
   }
 }

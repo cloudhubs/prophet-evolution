@@ -6,6 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import java.util.Objects;
 
 /**
@@ -24,9 +28,6 @@ public class RestCall extends MethodCall {
    */
   private String httpMethod = "";
 
-  /** Expected return type of the api call */
-  //  private String returnType = "";
-
   private int responseTypeIndex = -1;
 
   @SerializedName("source-file")
@@ -34,6 +35,14 @@ public class RestCall extends MethodCall {
 
   @SerializedName("call-dest")
   private String destFile = "";
+
+  public void setSourceFile(String sourceFile) {
+    this.sourceFile = sourceFile.replaceAll("\\\\", "/");
+  }
+
+  public void setDestFile(String destFile) {
+    this.destFile = destFile.replaceAll("\\\\", "/");
+  }
 
   private static final RestCall[] restTemplates = {
     new RestCall("getForObject", HttpMethod.GET, 1),
@@ -102,5 +111,20 @@ public class RestCall extends MethodCall {
   @Override
   public int hashCode() {
     return Objects.hash(super.hashCode(), api, httpMethod, responseTypeIndex, sourceFile, destFile);
+  }
+
+  /**
+   * @return Converted JsonObject of RestCall object
+   */
+  public JsonObject toJsonObject() {
+    // Get "restCall" methodCalls in service
+    JsonObjectBuilder restCallBuilder = super.createBuilder();
+
+    restCallBuilder.add("api", api);
+    restCallBuilder.add("httpMethod", httpMethod);
+    restCallBuilder.add("source-file", sourceFile);
+    restCallBuilder.add("dest-file", destFile);
+
+    return restCallBuilder.build();
   }
 }

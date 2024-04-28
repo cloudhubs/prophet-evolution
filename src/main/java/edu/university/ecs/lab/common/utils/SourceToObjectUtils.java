@@ -23,16 +23,17 @@ import java.util.List;
 import java.util.Objects;
 
 /** Static utility class for parsing a file and returning associated models from code structure. */
-public class JsonToObjectUtils {
+public class SourceToObjectUtils {
 
   /**
    * Parse a Java class file and return a JClass object.
-   * The class role will be determined by {@link #parseClassRole(File)} and the returned object
-   * will be of correct {@link JClass} subclass type.
+   * The class role will be determined by {@link ClassRole#fromSourceFile(File)} and the returned object
+   * will be of correct {@link JClass} subclass type where applicable.
    * @param sourceFile the file to parse
    * @return the JClass object representing the file
    * @throws IOException on parse error
    */
+  // TODO move this logic to JClass
   public static JClass parseClass(File sourceFile, InputConfig config) throws IOException {
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
@@ -41,6 +42,8 @@ public class JsonToObjectUtils {
       return null;
     }
 
+    String msId = getServiceName(sourceFile, config);
+
     JClass jClass = JClass.builder()
             .classPath(getRepositoryPath(sourceFile, config))
             .className(sourceFile.getName().replace(".java", ""))
@@ -48,14 +51,14 @@ public class JsonToObjectUtils {
             .methods(parseMethods(cu))
             .fields(parseFields(sourceFile))
             .methodCalls(parseMethodCalls(sourceFile))
-            .msId(getServiceName(sourceFile, config))
-            .classRole(parseClassRole(sourceFile))
+            .msId(msId)
+            .classRole(ClassRole.fromSourceFile(sourceFile))
             .build();
 
     // Handle special class roles
     if (jClass.getClassRole() == ClassRole.CONTROLLER) {
       JController controller = new JController(jClass);
-      controller.setEndpoints(parseEndpoints(sourceFile));
+      controller.setEndpoints(parseEndpoints(msId, sourceFile));
       return controller;
     } else if (jClass.getClassRole() == ClassRole.SERVICE) {
       JService service = new JService(jClass);
@@ -134,7 +137,7 @@ public class JsonToObjectUtils {
     return methods;
   }
 
-  public static List<Endpoint> parseEndpoints(File sourceFile) throws IOException {
+  public static List<Endpoint> parseEndpoints(String msId, File sourceFile) throws IOException {
     List<Endpoint> endpoints = new ArrayList<>();
 
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
@@ -150,7 +153,7 @@ public class JsonToObjectUtils {
 
       // loop through methods
       for (MethodDeclaration md : cid.findAll(MethodDeclaration.class)) {
-        Endpoint endpoint = new Endpoint(parseMethod(md));
+        Endpoint endpoint = new Endpoint(msId, parseMethod(md));
 
         // loop through annotations
         for (AnnotationExpr ae : md.getAnnotations()) {
@@ -195,6 +198,7 @@ public class JsonToObjectUtils {
     return endpoints;
   }
 
+  // TODO move this to Method class
   public static Method parseMethod(MethodDeclaration md) {
     Method method = new Method();
     method.setMethodName(md.getNameAsString());
@@ -324,31 +328,6 @@ public class JsonToObjectUtils {
     }
 
     return javaFields;
-  }
-
-  /**
-   * Parse the class role of the given file. This is determined by the file name and parent path.
-   * @param sourceFile the file to parse
-   * @return the {@link ClassRole} of the file
-   * TODO put this inside the ClassRole enum as a constructor
-   */
-  private static ClassRole parseClassRole(File sourceFile) {
-    String fileName = sourceFile.getName().toLowerCase();
-    String parentPath = sourceFile.getParent().toLowerCase();
-
-    if (fileName.contains("controller")) {
-      return ClassRole.CONTROLLER;
-    } else if (fileName.contains("service")) {
-      return ClassRole.SERVICE;
-    } else if (fileName.contains("dto")) {
-      return ClassRole.DTO;
-    } else if (fileName.contains("repository")) {
-      return ClassRole.REPOSITORY;
-    } else if (parentPath.contains("entity") || parentPath.contains("model")) {
-      return ClassRole.ENTITY;
-    } else {
-      return ClassRole.UNKNOWN;
-    }
   }
 
   private static String pathFromAnnotation(AnnotationExpr ae) {

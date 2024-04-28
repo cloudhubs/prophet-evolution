@@ -4,7 +4,12 @@ import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import lombok.*;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.util.List;
+
+import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.*;
 
 /**
  * Represents a class in Java. It holds all information regarding that class including all method
@@ -15,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Builder
-public class JClass {
+public class JClass implements JsonSerializable {
   protected String className;
   /** Path like repoName/.../serviceName/.../file.java */
   protected String classPath;
@@ -37,4 +42,29 @@ public class JClass {
     return classRole.name() + ":" + msId + "#" + className;
   }
 
+  /**
+   * Convert a single JClass to a JsonObject
+   *
+   * @return Converted JsonObject of JClass object
+   */
+  @Override
+  public JsonObject toJsonObject() {
+
+
+    return createBuilder().build();
+  }
+
+  protected JsonObjectBuilder createBuilder() {
+    JsonObjectBuilder jClassBuilder = Json.createObjectBuilder();
+
+    jClassBuilder.add("className", this.className);
+    jClassBuilder.add("classPath", this.classPath.replaceAll("\\\\", "/"));
+    jClassBuilder.add("packageName", this.packageName);
+    jClassBuilder.add("classRole", this.classRole.name());
+    jClassBuilder.add("methods", listToJsonArray(methods));
+    jClassBuilder.add("variables", listToJsonArray(fields));
+    jClassBuilder.add("methodCalls", listToJsonArray(methodCalls));
+
+    return jClassBuilder;
+  }
 }

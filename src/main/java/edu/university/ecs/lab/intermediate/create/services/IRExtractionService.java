@@ -5,7 +5,7 @@ import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.JController;
 import edu.university.ecs.lab.common.models.JService;
 import edu.university.ecs.lab.common.models.Microservice;
-import edu.university.ecs.lab.common.utils.ObjectToJsonUtils;
+import edu.university.ecs.lab.common.models.MsSystem;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import javassist.NotFoundException;
 
@@ -21,6 +21,7 @@ import static edu.university.ecs.lab.common.models.enums.ErrorCodes.*;
  * are allowed to exit the program with an error code if an error occurs.
  */
 public class IRExtractionService {
+    public static final String INIT_VERSION_NUMBER = "0.0.1";
     /** The input configuration file, defaults to config.json */
     private final InputConfig config;
     /** Relative path to clone repositories to, default: "./repos", specified in {@link InputConfig} */
@@ -52,10 +53,8 @@ public class IRExtractionService {
         Map<String, Microservice> msDataMap = this.cloneAndScanServices();
 
         if (msDataMap == null) {
-            System.out.println("No microservices were detected in intermediate representation extraction. " +
-                    "Check your config file to make sure that the repositories are correct and" +
-                    "contain the correct structure for the microservices to be detected.");
-            System.exit(0);
+            System.out.println(NO_MICROSERVICES.getMessage());
+            System.exit(NO_MICROSERVICES.ordinal());
         }
 
         // Scan through each endpoint to update rest call destinations
@@ -88,7 +87,7 @@ public class IRExtractionService {
             try {
                 gitCloneService.cloneRemote(inputRepository);
             } catch (Exception e) {
-                System.err.println("Error cloning repository: " + e.getMessage());
+                System.err.println(GIT_CLONE_FAILED.getMessage() + ": " + e.getMessage());
                 System.exit(GIT_CLONE_FAILED.ordinal());
             }
 
@@ -132,7 +131,7 @@ public class IRExtractionService {
             if (cloneDir.mkdirs()) {
                 System.out.println("Successfully created \"" + dirPath + "\" directory.");
             } else {
-                System.err.println("Could not create \"" + dirPath + "\" directory");
+                System.err.println(COULD_NOT_CREATE_DIRECTORY.getMessage() + ": \"" + dirPath + "\"");
                 System.exit(COULD_NOT_CREATE_DIRECTORY.ordinal());
             }
         }
@@ -173,8 +172,9 @@ public class IRExtractionService {
 
         validateOrCreateLocalDirectory(config.getOutputPath());
 
-        // TODO implement version number
-        JsonObject jout = ObjectToJsonUtils.buildSystem(config.getSystemName(), "0.0.1", msMap);
+        JsonObject jout = new MsSystem(config.getSystemName(), INIT_VERSION_NUMBER, new ArrayList<>(msMap.values()))
+                .toJsonObject();
+
         MsJsonWriter.writeJsonToFile(jout, outputName);
 
         System.out.println("Successfully wrote rest extraction to: \"" + outputName + "\"");

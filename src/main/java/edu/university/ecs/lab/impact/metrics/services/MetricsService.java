@@ -1,13 +1,9 @@
 package edu.university.ecs.lab.impact.metrics.services;
 
 import edu.university.ecs.lab.common.models.*;
-import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
-import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.impact.models.SystemMetrics;
-import edu.university.ecs.lab.impact.models.change.EndpointChange;
-import edu.university.ecs.lab.impact.models.change.Metric;
 
 import java.io.IOException;
 import java.util.*;
@@ -68,42 +64,4 @@ public class MetricsService {
 
     return systemMetrics;
   }
-
-//  @Deprecated
-//  private List<Metric> getMetrics() {
-//    List<Metric> metricList = new ArrayList<>();
-//    Metric metric;
-//
-//    // Handle all service changes
-//    if (Objects.nonNull(systemChange.getServices()) && !systemChange.getServices().isEmpty()) {
-//      for (Delta delta : systemChange.getServices()) {
-//        metric = new Metric();
-//        metric.setFilePath(delta.getLocalPath());
-//        metric.setCallChangeList(callChangeService.getRestCallChangesForDelta(delta));
-//        metric.setClassRole(ClassRole.SERVICE);
-//
-//        metric.setChangeType(delta.getChangeType());
-//        metric.setMicroserviceName(delta.getMsName());
-//        metricList.add(metric);
-//
-//      }
-//    }
-//
-//    // Handle all controller changes
-//    if (Objects.nonNull(systemChange.getControllers())
-//        && !systemChange.getControllers().isEmpty()) {
-//      for (Delta delta : systemChange.getControllers()) {
-//        metric = new Metric();
-//        metric.setFilePath(delta.getLocalPath());
-//        metric.setEndpointChangeList(endpointChangeService.getEndpointChangesForDelta(delta));
-//        metric.setClassRole(ClassRole.CONTROLLER);
-//
-//        metric.setChangeType(delta.getChangeType());
-//        metric.setMicroserviceName(delta.getMsName());
-//        metricList.add(metric);
-//      }
-//    }
-//
-//    return metricList;
-//  }
 }
