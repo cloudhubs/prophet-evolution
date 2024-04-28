@@ -5,10 +5,17 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
+import edu.university.ecs.lab.common.config.models.InputConfig;
+import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.intermediate.create.utils.StringParserUtils;
 import edu.university.ecs.lab.common.models.*;
+import javassist.NotFoundException;
 
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,14 +26,14 @@ import java.util.Objects;
 public class JsonToObjectUtils {
 
   /**
-   * Parse a Java class file and return a JClass object. This WILL NOT include the msId field.
+   * Parse a Java class file and return a JClass object.
    * The class role will be determined by {@link #parseClassRole(File)} and the returned object
    * will be of correct {@link JClass} subclass type.
    * @param sourceFile the file to parse
    * @return the JClass object representing the file
    * @throws IOException on parse error
    */
-  public static JClass parseClass(File sourceFile) throws IOException {
+  public static JClass parseClass(File sourceFile, InputConfig config) throws IOException {
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
     String packageName = StringParserUtils.findPackage(cu);
@@ -35,13 +42,13 @@ public class JsonToObjectUtils {
     }
 
     JClass jClass = JClass.builder()
-            .classPath(getRelativePath(sourceFile))
+            .classPath(getRepositoryPath(sourceFile, config))
             .className(sourceFile.getName().replace(".java", ""))
             .packageName(packageName)
             .methods(parseMethods(cu))
             .fields(parseFields(sourceFile))
             .methodCalls(parseMethodCalls(sourceFile))
-            .msId(null)
+            .msId(getServiceName(sourceFile, config))
             .classRole(parseClassRole(sourceFile))
             .build();
 
@@ -52,7 +59,7 @@ public class JsonToObjectUtils {
       return controller;
     } else if (jClass.getClassRole() == ClassRole.SERVICE) {
       JService service = new JService(jClass);
-      service.setRestCalls(parseRestCalls(sourceFile));
+      service.setRestCalls(parseRestCalls(sourceFile, config));
       return service;
     }
 
@@ -60,15 +67,58 @@ public class JsonToObjectUtils {
   }
 
   /**
-   * Get the relative path of the file from the root directory. This will cut off
-   * the first 2 directories in the path, assuming .\repos\SYSTEM_NAME\rest-of-path
-   * @param sourceFile the file to get the relative path of
-   * @return the relative path of the file after .\repos\SYSTEM_NAME
-   * @apiNote CURRENT LIMITATION: only works for paths of this length. If the config file has a different path length for either
-   * the clonePath or the repositoryPaths, this will not work.
+   * Get the service name from the given file. This is determined by the file path and config.
+   * @param sourceFile the file to parse
+   * @return the service name of the file, null if not found
    */
-  private static String getRelativePath(File sourceFile) {
-    return "." + File.separator + sourceFile.getPath().split("\\\\", 4)[3];
+  private static String getServiceName(File sourceFile, InputConfig config) {
+    // Get the path beginning with repoName/serviceName/...
+    String filePath = getRepositoryPath(sourceFile, config);
+
+    // Find correct repository from config
+    for (InputRepository repo : config.getRepositories()) {
+      if (filePath.startsWith(repo.getName())) {
+        for (String servicePath : repo.getPaths()) {
+          // remove repoName/ from the path
+          String subPath = filePath.substring(repo.getName().length() + 1);
+
+          if (subPath.startsWith(servicePath)) {
+            try {
+              return repo.getServiceNameFromPath(servicePath);
+            } catch (NotFoundException e) {
+              System.err.println("Failed to get service name from path \"" + filePath + "\": " + e.getMessage());
+            }
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Get the path from the repository TLD of the file from the clonePath directory.
+   * This will look like repoName/serviceName/path/to/file.java
+   * @param sourceFile the file to get the path of
+   * @param config system input config file
+   * @return the relative path of the file after ./clonePath/
+   */
+  private static String getRepositoryPath(File sourceFile, InputConfig config) {
+    // Get the file path start from the clonePath directory
+    String filePath = sourceFile.getAbsolutePath();
+    String clonePath = config.getClonePath();
+
+    // Sanitize clonePath
+    clonePath = clonePath.replace("./", "").replace(".\\", "");
+
+    int clonePathIndex = filePath.indexOf(clonePath);
+
+    if (clonePathIndex == -1) {
+      System.err.println("Error: File path does not contain clone path when trying to get relativePath: " + filePath);
+      return filePath;
+    }
+
+    return filePath.substring(clonePathIndex + clonePath.length() + 1);
   }
 
   public static List<Method> parseMethods(CompilationUnit cu) {
@@ -169,7 +219,7 @@ public class JsonToObjectUtils {
     return method;
   }
 
-  public static List<RestCall> parseRestCalls(File sourceFile) throws IOException {
+  public static List<RestCall> parseRestCalls(File sourceFile, InputConfig config) throws IOException {
     List<RestCall> restCalls = new ArrayList<>();
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
@@ -207,7 +257,7 @@ public class JsonToObjectUtils {
             restCall.setParentMethod(parentMethodName);
             restCall.setCalledFieldName(getCalledServiceName(scope));
             restCall.setSourceFile(
-                    getRelativePath(sourceFile));
+                    getRepositoryPath(sourceFile, config));
 
             restCalls.add(restCall);
             // System.out.println(restCall);
@@ -319,6 +369,7 @@ public class JsonToObjectUtils {
     return "";
   }
 
+  // TODO is this called service as in microservice? Or as in service class? Service method? Rename to avoid confusion
   private static String getCalledServiceName(Expression scope) {
     String calledServiceID = null;
     if (Objects.nonNull(scope) && scope instanceof NameExpr) {
@@ -336,6 +387,7 @@ public class JsonToObjectUtils {
    * @param cid the class or interface to search
    * @return the URL found
    */
+  // TODO: what is URL here? Is it the URL of the service? Or the URL of the method call? Rename to avoid confusion
   private static String parseURL(MethodCallExpr mce, ClassOrInterfaceDeclaration cid) {
     if (mce.getArguments().isEmpty()) {
       return "";
@@ -390,6 +442,7 @@ public class JsonToObjectUtils {
     return ""; // URL not found in subtree
   }
 
+  // TODO format to what? add comments please
   private static String formatURL(StringLiteralExpr stringLiteralExpr) {
     String str = stringLiteralExpr.toString();
     str = str.replace("http://", "");
@@ -432,5 +485,13 @@ public class JsonToObjectUtils {
     } else {
       return "GET"; // default
     }
+  }
+
+  public static JsonArray convertListToJsonArray(List<JsonObject> jsonObjectList) {
+    JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+    for (JsonObject jsonObject : jsonObjectList) {
+      arrayBuilder.add(jsonObject);
+    }
+    return arrayBuilder.build();
   }
 }

@@ -1,23 +1,8 @@
 package edu.university.ecs.lab.intermediate.merge;
 
-import edu.university.ecs.lab.common.models.Microservice;
-import edu.university.ecs.lab.common.models.enums.ClassRole;
-import edu.university.ecs.lab.common.utils.ObjectToJsonUtils;
-import edu.university.ecs.lab.common.writers.MsJsonWriter;
-import edu.university.ecs.lab.delta.models.Delta;
-import edu.university.ecs.lab.common.models.MsSystem;
-import edu.university.ecs.lab.delta.models.SystemChange;
-import edu.university.ecs.lab.intermediate.merge.services.MergeService;
-import edu.university.ecs.lab.common.utils.IRParserUtils;
 
-import javax.json.JsonObject;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+
 
 public class IRMergeRunner {
 

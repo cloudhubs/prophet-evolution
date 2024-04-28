@@ -47,11 +47,11 @@ public class ClassMetricsService {
    * @param changeList list of changes to classes of that role
    * @return metrics for that class role
    */
-  private ClassMetrics generateMetricsForRole(ClassRole classRole, List<Delta> changeList) {
+  private ClassMetrics generateMetricsForRole(ClassRole classRole, Map<String, Delta> changeList) {
     ClassMetrics classMetrics = new ClassMetrics();
     classMetrics.setClassRole(classRole);
 
-    for (Delta delta : changeList) {
+    for (Delta delta : changeList.values()) {
       switch (delta.getChangeType()) {
         case ADD:
           classMetrics.incrementAddedClassCount();

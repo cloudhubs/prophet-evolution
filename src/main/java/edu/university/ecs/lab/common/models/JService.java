@@ -12,6 +12,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class JService extends JClass {
+  private List<RestCall> restCalls;
+
   public JService(@NonNull JClass jClass) {
     super(
         jClass.getClassName(),
@@ -23,7 +25,6 @@ public class JService extends JClass {
         jClass.getMethodCalls(),
         jClass.getMsId()
     );
+    this.restCalls = new ArrayList<>();
   }
-
-  private List<RestCall> restCalls;
 }

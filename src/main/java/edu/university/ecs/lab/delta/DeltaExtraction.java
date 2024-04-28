@@ -1,28 +1,39 @@
 package edu.university.ecs.lab.delta;
 
+import edu.university.ecs.lab.common.config.ConfigUtil;
+import edu.university.ecs.lab.common.config.models.InputConfig;
+import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.delta.services.DeltaExtractionService;
-import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.lib.Repository;
+import edu.university.ecs.lab.intermediate.create.services.IRExtractionService;
 
 import java.util.*;
 
-/** Service for extracting the differences between a local and remote repository. */
+/** Service for extracting the differences between a local and remote repository.
+ * TODO: notice how {@link DeltaExtractionService#generateDelta()} returns a set of file names, we should make this all 1 file for the multi-repo case.
+ * */
 public class DeltaExtraction {
   /**
-   * main method entry point to delta extraction
+   * Compares the branch specified in the configuration file to the most
+   * recent commit on the remote repository branch name specified in the arguments and generates the delta
+   * file.
    *
-   * @param args [branch] [list containing /path/to/repo(s)]
+   * @param args {@literal <branch name> [/path/to/config]}
    */
   public static void main(String[] args) throws Exception {
-    args = new String[]{"main", "./repos/train-ticket-microservices"};
-    if (args.length < 2) {
-      System.err.println("Required arguments <branch> <list of paths...>");
+    if (args.length < 1 || args.length > 2) {
+      System.err.println("Required arguments <branch> [(optional) /path/to/config]");
     }
 
     String branch = args[0];
-    String[] paths = Arrays.copyOfRange(args, 1, args.length);
+    InputConfig inputConfig = ConfigUtil.validateConfig((args.length == 2) ? args[1] : "config.json");
 
-    DeltaExtractionService deltaService = new DeltaExtractionService(branch, paths);
-    deltaService.generateDelta();
+    // TESTING TODO remove
+    new IRExtractionService(inputConfig).generateSystemIntermediate();
+    // TESTING ^^^^
+
+    DeltaExtractionService deltaService = new DeltaExtractionService(branch, inputConfig);
+    Set<String> outputNames = deltaService.generateDelta();
+
+    FullCimetUtils.pathsToDeltas = outputNames;
   }
 }

@@ -28,5 +28,7 @@ public class JController extends JClass {
             jClass.getMethodCalls(),
             jClass.getMsId()
     );
+
+    this.endpoints = new ArrayList<>();
   }
 }

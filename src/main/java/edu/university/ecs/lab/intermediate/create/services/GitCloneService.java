@@ -28,7 +28,7 @@ public class GitCloneService {
    */
   public void cloneRemote(InputRepository inputRepository) throws Exception {
 
-    String relativeClonePath = ConfigUtil.getRepositoryClonePath(inputConfig, inputRepository);
+    String relativeClonePath = inputConfig.getLocalPath(inputRepository);
     FullCimetUtils.microservicePaths.add(relativeClonePath);
 
     ProcessBuilder processBuilder =

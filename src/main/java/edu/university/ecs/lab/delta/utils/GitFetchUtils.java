@@ -1,11 +1,5 @@
 package edu.university.ecs.lab.delta.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 import org.eclipse.jgit.api.FetchCommand;
 import org.eclipse.jgit.api.DiffCommand;
 import org.eclipse.jgit.api.Git;
@@ -21,17 +15,12 @@ import org.eclipse.jgit.treewalk.FileTreeIterator;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
 
 /** Utility class for fetching differences between local and remote git repositories. */
 public class GitFetchUtils {
   /** Private constructor to prevent instantiation */
   private GitFetchUtils() {}
-
-  /** The base URL for the GitHub API */
-  private static final String GITHUB_API_URL = "https://api.github.com/repos/";
 
   /**
    * Establish a local endpoint for the given repository path.

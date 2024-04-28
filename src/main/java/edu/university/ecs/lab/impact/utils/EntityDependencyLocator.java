@@ -23,7 +23,7 @@ public class EntityDependencyLocator {
       return;
     }
 
-    for (Delta d : systemChange.getEntities()) {
+    for (Delta d : systemChange.getEntities().values()) {
 
       Microservice model = msSystem.getServiceMap().get(d.getMsId());
 
@@ -84,7 +84,7 @@ public class EntityDependencyLocator {
       throw new RuntimeException("Shouldn't be possible");
     }
 
-    if (Objects.equals(oldClass.get(), delta.getChange())) {
+    if (Objects.equals(oldClass.get(), delta.getChangedClass())) {
       return false;
     }
 
