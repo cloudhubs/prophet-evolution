@@ -14,7 +14,14 @@ public class CallChangeService {
 
     private Map<String, Microservice> oldMicroserviceMap;
     private Map<String, Microservice> newMicroserviceMap;
-    private Map<Microservice, List<Microservice>> dependencyGraph;
+
+    // Cycle stuff
+    private Map<String, Integer> microserviceKey;
+
+    private final int vertices;
+    private final List<List<Integer>> adjList;
+    private int[] parent;  // To keep track of the path
+
 
     SystemChange systemChange;
 
@@ -22,22 +29,36 @@ public class CallChangeService {
         this.oldMicroserviceMap = oldMicroserviceMap;
         this.newMicroserviceMap = newMicroserviceMap;
         this.systemChange = systemChange;
-        this.dependencyGraph = new HashMap<>(newMicroserviceMap.size());
+        vertices = newMicroserviceMap.size();
+        this.microserviceKey = new HashMap<>(vertices);
+        this.adjList = new ArrayList<>(vertices);
+        this.parent = new int[vertices];
+
+        initializeKeyAndAdjlist();
     }
 
-    private void initializeGraph() {
+    private void initializeKeyAndAdjlist() {
+        // Init the keys
+        int i = 0;
         for(Microservice microservice : newMicroserviceMap.values()) {
-            dependencyGraph.put(microservice, new ArrayList<>());
+            microserviceKey.put(microservice.getId(), i);
+            i++;
         }
 
+        // Initialize the adjList
+        for(int k = 0; k < vertices; k++) {
+            adjList.add(new ArrayList<>());
+        }
+
+        // Create the links
         for(Microservice microservice : newMicroserviceMap.values()) {
             for(JService service : microservice.getServices()) {
                 for(RestCall restCall : service.getRestCalls()) {
                     if(Objects.nonNull(restCall.getDestFile()) && !restCall.getDestFile().isEmpty()) {
-                        String destMicroserviceName = restCall.getDestFile().substring(2).substring(restCall.getDestFile().indexOf('/') + 1);
+                        String destMicroserviceName = restCall.getDestFile().substring(2).substring(0,restCall.getDestFile().substring(2).indexOf("/"));
                         Microservice destMicroservice = oldMicroserviceMap.get(destMicroserviceName);
                         if(Objects.nonNull(destMicroservice)) {
-                            dependencyGraph.get(microservice).add(destMicroservice);
+                            adjList.get(microserviceKey.get(microservice.getId())).add(microserviceKey.get(destMicroservice.getId()));
                         }
                     }
                 }
@@ -45,8 +66,66 @@ public class CallChangeService {
         }
     }
 
-    private void detectCycle() {
+    public List<String> findCycle() {
+        boolean[] visited = new boolean[vertices];
+        boolean[] recStack = new boolean[vertices];
 
+        for (int node = 0; node < vertices; node++) {
+            if (!visited[node] && detectCycle(node, visited, recStack)) {
+                return getCycle(node);
+            }
+        }
+        return new ArrayList<>(); // No cycle found
+    }
+
+    private boolean detectCycle(int vertex, boolean[] visited, boolean[] recStack) {
+        if (recStack[vertex]) {
+            return true;
+        }
+        if (visited[vertex]) {
+            return false;
+        }
+
+        visited[vertex] = true;
+        recStack[vertex] = true;
+
+        List<Integer> children = adjList.get(vertex);
+        for (Integer child : children) {
+            parent[child] = vertex; // Track the path
+            if (detectCycle(child, visited, recStack)) {
+                return true;
+            }
+        }
+
+        recStack[vertex] = false;
+        return false;
+    }
+
+    private List<String> getCycle(int start) {
+        List<String> cycle = new ArrayList<>();
+        int current = start;
+        cycle.add(keyFromValue(start));
+        while (parent[current] != start) {
+            cycle.add(keyFromValue(parent[current]));
+            current = parent[current];
+        }
+        cycle.add(keyFromValue(start)); // To show the cycle completion
+        Collections.reverse(cycle); // To show the cycle in correct order
+        return cycle;
+    }
+
+    public boolean isInCycle(Microservice microservice) {
+        return findCycle().contains(microservice.getId());
+    }
+
+    private String keyFromValue(int i) {
+        for(Map.Entry<String, Integer> entry : microserviceKey.entrySet()) {
+            if(entry.getValue() == i) {
+                return entry.getKey();
+            }
+        }
+
+        return null;
     }
 
     /**
