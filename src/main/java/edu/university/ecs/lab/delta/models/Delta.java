@@ -11,6 +11,7 @@ import edu.university.ecs.lab.common.utils.ObjectToJsonUtils;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.eclipse.jgit.diff.DiffEntry;
 
@@ -36,6 +37,10 @@ public class Delta implements JsonSerializable, JsonDeserializer<Delta> {
 
   @SerializedName(CHANGES)
   private JClass changedClass;
+
+  public Delta() {
+
+  }
 
   /**
    * @return the microservice id of the changed class

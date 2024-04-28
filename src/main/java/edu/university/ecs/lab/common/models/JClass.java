@@ -49,8 +49,6 @@ public class JClass implements JsonSerializable {
    */
   @Override
   public JsonObject toJsonObject() {
-
-
     return createBuilder().build();
   }
 
