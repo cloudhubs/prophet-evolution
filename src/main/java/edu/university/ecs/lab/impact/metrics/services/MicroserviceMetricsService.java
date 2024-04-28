@@ -42,7 +42,7 @@ public class MicroserviceMetricsService {
 
             // Dependency Metrics
             dependencyMetrics.setCallChanges(callChangeService.getAllMsRestCallChanges(microservice.getId()));
-            dependencyMetrics.setEndpointChanges(endpointChangeService.getAllMsEndpointChanges(microservice.getId()));
+//            dependencyMetrics.setEndpointChanges(endpointChangeService.getAllMsEndpointChanges(microservice.getId()));
             microserviceMetrics.setDependencyMetrics(dependencyMetrics);
 
             // Numeric Metrics
@@ -54,7 +54,9 @@ public class MicroserviceMetricsService {
 
             microserviceMetrics.setOldSidc2Score(calculateSIDC2Score(microservice));
             microserviceMetrics.setNewSidc2Score(calculateSIDC2Score(newMicroserviceMap.get(microservice.getId())));
+
             microserviceMetrics.setHighCoupling(calculateADS(microservice) > THRESHOLD);
+            microserviceMetrics.setInCycle(callChangeService.isInCycle(microservice));
 
             microserviceMetricsList.add(microserviceMetrics);
         }

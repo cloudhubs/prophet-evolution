@@ -16,6 +16,7 @@ public class MicroserviceMetrics {
     private double newSiucScore;
     private double newAdsScore;
     private boolean highCoupling;
+    private boolean inCycle;
     private DependencyMetrics dependencyMetrics;
 
 
