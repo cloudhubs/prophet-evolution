@@ -36,7 +36,7 @@ public class MetricsService {
     newMicroserviceMap = IRParserUtils.parseIRSystem(newIrPath).getServiceMap();
     systemChange = IRParserUtils.parseSystemChange(deltaPath);
     classMetricsService = new ClassMetricsService(oldMicroserviceMap, systemChange);
-    microserviceMetricsService = new MicroserviceMetricsService(oldMicroserviceMap, newMicroserviceMap, systemChange);
+    microserviceMetricsService = new MicroserviceMetricsService(oldMicroserviceMap, newMicroserviceMap);
     systemMetricsService = new SystemMetricsService(oldMicroserviceMap, newMicroserviceMap, systemChange);
   }
 
@@ -59,7 +59,6 @@ public class MetricsService {
 
     // Now Microservice specific metrics
     systemMetrics.setMicroserviceMetrics(microserviceMetricsService.getMicroserviceMetrics());
-
 
 
     return systemMetrics;

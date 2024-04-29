@@ -65,9 +65,9 @@ public class RestCall extends MethodCall {
     return restCallBuilder.build();
   }
 
-  public void setDestination(JController destination) {
-    this.msId = destination.getMsId();
-    setDestFile(destination.getClassPath());
+  public void setDestination(JController destController) {
+    this.destMsId = destController.getMsId();
+    setDestFile(destController.getClassPath());
   }
 
   public void setDestinationAsDeleted() {
@@ -76,5 +76,10 @@ public class RestCall extends MethodCall {
 
   public boolean pointsToDeletedFile() {
     return DEST_DELETED.equals(destFile);
+  }
+
+  public String getId() {
+    return msId + "#" + calledFrom + "[" + httpMethod + "]"
+            + "->" + destMsId + ":" + destEndpoint;
   }
 }

@@ -23,7 +23,10 @@ public class IRParserUtils {
                                 controller.getEndpoints().stream()
                                         .filter(e -> e.matchCall(restCall))
                                         .findAny()
-                                        .ifPresent(endpoint -> restCall.setDestination(controller));
+                                        .ifPresent(endpoint -> {
+                                            restCall.setDestination(controller);
+                                            endpoint.addCall(restCall);
+                                        });
                             });
                         }
                     }

@@ -151,45 +151,45 @@ public class SourceToObjectUtils {
 
       // loop through methods
       for (MethodDeclaration md : cid.findAll(MethodDeclaration.class)) {
-        Endpoint endpoint = new Endpoint(msId, parseMethod(md));
 
         // loop through annotations
         for (AnnotationExpr ae : md.getAnnotations()) {
-          endpoint.setUrl(StringParserUtils.mergePaths(classLevelPath, pathFromAnnotation(ae)));
-          endpoint.setDecorator(ae.getNameAsString());
-
+          String url = StringParserUtils.mergePaths(classLevelPath, pathFromAnnotation(ae));
+          String decorator = ae.getNameAsString();
+          String httpMethod = null;
           // TODO move logic to enum
           switch (ae.getNameAsString()) {
             case "GetMapping":
-              endpoint.setHttpMethod("GET");
+              httpMethod = "GET";
               break;
             case "PostMapping":
-              endpoint.setHttpMethod("POST");
+              httpMethod = "POST";
               break;
             case "DeleteMapping":
-              endpoint.setHttpMethod("DELETE");
+              httpMethod = "DELETE";
               break;
             case "PutMapping":
-              endpoint.setHttpMethod("PUT");
+              httpMethod = "PUT";
               break;
             case "RequestMapping":
               if (ae.toString().contains("RequestMethod.POST")) {
-                endpoint.setHttpMethod("POST");
+                httpMethod = "POST";
               } else if (ae.toString().contains("RequestMethod.DELETE")) {
-                endpoint.setHttpMethod("DELETE");
+                httpMethod = "DELETE";
               } else if (ae.toString().contains("RequestMethod.PUT")) {
-                endpoint.setHttpMethod("PUT");
+                httpMethod = "PUT";
               } else {
-                endpoint.setHttpMethod("GET");
+                httpMethod = "GET";
               }
               break;
           }
 
-          if (endpoint.getHttpMethod() == null) {
+          if (httpMethod == null) {
+            System.err.println("Could not determine httpMethod for endpoint: " + url + " in " + md.getNameAsString() + " in " + sourceFile.getName());
             continue;
           }
 
-          endpoints.add(endpoint);
+          endpoints.add(new Endpoint(parseMethod(md), url, decorator, httpMethod, msId));
         }
       }
     }

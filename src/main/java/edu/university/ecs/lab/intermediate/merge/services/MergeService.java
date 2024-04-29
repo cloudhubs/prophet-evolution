@@ -164,6 +164,7 @@ public class MergeService {
             for (Endpoint endpoint : controller.getEndpoints()) {
               if (endpoint.matchCall(restCall)) {
                 restCall.setDestination(controller);
+                endpoint.addCall(restCall);
               }
             }
           }

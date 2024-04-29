@@ -1,5 +1,6 @@
 package edu.university.ecs.lab.impact.models;
 
+import edu.university.ecs.lab.common.models.Microservice;
 import edu.university.ecs.lab.impact.models.change.CallChange;
 import edu.university.ecs.lab.impact.models.change.EndpointChange;
 import lombok.*;

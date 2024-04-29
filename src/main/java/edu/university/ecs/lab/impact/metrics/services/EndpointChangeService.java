@@ -15,31 +15,26 @@ import java.util.stream.Collectors;
 import static edu.university.ecs.lab.common.utils.FlowUtils.buildFlows;
 
 public class EndpointChangeService {
-    Map<String, Microservice> oldMicroserviceMap;
-    Map<String, Microservice> newMicroserviceMap;
-    SystemChange systemChange;
+    private final Map<String, Microservice> oldMicroserviceMap;
+    private final Map<String, Microservice> newMicroserviceMap;
 
-    public EndpointChangeService(Map<String, Microservice> oldMicroserviceMap, Map<String, Microservice> newMicroserviceMap, SystemChange systemChange) {
+    public EndpointChangeService(Map<String, Microservice> oldMicroserviceMap, Map<String, Microservice> newMicroserviceMap) {
         this.oldMicroserviceMap = oldMicroserviceMap;
         this.newMicroserviceMap = newMicroserviceMap;
-        this.systemChange = systemChange;
     }
+
     /**
      * Get a list of all changed rest calls for a single delta
      *
-     * @param msId id of the microservice in the map
      * @return list of rest call changes from the given delta
      */
-    public List<EndpointChange> getAllMsEndpointChanges(String msId) {
-
-        // Find the microservices
-        Microservice oldMicroservice = oldMicroserviceMap.get(msId);
-        Microservice newMicroservice = newMicroserviceMap.get(msId);
+    public List<EndpointChange> getAllMsEndpointChanges(Microservice oldMicroservice, Microservice newMicroservice) {
 
         // Ensure non null
-        // TODO, This will cause crash if there is a new or deleted service. Handle these cases
-        assert Objects.nonNull(oldMicroservice) && Objects.nonNull(newMicroservice);
+        Objects.requireNonNull(oldMicroservice, "Old microservice cannot be null during endpoint metrics collection.");
+        Objects.requireNonNull(newMicroservice, "Old microservice cannot be null during endpoint metrics collection.");
 
+        String msId = newMicroservice.getId();
 
         // Find all their endpoints
         List<JController> oldControllers = oldMicroservice.getControllers();
@@ -49,107 +44,96 @@ public class EndpointChangeService {
         // Build endpoint changes
         List<EndpointChange> endpointChanges = new ArrayList<>();
 
-        // Handle deleted classes
+        // Parse existing and deleted controllers (if deleted, newController is null)
         for (JController oldController : oldControllers) {
-            // TODO searching for controller by classpath is unsafe, we should be searching by something else
-            if(newControllers.stream().filter(jController -> jController.getClassPath().equals(oldController.getClassPath())).findFirst().isEmpty()) {
-                for(Endpoint oldEndpoint : oldController.getEndpoints()) {
-                    // Add the new endpoint change of delete
-                    endpointChanges.add(new EndpointChange(
-                            oldEndpoint,
-                            null,
-                            getEndpointLinks(oldEndpoint, msId, true),
-                            new ArrayList<>(),
-                            ChangeType.DELETE));
-                }
-            }
+            JController newController = newControllers.stream().filter(oldController::matchClassPath).findFirst().orElse(null);
+
+            List<EndpointChange> controllerChanges = getControllerEndpointChanges(oldController, newController);
+            endpointChanges.addAll(controllerChanges);
         }
 
-        // Handle added classes
-        for (JController newController : newControllers) {
-            if(newControllers.stream().filter(jController -> jController.getClassPath().equals(newController.getClassPath())).findFirst().isEmpty()) {
-                for(Endpoint newEndpoint : newController.getEndpoints()) {
-                    // Add the new endpoint change of delete
-                    endpointChanges.add(new EndpointChange(
-                            null,
-                            newEndpoint,
-                            new ArrayList<>(),
-                            getEndpointLinks(newEndpoint, msId, false),
-                            ChangeType.ADD));
-                }
-            }
-        }
-
-        // Handle deleted classes
-        for (JController oldController : oldControllers) {
-            if(newControllers.stream().filter(jController -> jController.getClassPath().equals(oldController.getClassPath())).findFirst().isPresent()) {
-                JController newController = newControllers.stream().filter(jController -> jController.getClassPath().equals(oldController.getClassPath())).findFirst().get();
-
-                // Same concept as before, but with endpoints
-                List<Endpoint> oldEndpoints = oldController.getEndpoints();
-                List<Endpoint> newEndpoints = newController.getEndpoints();
-
-                // Handle deleted endpoints
-                for (Endpoint oldEndpoint : oldEndpoints) {
-                    if(newEndpoints.stream().filter(endpoint -> endpoint.getMethodName().equals(oldEndpoint.getMethodName())).findFirst().isEmpty()) {
-                        // Add the new endpoint change of delete
-                        endpointChanges.add(new EndpointChange(
-                                oldEndpoint,
-                                null,
-                                getEndpointLinks(oldEndpoint, msId, true),
-                                new ArrayList<>(),
-                                ChangeType.MODIFY));
-                    }
-                }
-
-                // Handle added endpoints
-                for (Endpoint newEndpoint : newEndpoints) {
-                    if(oldEndpoints.stream().filter(endpoint -> endpoint.getMethodName().equals(newEndpoint.getMethodName())).findFirst().isEmpty()) {
-                        // Add the new endpoint change of delete
-                        endpointChanges.add(new EndpointChange(
-                                null,
-                                newEndpoint,
-                                new ArrayList<>(),
-                                getEndpointLinks(newEndpoint, msId, false),
-                                ChangeType.MODIFY));
-                    }
-                }
-
-                // Handle modified endpoints
-                for (Endpoint oldEndpoint : oldEndpoints) {
-                    if(newEndpoints.stream().filter(endpoint -> endpoint.getMethodName().equals(oldEndpoint.getMethodName())).findFirst().isPresent()) {
-                        Endpoint newEndpoint = newEndpoints.stream().filter(endpoint -> endpoint.getMethodName().equals(oldEndpoint.getMethodName())).findFirst().get();
-                        // Add the new endpoint change of delete
-                        endpointChanges.add(new EndpointChange(
-                                oldEndpoint,
-                                newEndpoint,
-                                getEndpointLinks(oldEndpoint, msId, true),
-                                getEndpointLinks(newEndpoint, msId, false),
-                                ChangeType.MODIFY));
-                    }
-                }
-
-            }
-        }
+        // Add changes for newly created controllers (oldController is null)
+        newControllers.stream()
+                .filter(newController -> oldControllers.stream().noneMatch(newController::matchClassPath))
+                .forEach(newController -> {
+                    List<EndpointChange> controllerChanges = getControllerEndpointChanges(null, newController);
+                    endpointChanges.addAll(controllerChanges);
+                });
 
         updateEndpointChangeImpact(endpointChanges, msId);
 
         return filterNoImpact(endpointChanges);
     }
 
+    /**
+     * Handle all cases for controller changes. Has logic for ADD, DELETE,
+     * else delegate to {@link #getModifiedControllerEndpointChanges(JController, JController)} for MODIFY
+     * @param oldController controller in old IR (null if DELETE)
+     * @param newController controller in new IR (null if ADD)
+     * @return list of endpoint changes
+     */
+    private List<EndpointChange> getControllerEndpointChanges(JController oldController, JController newController) {
+        if (Objects.isNull(oldController) || Objects.isNull(newController)) {
+            boolean isDelete = Objects.isNull(newController);
+            JController singleController = isDelete ? oldController : newController;
+
+            Objects.requireNonNull(singleController, "Both controllers are null during metrics collection, this should not happen.");
+            return singleController.getEndpoints().stream()
+                    .map(endpoint ->
+                            EndpointChange.addOrDeleteControllerChange(
+                                    endpoint,
+                                    getEndpointLinks(endpoint, singleController.getMsId(), isDelete),
+                                    isDelete ? ChangeType.DELETE : ChangeType.ADD))
+                    .collect(Collectors.toList());
+        }
+
+        // Both controllers exist, compare their endpoints
+        return getModifiedControllerEndpointChanges(oldController, newController);
+
+    }
+
+    /**
+     * Handle MODIFY case for endpoint changes
+     * @param oldController controller in old IR (not null)
+     * @param newController  controller in new IR (not null)
+     * @return list of endpoint changes
+     */
+    private List<EndpointChange> getModifiedControllerEndpointChanges(JController oldController, JController newController) {
+        Objects.requireNonNull(oldController, "Old controller cannot be null for modify.");
+        Objects.requireNonNull(newController, "New controller cannot be null for modify.");
+
+        // Same concept as before, but with endpoints
+        List<Endpoint> oldEndpoints = oldController.getEndpoints();
+        List<Endpoint> newEndpoints = newController.getEndpoints();
+
+        List<EndpointChange> endpointChanges = new ArrayList<>();
+
+        // Parse existing and deleted endpoints (if deleted, newEndpoint is null)
+        for (Endpoint oldEndpoint : oldEndpoints) {
+            Endpoint newEndpoint = newEndpoints.stream().filter(oldEndpoint::isSameEndpoint).findFirst().orElse(null);
+            endpointChanges.add(EndpointChange.buildChange(oldEndpoint, newEndpoint));
+        }
+
+        // Add new endpoints (oldEndpoint is null)
+        newEndpoints.stream()
+                .filter(newEndpoint -> oldEndpoints.stream().noneMatch(newEndpoint::isSameEndpoint))
+                .forEach(newEndpoint -> endpointChanges.add(EndpointChange.buildChange(null, newEndpoint)));
+
+        return endpointChanges;
+    }
 
 
     private void updateEndpointChangeImpact(List<EndpointChange> endpointChangeList, String microserviceName) {
         // Check for CALL_TO_DEPRECATED_ENDPOINT
         for(EndpointChange endpointChange : endpointChangeList) {
-            if(checkInconsistentEndpoint(endpointChange)) {
-                break;
-            } else if(checkUnusedCall(endpointChange, microserviceName)) {
-                break;
-            } else if(checkBreakingDependentCall(endpointChange, microserviceName)) {
-                break;
+            if (Objects.isNull(endpointChange.getOldEndpoint()) || Objects.isNull(endpointChange.getNewEndpoint())) {
+                continue;
             }
-
+            if(!checkInconsistentEndpoint(endpointChange)) {
+                if (!checkUnusedCall(endpointChange, microserviceName)) {
+                    checkBreakingDependentCall(endpointChange, microserviceName);
+                }
+            }
         }
     }
 
@@ -162,6 +146,7 @@ public class EndpointChangeService {
      * @param microserviceName
      * @return
      */
+    // TODO lets just store this in the endpoint object as we parse it in the delta
     private List<Link> getEndpointLinks(Endpoint endpoint, String microserviceName, boolean oldMap) {
         List<Link> linkList = new ArrayList<>();
 

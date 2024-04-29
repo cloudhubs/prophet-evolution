@@ -26,7 +26,7 @@ public class SystemMetricsService {
         of all services.
      */
     public double calculateADCS(Map<String, Microservice> microserviceMap) {
-        MicroserviceMetricsService microserviceMetricsService = new MicroserviceMetricsService(oldMicroserviceMap, newMicroserviceMap, systemChange);
+        MicroserviceMetricsService microserviceMetricsService = new MicroserviceMetricsService(oldMicroserviceMap, newMicroserviceMap);
         int totalADS = 0;
         for(Microservice microservice : microserviceMap.values()) {
             totalADS += microserviceMetricsService.calculateADS(microservice);

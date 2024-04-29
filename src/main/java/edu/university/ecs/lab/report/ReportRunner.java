@@ -9,9 +9,9 @@ public class ReportRunner {
     public static void main(String[] args) throws IOException {
       // Testing TODO remove
       args = new String[]{"main", "123", "compare", "456",
-              "./out/rest-extraction-output-[1713220548219].json",
-              "./out/rest-extraction-new-[1713220834011].json",
-              "./out/delta-changes-[1713220716931].json"};
+              "./out/rest-extraction-output-[1714423463791].json",
+              "./out/rest-extraction-new-[1714423538153].json",
+              "./out/delta-changes-[1714423474668].json"};
 
       if (args.length != 7) {
           System.err.println(

@@ -8,7 +8,14 @@ import java.io.FileReader;
 
 import static edu.university.ecs.lab.common.models.enums.ErrorCodes.BAD_CONFIG;
 
+/**
+ * Utility class for reading and validating the input config file
+ */
 public class ConfigUtil {
+
+  /** Prevent instantiation */
+  private ConfigUtil() {}
+
   /**
    * Validate the input config file
    *

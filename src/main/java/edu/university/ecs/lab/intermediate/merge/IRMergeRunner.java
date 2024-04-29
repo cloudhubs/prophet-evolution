@@ -16,7 +16,7 @@ public class IRMergeRunner {
      * @param args {@literal </path/to/intermediate-json> </path/to/delta-json> [/path/to/config]}
      */
   public static void main(String[] args) throws IOException {
-    args = new String[]{"./out/rest-extraction-output-[1714354529315].json", "./out/delta-changes-[1714354531296].json"};
+    args = new String[]{"./out/rest-extraction-output-[1714423463791].json", "./out/delta-changes-[1714423474668].json"};
     if (args.length < 2 || args.length > 3) {
       System.err.println(
           "Invalid # of args, 2-3 expected: <path/to/intermediate-json> <path/to/delta-json> [(optional) /path/to/config]");

@@ -11,24 +11,20 @@ import java.util.stream.Collectors;
 
 public class CallChangeService {
 
-    private Map<String, Microservice> oldMicroserviceMap;
-    private Map<String, Microservice> newMicroserviceMap;
+    private final Map<String, Microservice> oldMicroserviceMap;
+    private final Map<String, Microservice> newMicroserviceMap;
 
     // Cycle stuff
-    private Map<String, Integer> microserviceKey;
-
+    private final Map<String, Integer> microserviceKey;
     private final int vertices;
     private final Map<Integer, List<Integer>> adjList;
     private int[] parent;  // To keep track of the path
 
 
-    SystemChange systemChange;
-
-    public CallChangeService(Map<String, Microservice> oldMicroserviceMap, Map<String, Microservice> newMicroserviceMap, SystemChange systemChange) {
+    public CallChangeService(Map<String, Microservice> oldMicroserviceMap, Map<String, Microservice> newMicroserviceMap) {
         this.oldMicroserviceMap = oldMicroserviceMap;
         this.newMicroserviceMap = newMicroserviceMap;
-        this.systemChange = systemChange;
-        vertices = newMicroserviceMap.size();
+        this.vertices = newMicroserviceMap.size();
         this.microserviceKey = new HashMap<>(vertices);
         this.adjList = new HashMap<>(vertices);
         this.parent = new int[vertices];
@@ -134,23 +130,20 @@ public class CallChangeService {
      *
      * @return list of rest call changes from the given delta
      */
-    public List<CallChange> getAllMsRestCallChanges(String microserviceName) {
+    public List<CallChange> getMsRestCallChanges(Microservice oldService, Microservice newService) {
 
-        // Find the microservices
-        Microservice oldMicroservice = oldMicroserviceMap.values().stream().filter(microservice -> microservice.getId().equals(microserviceName)).findFirst().orElse(null);
-        Microservice newMicroservice = newMicroserviceMap.values().stream().filter(microservice -> microservice.getId().equals(microserviceName)).findFirst().orElse(null);
-
-        // Ensure non null
-        assert Objects.nonNull(oldMicroservice) && Objects.nonNull(newMicroservice);
+        // Ensure non null TODO make work for either deleted old or new service
+        assert Objects.nonNull(oldService) && Objects.nonNull(newService);
 
         // Find all their rest calls
-        List<RestCall> oldRestCalls = oldMicroservice.getServices().stream().flatMap(jService -> jService.getRestCalls().stream()).collect(Collectors.toList());
-        List<RestCall> newRestCalls = newMicroservice.getServices().stream().flatMap(jService -> jService.getRestCalls().stream()).collect(Collectors.toList());
+        List<RestCall> oldRestCalls = oldService.getServices().stream().flatMap(jService -> jService.getRestCalls().stream()).collect(Collectors.toList());
+        List<RestCall> newRestCalls = newService.getServices().stream().flatMap(jService -> jService.getRestCalls().stream()).collect(Collectors.toList());
 
 
         // Build call changes
         List<CallChange> callChanges = new ArrayList<>();
 
+        updateCallChangeImpact(callChanges, newService.getId());
         for (RestCall oldCall : oldRestCalls) {
             if (!newRestCalls.remove(oldCall)) {
                 // If no call removed, it isn't present (removed)
@@ -165,7 +158,7 @@ public class CallChangeService {
             }
         }
 
-        updateCallChangeImpact(callChanges, microserviceName);
+        updateCallChangeImpact(callChanges, oldService.getId());
 
         return callChanges;
     }

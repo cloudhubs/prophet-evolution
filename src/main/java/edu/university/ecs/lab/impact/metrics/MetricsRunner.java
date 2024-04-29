@@ -8,7 +8,7 @@ import java.nio.file.Path;
 public class MetricsRunner {
 
   public static void main(String[] args) throws IOException {
-    args = new String[]{"./out/rest-extraction-output-[1714354529315].json", "./out/rest-extraction-new-[1714354603262].json", "./out/delta-changes-[1714354531296].json"};
+    args = new String[]{"./out/rest-extraction-output-[1714416828298].json", "./out/rest-extraction-new-[1714416990718].json", "./out/delta-changes-[1714416882579].json"};
     if (args.length < 3) {
       System.err.println(
           "Invalid # of args, 2 expected: <path/to/old/intermediate-json> <path/to/new/intermediate-json> <path/to/delta>");

@@ -92,7 +92,7 @@
                 <ul class="space-y-1">
                     <#list systemMetrics.getMicroserviceMetrics() as service>
                         <li class="rounded-lg bg-gray-100 px-4 py-2">
-                            <div class="font-semibold text-violet-900 mb-2">${service.getName()}</div>
+                            <div class="font-semibold text-violet-900 mb-2">${service.getId()}</div>
                             <div class="text-sm">
                                 <div><span class="font-semibold font-sans text-gray-800">ADS Score:</span> ${service.getNewAdsScore()}</div>
                                 <div><span class="font-semibold font-sans text-gray-800">SIUC Score:</span> ${service.getNewSiucScore()}</div>
@@ -103,12 +103,12 @@
                                 <#list service.getDependencyMetrics().getCallChanges() as change>
                                     <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">
                                         <div class="mb-4">
-                                            <div><span class="font-semibold font-sans text-teal-800">Dest. Service:</span> ${change.getNewLink().getMsDestination()}</div>
-                                            <div><span class="font-semibold font-sans text-teal-800">Dest. Route:</span> ${change.getNewCall().getApi()}</div>
-                                            <div class="font-mono uppercase"><span class="font-semibold font-sans text-teal-800 normal-case">HttpMethod:</span> ${change.getNewCall().getHttpMethod()}</div>
+                                            <div><span class="font-semibold font-sans text-teal-800">Dest. Service:</span> ${(change.getNewLink().getMsDestination())!"null"}</div>
+                                            <div><span class="font-semibold font-sans text-teal-800">Dest. Route:</span> ${(change.getNewCall().getApi())!"null"}</div>
+                                            <div class="font-mono uppercase"><span class="font-semibold font-sans text-teal-800 normal-case">HttpMethod:</span> ${(change.getNewCall().getHttpMethod())!"null"}</div>
                                         </div>
                                         <div ><span class="font-semibold font-sans text-violet-800">Method Name:</span> {$change.getNewCall().getMethodName()}</div>
-                                        <div class="mb-2 italic text-gray-500"><span class="font-semibold font-sans not-italic text-violet-800">FilePath:</span> ${change.getNewCall().getSourceFile()}</div>
+                                        <div class="mb-2 italic text-gray-500"><span class="font-semibold font-sans not-italic text-violet-800">FilePath:</span> ${(change.getNewCall().getSourceFile())!"null"}</div>
 
                                         <div><span class="font-semibold text-red-800">Change:</span> ${change.getChangeType().name()}</div>
                                         <div><span class="font-semibold text-red-800">Impact:</span> ${change.getImpact().name()}</div>

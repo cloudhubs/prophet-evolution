@@ -11,74 +11,63 @@ import java.util.*;
 public class MicroserviceMetricsService {
     public static final int THRESHOLD = 5;
 
-    Map<String, Microservice> oldMicroserviceMap;
-    Map<String, Microservice> newMicroserviceMap;
+    private final Map<String, Microservice> oldMicroserviceMap;
+    private final Map<String, Microservice> newMicroserviceMap;
 
-    SystemChange systemChange;
     private final CallChangeService callChangeService;
     private final EndpointChangeService endpointChangeService;
 
 
-    public MicroserviceMetricsService(Map<String, Microservice> oldMicroserviceMap, Map<String, Microservice> newMicroserviceMap, SystemChange systemChange) {
+    public MicroserviceMetricsService(Map<String, Microservice> oldMicroserviceMap, Map<String, Microservice> newMicroserviceMap) {
         this.oldMicroserviceMap = oldMicroserviceMap;
         this.newMicroserviceMap = newMicroserviceMap;
 
-        this.systemChange = systemChange;
-        this.callChangeService = new CallChangeService(oldMicroserviceMap, newMicroserviceMap, systemChange);
-        this.endpointChangeService = new EndpointChangeService(oldMicroserviceMap, newMicroserviceMap, systemChange);
+        this.callChangeService = new CallChangeService(oldMicroserviceMap, newMicroserviceMap);
+        this.endpointChangeService = new EndpointChangeService(oldMicroserviceMap, newMicroserviceMap);
 
     }
 
     public List<MicroserviceMetrics> getMicroserviceMetrics() {
         List<MicroserviceMetrics> microserviceMetricsList = new ArrayList<>();
-        MicroserviceMetrics microserviceMetrics;
-        DependencyMetrics dependencyMetrics;
 
-        // Go through the OLD map and determine changed services
-        for(Microservice microservice : oldMicroserviceMap.values()) {
-            microserviceMetrics = new MicroserviceMetrics(microservice);
-            dependencyMetrics = new DependencyMetrics();
-
-
-            // Dependency Metrics
-            dependencyMetrics.setCallChanges(callChangeService.getAllMsRestCallChanges(microservice.getId()));
-//            dependencyMetrics.setEndpointChanges(endpointChangeService.getAllMsEndpointChanges(microservice.getId()));
-            microserviceMetrics.setDependencyMetrics(dependencyMetrics);
-
-            // Numeric Metrics
-            microserviceMetrics.setOldAdsScore(calculateADS(microservice));
-            microserviceMetrics.setNewAdsScore(calculateADS(newMicroserviceMap.get(microservice.getId())));
-
-            microserviceMetrics.setOldSiucScore(calculateSIUCScore(oldMicroserviceMap, microservice));
-            microserviceMetrics.setNewSiucScore(calculateSIUCScore(newMicroserviceMap,newMicroserviceMap.get(microservice.getId())));
-
-            microserviceMetrics.setOldSidc2Score(calculateSIDC2Score(microservice));
-            microserviceMetrics.setNewSidc2Score(calculateSIDC2Score(newMicroserviceMap.get(microservice.getId())));
-
-            microserviceMetrics.setHighCoupling(calculateADS(microservice) > THRESHOLD);
-            microserviceMetrics.setInCycle(callChangeService.isInCycle(microservice));
-
-            microserviceMetricsList.add(microserviceMetrics);
+        // Go through the old map and determine changed services
+        for (Microservice oldMicroservice : oldMicroserviceMap.values()) {
+            Microservice newMicroservice = newMicroserviceMap.get(oldMicroservice.getId());
+            microserviceMetricsList.add(buildMetrics(oldMicroservice, newMicroservice));
         }
 
-        // TODO here add new services from new map that are not in old map
-
+        // Handle new services
+        for (Microservice newMicroservice : newMicroserviceMap.values()) {
+            if (oldMicroserviceMap.get(newMicroservice.getId()) == null) {
+                microserviceMetricsList.add(buildMetrics(null, newMicroservice));
+            }
+        }
 
         return microserviceMetricsList;
+    }
+
+    private MicroserviceMetrics buildMetrics(Microservice oldMicroservice, Microservice newMicroservice) {
+        MicroserviceMetrics microserviceMetrics;
+        microserviceMetrics = new MicroserviceMetrics(oldMicroservice, newMicroservice);
+
+        microserviceMetrics.generateSiucMetrics(oldMicroserviceMap, newMicroserviceMap);
+
+        microserviceMetrics.setDependencyMetrics(new DependencyMetrics(
+                callChangeService.getMsRestCallChanges(oldMicroservice, newMicroservice),
+                endpointChangeService.getAllMsEndpointChanges(oldMicroservice, newMicroservice)));
+        return microserviceMetrics;
     }
 
     /*
         https://drive.google.com/drive/folders/1nEknAyMAsw-aUze0_ot9_lER2yNV-HOx
 
-            Service Interface Data Cohesion (SIDC1): this metric
-
-        quantifies the cohesion of a service based on the cohesive-
-        ness of the operations exposed in its interface, which means
-
+            Service Interface Data Cohesion (SIDC1): this metric quantifies
+        the cohesion of a service based on the cohesiveness
+        of the operations exposed in its interface, which means
         operations sharing the same type of input parameter [16].
+        SIDC2 evolves from SIDC1 by considering both in/out parameter types.
 
-        SIDC2 evolves from SIDC1 by considering both in/out pa-
-        rameter types. Formal definition:
+        Formal definition:
 
         SIDC(s) = (Common(Param(SOp(sis )))
         + Common(returnType(SOp(sis ))))/
@@ -93,7 +82,7 @@ public class MicroserviceMetricsService {
         – Total(SOp(sis )) returns the number of combinations of
         operation pairs for the service interface sis .
      */
-    private double calculateSIDC2Score(Microservice microservice) {
+    public static double calculateSIDC2Score(Microservice microservice) {
         Map<String, Integer> paramTypes = new HashMap<>();
         Map<String, Integer> returnTypes = new HashMap<>();
         int commonParams = 0;
@@ -101,16 +90,15 @@ public class MicroserviceMetricsService {
         int totalEndpoints = 0;
 
         for(JController controller : microservice.getControllers()) {
-            outer:
             {
-                for(Endpoint endpoint: controller.getEndpoints()) {
+                for (Endpoint endpoint : controller.getEndpoints()) {
                     totalEndpoints++;
                     String[] params = endpoint.getParameterList().split(",");
-                    for(String param : params) {
+                    for (String param : params) {
                         String[] paramParts = param.split(" ");
-                        if(paramParts.length == 2) {
+                        if (paramParts.length == 2) {
                             // If we try to add it but it was already there
-                            if(paramTypes.containsKey(paramParts[0])) {
+                            if (paramTypes.containsKey(paramParts[0])) {
                                 paramTypes.merge(paramParts[0], 1, Integer::sum);
                                 commonParams += (paramTypes.get(paramParts[0]) - 1) * 2;
                             } else {
@@ -119,7 +107,7 @@ public class MicroserviceMetricsService {
                         }
                     }
 
-                    if(returnTypes.containsKey(endpoint.getReturnType())) {
+                    if (returnTypes.containsKey(endpoint.getReturnType())) {
                         returnTypes.merge(endpoint.getReturnType(), 1, Integer::sum);
                         commonReturns += (returnTypes.get(endpoint.getReturnType()) - 1) * 2;
                     } else {
@@ -138,15 +126,18 @@ public class MicroserviceMetricsService {
 
         Service Interface Usage Cohesion (SIUC): this metric
         quantifies the client usage patterns of service operations
-        when a client invokes a service. Formal definition:
+        when a client invokes a service.
+
+        Formal definition:
         SIUC(s) = Invoked(clients, SOp(sis ))/
         (|clients| ∗ |SOp(sis )|), where
         – clients is the set of all clients of service s.
         – Invoked(clients, SOp(sis )) returns the number of used
         operations per client.
      */
-    private double calculateSIUCScore(Map<String, Microservice> microserviceMap, Microservice microservice) {
+    public static double calculateSIUCScore(Map<String, Microservice> microserviceMap, Microservice microservice) {
         Map<String, Integer> clients = new HashMap<>();
+
         int usedOperations = 0;
 
         for(JController controller : microservice.getControllers()) {

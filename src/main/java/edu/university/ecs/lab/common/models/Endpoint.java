@@ -5,6 +5,11 @@ import lombok.*;
 
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.stringListToJsonArray;
 
 /**
  * Represents an extension of a method declaration. An endpoint exists at the controller level and
@@ -24,14 +29,20 @@ public class Endpoint extends Method implements JsonSerializable {
 
   private String msId;
 
+  @SerializedName("src-call-ids")
+  private List<String> srcCallIds;
+
   // Not Yet Implemented
   // private String mapping;
   // private String mappingPath;
 
-  // TODO this is dangerous as it leaves all new fields null
-  public Endpoint(String mdId, Method method) {
+  public Endpoint(Method method, String url, String decorator, String httpMethod, String msId) {
     super(method.getMethodName(), method.getParameterList(), method.getReturnType());
-    setMsId(mdId);
+    setMsId(msId);
+    setUrl(url);
+    setDecorator(decorator);
+    setHttpMethod(httpMethod);
+    setSrcCallIds(new ArrayList<>());
   }
 
   @Override
@@ -43,6 +54,7 @@ public class Endpoint extends Method implements JsonSerializable {
       endpointBuilder.add("type", decorator);
       endpointBuilder.add("httpMethod", httpMethod);
       endpointBuilder.add("msId", msId);
+      endpointBuilder.add("src-call-ids", stringListToJsonArray(srcCallIds));
 
       return endpointBuilder.build();
     }
@@ -53,16 +65,41 @@ public class Endpoint extends Method implements JsonSerializable {
    * @return a unique Id representing this endpoint
    */
   public String getId() {
-    return httpMethod
-            + ":"
-            + msId
-            + "#"
-            + url;
+    return "[" + httpMethod + "]" + msId + ":" + url;
   }
 
-  // TODO this does not handle methods with {param} at end of url
   public boolean matchCall(RestCall restCall) {
-    return (this.url.startsWith(restCall.getDestEndpoint()))
-            && this.httpMethod.equals(restCall.getHttpMethod());
+
+    boolean isUrlMatch = this.url.equals(restCall.getDestEndpoint());
+
+    // TODO TESTING, this is a hack to handle endpoints with params
+    if (!isUrlMatch) {
+      String urlWithoutParams = this.url.split("/\\{")[0];
+      if (urlWithoutParams.length() != this.url.length()) {
+        isUrlMatch = urlWithoutParams.equals(restCall.getDestEndpoint());
+      }
+    }
+
+    return (isUrlMatch)
+            && this.httpMethod.equals(restCall.getHttpMethod()) &&
+            this.msId.equals(restCall.getDestMsId());
+  }
+
+  /**
+   * Compare this endpoint to another (changed) endpoint to determine if they are the same.
+   * @return true if the endpoints are the same, false otherwise
+   */
+  public boolean isSameEndpoint(Endpoint other) {
+    return Objects.equals(httpMethod, other.getHttpMethod())
+            && Objects.equals(url, other.getUrl())
+            && Objects.equals(decorator, other.getDecorator());
+  }
+
+  /**
+   * Add a call to the list of calls that use this endpoint.
+   * @param restCall the call to add
+   */
+  public void addCall(RestCall restCall) {
+    srcCallIds.add(restCall.getId());
   }
 }
