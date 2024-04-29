@@ -25,7 +25,7 @@ jobs:
         run: echo "SOURCE_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> "$GITHUB_ENV"
         id: extract_source_branch
 
-      - name: Extract Source Branch Name
+      - name: Extract Base Branch Name
         shell: bash
         run: echo "BASE_BRANCH=${GITHUB_BASE_REF}" >> "$GITHUB_ENV"
         id: extract_base_branch
@@ -37,7 +37,7 @@ jobs:
         run: git clone https://github.com/cloudhubs/cimet tool
         working-directory: ./  # Clone into the root directory
 
-      - name: Build cimet with Maven
+      - name: Build Cimet with Maven
         run: mvn clean install -DskipTests
         working-directory: ./tool
 
