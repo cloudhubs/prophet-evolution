@@ -1,0 +1,6 @@
+*
+!/pom.xml
+!/ts-common/pom.xml
+!/ts-common/src
+!/ts-consign-price-service/pom.xml
+!/ts-consign-price-service/src

@@ -1,0 +1,6 @@
+*
+!/pom.xml
+!/ts-common/pom.xml
+!/ts-common/src
+!/ts-verification-code-service/pom.xml
+!/ts-verification-code-service/src

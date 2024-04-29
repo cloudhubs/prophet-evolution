@@ -1,0 +1,6 @@
+*
+!/pom.xml
+!/ts-common/pom.xml
+!/ts-common/src
+!/ts-payment-service/pom.xml
+!/ts-payment-service/src

@@ -1,0 +1,6 @@
+*
+!/pom.xml
+!/ts-common/pom.xml
+!/ts-common/src
+!/ts-security-service/pom.xml
+!/ts-security-service/src

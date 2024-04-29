@@ -1,0 +1,6 @@
+*
+!/pom.xml
+!/ts-common/pom.xml
+!/ts-common/src
+!/ts-travel-plan-service/pom.xml
+!/ts-travel-plan-service/src

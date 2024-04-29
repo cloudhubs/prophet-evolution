@@ -1,0 +1,6 @@
+*
+!/pom.xml
+!/ts-common/pom.xml
+!/ts-common/src
+!/ts-order-other-service/pom.xml
+!/ts-order-other-service/src
