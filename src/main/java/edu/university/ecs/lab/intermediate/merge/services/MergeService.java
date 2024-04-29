@@ -4,13 +4,11 @@ import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.models.*;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
-import edu.university.ecs.lab.common.utils.ObjectToJsonUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
 
 import javax.json.JsonObject;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
@@ -223,7 +221,7 @@ public class MergeService {
         if (!ms.getId().equals(servicePath)) {
           for (JController controller : ms.getControllers()) {
             for (Endpoint endpoint : controller.getEndpoints()) {
-              if (endpoint.getUrl().equals(restCall.getApi())) {
+              if (endpoint.getUrl().equals(restCall.getDestEndpoint())) {
                 restCall.setDestFile(controller.getClassPath());
               }
             }
@@ -240,7 +238,7 @@ public class MergeService {
         if (!ms.getId().equals(servicePath)) {
           for (JService service : ms.getServices()) {
             for (RestCall restCall : service.getRestCalls()) {
-              if (restCall.getApi().equals(endpoint.getUrl())
+              if (restCall.getDestEndpoint().equals(endpoint.getUrl())
                       && !restCall.getDestFile().equals("")) {
                 restCall.setDestFile("");
               }

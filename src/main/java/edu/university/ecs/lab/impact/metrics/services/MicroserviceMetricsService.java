@@ -159,7 +159,7 @@ public class MicroserviceMetricsService {
                 for (Microservice ms : microserviceMap.values()) {
                     for (JService service : ms.getServices()) {
                         for (RestCall restCall : service.getRestCalls()) {
-                            if (restCall.getApi().equals(endpoint.getUrl())) {
+                            if (restCall.getDestEndpoint().equals(endpoint.getUrl())) {
                                 usedOperations++;
                                 clients.add(ms.getId());
                             }

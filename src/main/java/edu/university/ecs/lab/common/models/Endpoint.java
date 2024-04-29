@@ -48,17 +48,21 @@ public class Endpoint extends Method implements JsonSerializable {
     }
 
   /**
-   * Constructs a String endpointId from an Endpoint object and name of microservice
+   * Constructs a String endpointId from an Endpoint object and name of microservice.
    *
    * @return a unique Id representing this endpoint
    */
-  private String getId() {
+  public String getId() {
     return httpMethod
             + ":"
             + msId
-            + "."
-            + methodName
             + "#"
-            + Math.abs(parameterList.hashCode());
+            + url;
+  }
+
+  // TODO this does not handle methods with {param} at end of url
+  public boolean matchCall(RestCall restCall) {
+    return (this.url.startsWith(restCall.getDestEndpoint()))
+            && this.httpMethod.equals(restCall.getHttpMethod());
   }
 }

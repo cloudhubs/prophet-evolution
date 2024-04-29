@@ -1,6 +1,5 @@
 package edu.university.ecs.lab.impact.metrics.services;
 
-import com.google.common.util.concurrent.Service;
 import edu.university.ecs.lab.common.models.*;
 import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
@@ -54,9 +53,8 @@ public class CallChangeService {
         for(Microservice microservice : newMicroserviceMap.values()) {
             for(JService service : microservice.getServices()) {
                 for(RestCall restCall : service.getRestCalls()) {
-                    if(Objects.nonNull(restCall.getDestFile()) && !restCall.getDestFile().isEmpty()) {
-                        String destMicroserviceName = restCall.getDestFile().substring(2).substring(0,restCall.getDestFile().substring(2).indexOf("/"));
-                        Microservice destMicroservice = oldMicroserviceMap.get(destMicroserviceName);
+                    if(Objects.nonNull(restCall.getDestMsId()) && !restCall.getDestMsId().isEmpty()) {
+                        Microservice destMicroservice = oldMicroserviceMap.get(restCall.getDestMsId());
                         if(Objects.nonNull(destMicroservice)) {
                             adjList.get(microserviceKey.get(microservice.getId())).add(microserviceKey.get(destMicroservice.getId()));
                         }
@@ -131,7 +129,6 @@ public class CallChangeService {
     /**
      * Get a list of all changed rest calls for a single microservice
      *
-     * @param delta delta object representing changes to a system
      * @return list of rest call changes from the given delta
      */
     public List<CallChange> getAllMsRestCallChanges(String microserviceName) {
@@ -197,7 +194,7 @@ public class CallChangeService {
             for (JService service : microservice.getServices()) {
                 for (RestCall restCall : service.getRestCalls()) {
                     // Does the restCall hit the same api as our old (now deleted) restCall
-                    if (restCall.getApi().equals(callChange.getOldCall().getApi())) {
+                    if (restCall.getDestEndpoint().equals(callChange.getOldCall().getDestEndpoint())) {
                         return false;
                     }
                 }
@@ -222,7 +219,7 @@ public class CallChangeService {
         for (Microservice microservice : newMicroserviceMap.values()) {
             for (JController controller : microservice.getControllers()) {
                 for (Endpoint endpoint : controller.getEndpoints()) {
-                    if (endpoint.getUrl().equals(callChange.getNewCall().getApi())) {
+                    if (endpoint.getUrl().equals(callChange.getNewCall().getDestEndpoint())) {
                         return false;
                     }
                 }

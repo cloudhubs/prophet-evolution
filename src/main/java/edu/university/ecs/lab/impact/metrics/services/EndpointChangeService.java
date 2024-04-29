@@ -172,7 +172,7 @@ public class EndpointChangeService {
 
             for (JService service : microservice.getServices()) {
                 for (RestCall restCall : service.getRestCalls()) {
-                    if (endpoint.getUrl().equals(restCall.getApi())) {
+                    if (endpoint.getUrl().equals(restCall.getDestEndpoint())) {
                         linkList.add(new Link(microservice.getId(), microserviceName));
                     }
                 }
@@ -197,7 +197,7 @@ public class EndpointChangeService {
 
             for(JService service : microservice.getServices()) {
                 for(RestCall restCall : service.getRestCalls()) {
-                    if(restCall.getApi().equals(endpointChange.getOldEndpoint().getUrl())) {
+                    if(restCall.getDestEndpoint().equals(endpointChange.getOldEndpoint().getUrl())) {
                         brokenRestCalls.add(restCall);
                     }
                 }
@@ -240,7 +240,7 @@ public class EndpointChangeService {
                 // If we find a restcall whose parent is the same service method called in the flow, it is now cut off
                 // TODO assumption here is only one endpoint calls a service method, not necessarily true
                 for(RestCall restCall : ((JService) flow.getService()).getRestCalls()) {
-                    if(restCall.getParentMethod().equals(flow.getServiceMethod().getMethodName())) {
+                    if(restCall.getMsId().equals(flow.getServiceMethod().getMethodName())) {
                         return true;
                     }
                 }

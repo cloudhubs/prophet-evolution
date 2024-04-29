@@ -1,21 +1,24 @@
 package edu.university.ecs.lab.common.utils;
 
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
+import com.github.javaparser.resolution.SymbolResolver;
+import com.github.javaparser.symbolsolver.JavaSymbolSolver;
+import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
+import edu.university.ecs.lab.common.models.enums.HttpMethod;
+import edu.university.ecs.lab.common.models.enums.RestTemplate;
 import edu.university.ecs.lab.intermediate.create.utils.StringParserUtils;
 import edu.university.ecs.lab.common.models.*;
 import javassist.NotFoundException;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +45,7 @@ public class SourceToObjectUtils {
       return null;
     }
 
-    String msId = getServiceName(sourceFile, config);
+    String msId = getMicroserviceName(sourceFile, config);
 
     JClass jClass = JClass.builder()
             .classPath(getRepositoryPath(sourceFile, config))
@@ -50,7 +53,7 @@ public class SourceToObjectUtils {
             .packageName(packageName)
             .methods(parseMethods(cu))
             .fields(parseFields(sourceFile))
-            .methodCalls(parseMethodCalls(sourceFile))
+            .methodCalls(parseMethodCalls(sourceFile, msId))
             .msId(msId)
             .classRole(ClassRole.fromSourceFile(sourceFile))
             .build();
@@ -62,7 +65,7 @@ public class SourceToObjectUtils {
       return controller;
     } else if (jClass.getClassRole() == ClassRole.SERVICE) {
       JService service = new JService(jClass);
-      service.setRestCalls(parseRestCalls(sourceFile, config));
+      service.setRestCalls(parseRestCalls(sourceFile, msId));
       return service;
     }
 
@@ -75,7 +78,7 @@ public class SourceToObjectUtils {
    * @return the service name of the file, null if not found
    * TODO this logic is now in {@link InputRepository#getServiceNameFromPath(String)}, refactor and delete
    */
-  private static String getServiceName(File sourceFile, InputConfig config) {
+  private static String getMicroserviceName(File sourceFile, InputConfig config) {
     // Get the path beginning with repoName/serviceName/...
     String filePath = getRepositoryPath(sourceFile, config);
 
@@ -160,6 +163,7 @@ public class SourceToObjectUtils {
           endpoint.setUrl(StringParserUtils.mergePaths(classLevelPath, pathFromAnnotation(ae)));
           endpoint.setDecorator(ae.getNameAsString());
 
+          // TODO move logic to enum
           switch (ae.getNameAsString()) {
             case "GetMapping":
               endpoint.setHttpMethod("GET");
@@ -198,7 +202,6 @@ public class SourceToObjectUtils {
     return endpoints;
   }
 
-  // TODO move this to Method class
   public static Method parseMethod(MethodDeclaration md) {
     Method method = new Method();
     method.setMethodName(md.getNameAsString());
@@ -225,7 +228,7 @@ public class SourceToObjectUtils {
     return method;
   }
 
-  public static List<RestCall> parseRestCalls(File sourceFile, InputConfig config) throws IOException {
+  public static List<RestCall> parseRestCalls(File sourceFile, String msId) throws IOException {
     List<RestCall> restCalls = new ArrayList<>();
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
@@ -234,24 +237,26 @@ public class SourceToObjectUtils {
       // loop through methods
 
       for (MethodDeclaration md : cid.findAll(MethodDeclaration.class)) {
-        String parentMethodName = md.getNameAsString();
+        String calledFromMethodName = md.getNameAsString();
 
         // loop through method calls
         for (MethodCallExpr mce : md.findAll(MethodCallExpr.class)) {
-          MethodCall methodCall = new MethodCall();
           String methodName = mce.getNameAsString();
           Expression scope = mce.getScope().orElse(null);
 
-          RestCall restCall = RestCall.findCallByName(methodName);
-          String calledServiceName = getCalledServiceName(scope);
+          RestTemplate callTemplate = RestTemplate.findCallByName(methodName);
+          String calledServiceName = getCallingObjectName(scope);
 
+
+          HttpMethod httpMethod;
           // Are we a rest call
-          if (!Objects.isNull(restCall)
-              && Objects.nonNull(calledServiceName)
+          if (!Objects.isNull(callTemplate) && Objects.nonNull(calledServiceName)
               && calledServiceName.equals("restTemplate")) {
             // get http methods for exchange method
-            if (restCall.getMethodName().equals("exchange")) {
-              restCall.setHttpMethod(getHttpMethodForExchange(mce.getArguments().toString()));
+            if (callTemplate.getMethodName().equals("exchange")) {
+              httpMethod = RestTemplate.getHttpMethodForExchange(mce.getArguments().toString());
+            } else {
+              httpMethod = callTemplate.getHttpMethod();
             }
 
             // TODO find a more graceful way of handling/validating this can be passed up
@@ -259,14 +264,15 @@ public class SourceToObjectUtils {
               continue;
             }
 
-            restCall.setApi(parseURL(mce, cid));
-            restCall.setParentMethod(parentMethodName);
-            restCall.setCalledFieldName(getCalledServiceName(scope));
-            restCall.setSourceFile(
-                    getRepositoryPath(sourceFile, config));
+            RestCall call = new RestCall(callTemplate.getMethodName(),
+                    calledServiceName,
+                    calledFromMethodName,
+                    msId,
+                    httpMethod,
+                    parseURL(mce, cid),
+                    "", "");
 
-            restCalls.add(restCall);
-            // System.out.println(restCall);
+            restCalls.add(call);
           }
         }
       }
@@ -274,7 +280,7 @@ public class SourceToObjectUtils {
     return restCalls;
   }
 
-  public static List<MethodCall> parseMethodCalls(File sourceFile) throws IOException {
+  public static List<MethodCall> parseMethodCalls(File sourceFile, String msId) throws IOException {
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
     List<MethodCall> methodCalls = new ArrayList<>();
 
@@ -287,25 +293,20 @@ public class SourceToObjectUtils {
 
         // loop through method calls
         for (MethodCallExpr mce : md.findAll(MethodCallExpr.class)) {
-          MethodCall methodCall = new MethodCall();
           String methodName = mce.getNameAsString();
           Expression scope = mce.getScope().orElse(null);
 
-          RestCall restCall = RestCall.findCallByName(methodName);
-          String calledServiceName = getCalledServiceName(scope);
+          RestTemplate template = RestTemplate.findCallByName(methodName);
+          String calledServiceName = getCallingObjectName(scope);
 
           // Are we a rest call
-          if (!Objects.isNull(restCall)
+          if (!Objects.isNull(template)
               && Objects.nonNull(calledServiceName)
               && calledServiceName.equals("restTemplate")) {
             // do nothing, we only want regular methodCalls
             // System.out.println(restCall);
           } else if (Objects.nonNull(calledServiceName)) {
-            methodCall.setParentMethod(parentMethodName);
-            methodCall.setMethodName(methodName);
-            methodCall.setCalledFieldName(getCalledServiceName(scope));
-
-            methodCalls.add(methodCall);
+            methodCalls.add(new MethodCall(methodName, getCallingObjectName(scope), parentMethodName, msId));
           }
         }
       }
@@ -351,8 +352,12 @@ public class SourceToObjectUtils {
     return "";
   }
 
-  // TODO is this called service as in microservice? Or as in service class? Service method? Rename to avoid confusion
-  private static String getCalledServiceName(Expression scope) {
+  /**
+   * Get the name of the object a method is being called from (callingObj.methodName())
+   * @param scope the scope to search
+   * @return the name of the object the method is being called from
+   */
+  private static String getCallingObjectName(Expression scope) {
     String calledServiceID = null;
     if (Objects.nonNull(scope) && scope instanceof NameExpr) {
       NameExpr fae = scope.asNameExpr();
@@ -449,31 +454,5 @@ public class SourceToObjectUtils {
     }
 
     return str;
-  }
-
-  /**
-   * Get the HTTP method for the JSF exchange() method call.
-   *
-   * @param arguments the arguments of the exchange() method
-   * @return the HTTP method extracted
-   */
-  private static String getHttpMethodForExchange(String arguments) {
-    if (arguments.contains("HttpMethod.POST")) {
-      return "POST";
-    } else if (arguments.contains("HttpMethod.PUT")) {
-      return "PUT";
-    } else if (arguments.contains("HttpMethod.DELETE")) {
-      return "DELETE";
-    } else {
-      return "GET"; // default
-    }
-  }
-
-  public static JsonArray convertListToJsonArray(List<JsonObject> jsonObjectList) {
-    JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-    for (JsonObject jsonObject : jsonObjectList) {
-      arrayBuilder.add(jsonObject);
-    }
-    return arrayBuilder.build();
   }
 }

@@ -13,10 +13,7 @@ public class Link {
   private String msDestination;
 
   public Link(RestCall restCall) {
-    String[] sourceFileParts = restCall.getSourceFile().split("/");
-    String[] destFileParts = restCall.getDestFile().split("/");
-
-    msSource = sourceFileParts[1];
-    msDestination = restCall.getDestFile().isEmpty() ? "?" : destFileParts[1];
+    msSource = restCall.getMsId();
+    msDestination = restCall.getDestMsId();
   }
 }

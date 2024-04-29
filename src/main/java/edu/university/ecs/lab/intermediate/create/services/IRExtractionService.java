@@ -2,10 +2,7 @@ package edu.university.ecs.lab.intermediate.create.services;
 
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
-import edu.university.ecs.lab.common.models.JController;
-import edu.university.ecs.lab.common.models.JService;
-import edu.university.ecs.lab.common.models.Microservice;
-import edu.university.ecs.lab.common.models.MsSystem;
+import edu.university.ecs.lab.common.models.*;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import javassist.NotFoundException;
 
@@ -25,7 +22,7 @@ public class IRExtractionService {
     /** The input configuration file, defaults to config.json */
     private final InputConfig config;
     /** Relative path to clone repositories to, default: "./repos", specified in {@link InputConfig} */
-    private final String baseBath;
+    private final String basePath;
 
     /** Service to handle cloning from git */
     private final GitCloneService gitCloneService;
@@ -39,7 +36,7 @@ public class IRExtractionService {
      */
     public IRExtractionService(InputConfig config) {
         this.config = config;
-        baseBath = config.getClonePath();
+        basePath = config.getClonePath();
         gitCloneService = new GitCloneService(config);
         restModelService = new RestModelService(config);
     }
@@ -78,7 +75,7 @@ public class IRExtractionService {
     public Map<String, Microservice> cloneAndScanServices() {
         Map<String, Microservice> msModelMap = new HashMap<>();
 
-        this.validateOrCreateLocalDirectory(baseBath);
+        this.validateOrCreateLocalDirectory(basePath);
 
         // For each git repository in the config file, clone the repository and scan through the downloaded repo
         // for the microservices as per the structure in the input config file
@@ -107,8 +104,8 @@ public class IRExtractionService {
 
                 // Remove clonePath from path
                 String path = msPath;
-                if (msPath.contains(baseBath) && msPath.length() > baseBath.length() + 1) {
-                    path = msPath.substring(baseBath.length() + 1);
+                if (msPath.contains(basePath) && msPath.length() > basePath.length() + 1) {
+                    path = msPath.substring(basePath.length() + 1);
                 }
 
                 msModelMap.put(path, model);
@@ -149,11 +146,15 @@ public class IRExtractionService {
                     if (dest != src) {
                         for (JService service : dest.getServices()) {
                             service.getRestCalls().forEach(restCall -> {
-                                if (controller.getEndpoints().stream().anyMatch(e ->
-                                        e.getUrl().equals(restCall.getApi()))) {
-                                    // TODO change logic to be not reliant on files
-                                    restCall.setDestFile(controller.getClassPath());
-                                }
+                                // TODO this doesnt work due to duplicate urls with different base paths
+                                controller.getEndpoints().stream()
+                                        .filter(e -> e.matchCall(restCall))
+                                        .findAny()
+                                        .ifPresent(endpoint -> restCall.setDestination(
+                                                restCall.getDestEndpoint(),
+                                                controller.getMsId(),
+                                                controller.getClassPath())
+                                        );
                             });
                         }
                     }

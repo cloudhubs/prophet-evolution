@@ -59,6 +59,7 @@ public class JClass implements JsonSerializable {
     jClassBuilder.add("classPath", this.classPath.replaceAll("\\\\", "/"));
     jClassBuilder.add("packageName", this.packageName);
     jClassBuilder.add("classRole", this.classRole.name());
+    jClassBuilder.add("msId", msId);
     jClassBuilder.add("methods", listToJsonArray(methods));
     jClassBuilder.add("variables", listToJsonArray(fields));
     jClassBuilder.add("methodCalls", listToJsonArray(methodCalls));
