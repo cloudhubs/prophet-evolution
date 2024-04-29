@@ -66,4 +66,14 @@ public class JClass implements JsonSerializable {
 
     return jClassBuilder;
   }
+
+  /**
+   * Check if the given class is the same as this class. This is true if they have the same classPath.
+   *
+   * @param other The class to compare with
+   * @return True if the classes are the same, false otherwise
+   */
+  public boolean matchClassPath(JClass other) {
+    return this.getClassPath().equals(other.getClassPath());
+  }
 }

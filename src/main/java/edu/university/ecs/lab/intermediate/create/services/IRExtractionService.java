@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static edu.university.ecs.lab.common.models.enums.ErrorCodes.*;
+import static edu.university.ecs.lab.intermediate.utils.IRParserUtils.updateCallDestinations;
 
 /**
  * Top-level service for extracting intermediate representation from remote repositories. Methods
@@ -55,7 +56,7 @@ public class IRExtractionService {
         }
 
         // Scan through each endpoint to update rest call destinations
-        this.updateCallDestinations(msDataMap);
+        updateCallDestinations(msDataMap);
 
         //  Write each service and endpoints to IR
         try {
@@ -130,35 +131,6 @@ public class IRExtractionService {
             } else {
                 System.err.println(COULD_NOT_CREATE_DIRECTORY.getMessage() + ": \"" + dirPath + "\"");
                 System.exit(COULD_NOT_CREATE_DIRECTORY.ordinal());
-            }
-        }
-    }
-
-    /**
-     * Iterate over extracted services and link together rest calls to their destination endpoints
-     *
-     * @param msMap a map of service to their information
-     */
-    private void updateCallDestinations(Map<String, Microservice> msMap) {
-        for (Microservice src : msMap.values()) {
-            for (JController controller : src.getControllers()) {
-                for (Microservice dest : msMap.values()) {
-                    if (dest != src) {
-                        for (JService service : dest.getServices()) {
-                            service.getRestCalls().forEach(restCall -> {
-                                // TODO this doesnt work due to duplicate urls with different base paths
-                                controller.getEndpoints().stream()
-                                        .filter(e -> e.matchCall(restCall))
-                                        .findAny()
-                                        .ifPresent(endpoint -> restCall.setDestination(
-                                                restCall.getDestEndpoint(),
-                                                controller.getMsId(),
-                                                controller.getClassPath())
-                                        );
-                            });
-                        }
-                    }
-                }
             }
         }
     }

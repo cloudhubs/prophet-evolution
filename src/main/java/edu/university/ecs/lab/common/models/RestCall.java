@@ -16,10 +16,10 @@ import java.util.List;
  * a call to an endpoint mapping.
  */
 @Getter
-@Setter
 @ToString
 @EqualsAndHashCode(callSuper = true)
 public class RestCall extends MethodCall {
+  public static final String DEST_DELETED = "FILE_DELETED";
   /** The api url that is targeted in rest call */
   @SerializedName("dest-endpoint")
   private String destEndpoint;
@@ -62,9 +62,16 @@ public class RestCall extends MethodCall {
     return restCallBuilder.build();
   }
 
-  public void setDestination(String destApi, String destMsId, String destFile) {
-    setDestEndpoint(destApi);
-    setDestMsId(destMsId);
-    setDestFile(destFile);
+  public void setDestination(JController destination) {
+    this.msId = destination.getMsId();
+    setDestFile(destination.getClassPath());
+  }
+
+  public void setDestinationAsDeleted() {
+    setDestFile(DEST_DELETED);
+  }
+
+  public boolean pointsToDeletedFile() {
+    return DEST_DELETED.equals(destFile);
   }
 }

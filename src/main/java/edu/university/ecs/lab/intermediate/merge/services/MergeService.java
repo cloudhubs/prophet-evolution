@@ -12,6 +12,7 @@ import javax.json.JsonObject;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -36,17 +37,16 @@ public class MergeService {
     this.msSystem = IRParserUtils.parseIRSystem(Path.of(intermediatePath).toAbsolutePath().toString());
     this.msModelMap = msSystem.getServiceMap();
 
-    // TODO check for update
     this.systemChange = IRParserUtils.parseSystemChange(Path.of(deltaPath).toAbsolutePath().toString());
   }
 
   public void mergeAndWriteToFile() {
 
-    updateModelMap(ClassRole.CONTROLLER, msModelMap, systemChange.getControllers());
-    updateModelMap(ClassRole.SERVICE, msModelMap, systemChange.getServices());
-    updateModelMap(ClassRole.REPOSITORY, msModelMap, systemChange.getRepositories());
-    updateModelMap(ClassRole.DTO, msModelMap, systemChange.getDtos());
-    updateModelMap(ClassRole.ENTITY, msModelMap, systemChange.getEntities());
+    updateModelMap(ClassRole.CONTROLLER, systemChange.getControllers());
+    updateModelMap(ClassRole.SERVICE, systemChange.getServices());
+    updateModelMap(ClassRole.REPOSITORY, systemChange.getRepositories());
+    updateModelMap(ClassRole.DTO, systemChange.getDtos());
+    updateModelMap(ClassRole.ENTITY, systemChange.getEntities());
 
     // increment system version
     msSystem.incrementVersion();
@@ -72,49 +72,35 @@ public class MergeService {
     System.out.println("Successfully wrote updated extraction to: \"" + outputName + "\"");
   }
 
-  private void updateModelMap(ClassRole classRole, Map<String, Microservice> msModelMap,
-                              Map<String, ? extends Delta> changeMap) {
+  // TODO this cannot handle file moves, only add/modify/delete
+  private void updateModelMap(ClassRole classRole, Map<String, Delta> changeMap) {
 
     for (Delta delta : changeMap.values()) {
-      String localPath = delta.getLocalPath();
-      String msId;
-
-      int serviceNdx = localPath.indexOf("-service");
-
-      // todo: generalize better in the future
-      if (serviceNdx >= 0) {
-        msId = localPath.substring(0, serviceNdx + 8);
-        msId = msId.substring(msId.lastIndexOf("/") + 1);
-      } else {
-        msId = localPath;
-      }
+      String msId = delta.getMsId();
 
       // check change type
       switch (delta.getChangeType()) {
         case ADD:
-          msModelMap.put(msId, this.addFiles(classRole, msId, msModelMap, delta));
+          // Add new service or add to existing service
+          addNewFiles(classRole, msId, delta);
           break;
         case DELETE:
-          this.removeFiles(classRole, msId, msModelMap, delta);
+          removeFiles(classRole, msId, delta);
           break;
         case MODIFY:
-          Microservice modifyModel = this.modifyFiles(classRole, msId, msModelMap, delta);
-          if (Objects.isNull(modifyModel)) {
-            continue;
-          }
-
-          msModelMap.put(msId, this.modifyFiles(classRole, msId, msModelMap, delta));
+          modifyExisting(classRole, msId, delta);
           break;
         default:
+          System.err.println("Warning in merge service: Not yet implemented change type, skipping: " + delta.getChangeType());
           break;
       }
     }
   }
 
-  public Microservice addFiles(
-          ClassRole classRole, String msId, Map<String, Microservice> msModelMap, Delta delta) {
-    Microservice msModel;
+  public void addNewFiles(ClassRole classRole, String msId, Delta delta) {
 
+    // Check if service exists or if this is an entirely new service
+    Microservice msModel;
     if (msModelMap.containsKey(msId)) {
       msModel = msModelMap.get(msId);
     } else {
@@ -122,43 +108,27 @@ public class MergeService {
     }
 
     if (classRole == ClassRole.SERVICE) {
-      updateApiDestinationsAdd(msModelMap, (JService) delta.getChangedClass(), msId);
+      updateApiDestinationsAdd((JService) delta.getChangedClass(), msId);
     }
 
-    switch (classRole) {
-      case CONTROLLER:
-        msModel.getControllers().add((JController) delta.getChangedClass());
-        break;
-      case SERVICE:
-        msModel.getServices().add((JService) delta.getChangedClass());
-        break;
-      case REPOSITORY:
-        msModel.getRepositories().add(delta.getChangedClass());
-        break;
-      case DTO:
-        msModel.getDtos().add(delta.getChangedClass());
-        break;
-      case ENTITY:
-        msModel.getEntities().add(delta.getChangedClass());
-        break;
-    }
 
-    return msModel;
+    msModel.addChange(delta);
+    msModelMap.put(msId, msModel);
   }
 
-  public Microservice modifyFiles(
-          ClassRole classRole, String msId, Map<String, Microservice> msModelMap, Delta delta) {
+  public void modifyExisting(ClassRole classRole, String msId, Delta delta) {
     if (!msModelMap.containsKey(msId)) {
-      return null;
+      System.err.println("Warning in merge service: Could not find service for MODIFY " +
+              "(service should ideally exist for this type), skipping: " + msId);
+      return;
     }
 
     // modification is simply file removal then an add
-    removeFiles(classRole, msId, msModelMap, delta);
-    return addFiles(classRole, msId, msModelMap, delta);
+    removeFiles(classRole, msId, delta);
+    addNewFiles(classRole, msId, delta);
   }
 
-  public void removeFiles(
-          ClassRole classRole, String msId, Map<String, Microservice> msModelMap, Delta delta) {
+  public void removeFiles(ClassRole classRole, String msId, Delta delta) {
     Microservice msModel;
 
     if (msModelMap.containsKey(msId)) {
@@ -171,58 +141,29 @@ public class MergeService {
       JController controller =
               msModel.getControllers().stream()
                       .filter(
-                              jController ->
-                                      jController.getClassPath().contains(delta.getLocalPath().substring(1)))
+                              jController -> jController.matchClassPath(delta.getChangedClass()))
                       .findFirst()
                       .orElse(null);
       if (Objects.nonNull(controller)) {
-        updateApiDestinationsDelete(msModelMap, controller, msId);
+        updateApiDestinationsDelete(controller, msId);
       }
     }
 
-    switch (classRole) {
-      case CONTROLLER:
-        msModel
-                .getControllers()
-                .removeIf(
-                        jController ->
-                                jController.getClassPath().contains(delta.getLocalPath().substring(1)));
-        break;
-      case SERVICE:
-        msModel
-                .getServices()
-                .removeIf(
-                        jService -> jService.getClassPath().contains(delta.getLocalPath().substring(1)));
-        break;
-      case REPOSITORY:
-        msModel
-                .getRepositories()
-                .removeIf(
-                        repository ->
-                                repository.getClassPath().contains(delta.getLocalPath().substring(1)));
-        break;
-      case DTO:
-        msModel
-                .getDtos()
-                .removeIf(dto -> dto.getClassPath().contains(delta.getLocalPath().substring(1)));
-        break;
-      case ENTITY:
-        msModel
-                .getEntities()
-                .removeIf(entity -> entity.getClassPath().contains(delta.getLocalPath().substring(1)));
-        break;
-    }
+    removeIfClassMatches(msModel.getListForRole(classRole), delta);
   }
 
-  private static void updateApiDestinationsAdd(
-          Map<String, Microservice> msModelMap, JService service, String servicePath) {
+  private static <T extends JClass> void removeIfClassMatches(List<T> list, Delta delta) {
+    list.removeIf(jClass -> jClass.matchClassPath(delta.getChangedClass()));
+  }
+
+  private void updateApiDestinationsAdd(JService service, String servicePath) {
     for (RestCall restCall : service.getRestCalls()) {
       for (Microservice ms : msModelMap.values()) {
         if (!ms.getId().equals(servicePath)) {
           for (JController controller : ms.getControllers()) {
             for (Endpoint endpoint : controller.getEndpoints()) {
-              if (endpoint.getUrl().equals(restCall.getDestEndpoint())) {
-                restCall.setDestFile(controller.getClassPath());
+              if (endpoint.matchCall(restCall)) {
+                restCall.setDestination(controller);
               }
             }
           }
@@ -231,16 +172,14 @@ public class MergeService {
     }
   }
 
-  private static void updateApiDestinationsDelete(
-          Map<String, Microservice> msModelMap, JController controller, String servicePath) {
+  private void updateApiDestinationsDelete(JController controller, String servicePath) {
     for (Endpoint endpoint : controller.getEndpoints()) {
       for (Microservice ms : msModelMap.values()) {
         if (!ms.getId().equals(servicePath)) {
           for (JService service : ms.getServices()) {
             for (RestCall restCall : service.getRestCalls()) {
-              if (restCall.getDestEndpoint().equals(endpoint.getUrl())
-                      && !restCall.getDestFile().equals("")) {
-                restCall.setDestFile("");
+              if (endpoint.matchCall(restCall) && !restCall.pointsToDeletedFile() && !"".equals(restCall.getDestFile())) {
+                restCall.setDestinationAsDeleted();
               }
             }
           }

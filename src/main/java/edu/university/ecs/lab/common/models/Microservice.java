@@ -1,6 +1,8 @@
 package edu.university.ecs.lab.common.models;
 
 import com.google.gson.annotations.SerializedName;
+import edu.university.ecs.lab.common.models.enums.ClassRole;
+import edu.university.ecs.lab.delta.models.Delta;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -12,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static edu.university.ecs.lab.common.models.enums.ClassRole.CONTROLLER;
 import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonArray;
 
 /**
@@ -20,23 +23,37 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
  */
 @Getter
 public class Microservice implements JsonSerializable {
-  /** The name of the service (ex: "ts-assurance-service") */
+  /**
+   * The name of the service (ex: "ts-assurance-service")
+   */
   @SerializedName("id")
   private String id;
 
-  /** The commit id of the service as cloned */
+  /**
+   * The commit id of the service as cloned
+   */
   @SerializedName("commitId")
   private String commit;
 
-  /** Controller classes belonging to the microservice. */
+  /**
+   * Controller classes belonging to the microservice.
+   */
   private List<JController> controllers;
-  /** Service classes to the microservice. */
+  /**
+   * Service classes to the microservice.
+   */
   private List<JService> services;
-  /** DTO classes belonging to the microservice. */
+  /**
+   * DTO classes belonging to the microservice.
+   */
   private List<JClass> dtos;
-  /** Repository classes belonging to the microservice. */
+  /**
+   * Repository classes belonging to the microservice.
+   */
   private List<JClass> repositories;
-  /** Entity classes belonging to the microservice. */
+  /**
+   * Entity classes belonging to the microservice.
+   */
   private List<JClass> entities;
 
   public void setId(String id) {
@@ -95,13 +112,13 @@ public class Microservice implements JsonSerializable {
   /**
    * Constructor for the microservice object
    *
-   * @param id the name of the service
-   * @param commit the commit id of the service
-   * @param controllers the controllers in the service
-   * @param services the services in the service
-   * @param dtos the dtos in the service
+   * @param id           the name of the service
+   * @param commit       the commit id of the service
+   * @param controllers  the controllers in the service
+   * @param services     the services in the service
+   * @param dtos         the dtos in the service
    * @param repositories the repositories in the service
-   * @param entities the entities in the service
+   * @param entities     the entities in the service
    */
   public Microservice(String id,
                       String commit,
@@ -122,7 +139,7 @@ public class Microservice implements JsonSerializable {
   /**
    * Constructor for the microservice object with all lists as empty
    *
-   * @param id the name of the service
+   * @param id     the name of the service
    * @param commit the commit # of the service
    */
   public Microservice(String id, String commit) {
@@ -148,5 +165,44 @@ public class Microservice implements JsonSerializable {
     builder.add("entities", listToJsonArray(entities));
 
     return builder.build();
+  }
+
+
+  public List<? extends JClass> getListForRole(ClassRole classRole) {
+    switch (classRole) {
+      case CONTROLLER:
+        return controllers;
+      case SERVICE:
+        return services;
+      case REPOSITORY:
+        return repositories;
+      case DTO:
+        return dtos;
+      case ENTITY:
+        return entities;
+      default:
+        System.err.println("No list for class role: " + classRole);
+        return null;
+    }
+  }
+
+  public void addChange(Delta delta) {
+    switch (delta.getChangedClass().getClassRole()) {
+      case CONTROLLER:
+        controllers.add((JController) delta.getChangedClass());
+        break;
+      case SERVICE:
+        services.add((JService) delta.getChangedClass());
+        break;
+      case REPOSITORY:
+      case DTO:
+      case ENTITY:
+        List<JClass> list = (List<JClass>) getListForRole(delta.getChangedClass().getClassRole());
+        list.add(delta.getChangedClass());
+        break;
+      default:
+        System.err.println("Unable to add change for class role: " + delta);
+        break;
+    }
   }
 }
