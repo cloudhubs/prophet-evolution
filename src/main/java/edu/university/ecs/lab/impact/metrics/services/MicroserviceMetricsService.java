@@ -130,7 +130,7 @@ public class MicroserviceMetricsService {
             }
         }
 
-        return (double) (commonParams + commonReturns) / (totalEndpoints * 2);
+        return totalEndpoints == 0 ? 0 : (double) (commonParams + commonReturns) / (totalEndpoints * 2);
     }
 
     /*
@@ -146,9 +146,8 @@ public class MicroserviceMetricsService {
         operations per client.
      */
     private double calculateSIUCScore(Map<String, Microservice> microserviceMap, Microservice microservice) {
-        Set<String> clients = new HashSet<>();
+        Map<String, Integer> clients = new HashMap<>();
         int usedOperations = 0;
-        long totalOperations = microserviceMap.values().stream().flatMap(ms -> ms.getServices().stream()).flatMap(jService -> jService.getRestCalls().stream()).count();
 
         for(JController controller : microservice.getControllers()) {
 
@@ -161,7 +160,8 @@ public class MicroserviceMetricsService {
                         for (RestCall restCall : service.getRestCalls()) {
                             if (restCall.getDestEndpoint().equals(endpoint.getUrl())) {
                                 usedOperations++;
-                                clients.add(ms.getId());
+                                clients.putIfAbsent(ms.getId(), 0);
+                                clients.merge(ms.getId(), 1, Integer::sum);
                             }
                         }
                     }
@@ -171,7 +171,21 @@ public class MicroserviceMetricsService {
 
         }
 
-        return (double) usedOperations / clients.size() * totalOperations;
+        if(usedOperations == 0) {
+            return 0;
+        }
+
+        double siuc = 0;
+
+        for(int i : clients.values()) {
+            siuc += i;
+        }
+
+        siuc /= clients.size();
+
+        siuc /= (clients.size() * siuc);
+
+        return siuc;
     }
 
     /*

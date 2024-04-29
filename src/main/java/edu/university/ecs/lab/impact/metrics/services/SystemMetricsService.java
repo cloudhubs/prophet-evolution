@@ -32,7 +32,7 @@ public class SystemMetricsService {
             totalADS += microserviceMetricsService.calculateADS(microservice);
         }
 
-        return (double) totalADS / microserviceMap.size();
+        return totalADS == 0 ? 0 : ((double) totalADS / microserviceMap.size());
     }
 
     /*
