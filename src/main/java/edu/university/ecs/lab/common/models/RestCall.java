@@ -36,6 +36,9 @@ public class RestCall extends MethodCall {
 
   public void setDestFile(String destFile) {
     this.destFile = destFile.replaceAll("\\\\", "/");
+    if(!destFile.equals("FILE_DELETED")) {
+      this.destMsId = this.getDestFile().substring(this.getDestFile().indexOf("/") + 1).substring(0, this.getDestFile().substring(this.getDestFile().indexOf("/") + 1).indexOf("/"));
+    }
   }
 
   public RestCall(String methodName, String objectName, String calledFrom, String msId,

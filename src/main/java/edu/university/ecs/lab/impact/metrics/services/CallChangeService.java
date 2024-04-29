@@ -18,7 +18,7 @@ public class CallChangeService {
     private Map<String, Integer> microserviceKey;
 
     private final int vertices;
-    private final List<List<Integer>> adjList;
+    private final Map<Integer, List<Integer>> adjList;
     private int[] parent;  // To keep track of the path
 
 
@@ -30,7 +30,7 @@ public class CallChangeService {
         this.systemChange = systemChange;
         vertices = newMicroserviceMap.size();
         this.microserviceKey = new HashMap<>(vertices);
-        this.adjList = new ArrayList<>(vertices);
+        this.adjList = new HashMap<>(vertices);
         this.parent = new int[vertices];
 
         initializeKeyAndAdjlist();
@@ -44,76 +44,79 @@ public class CallChangeService {
             i++;
         }
 
-        // Initialize the adjList
-        for(int k = 0; k < vertices; k++) {
-            adjList.add(new ArrayList<>());
-        }
-
         // Create the links
         for(Microservice microservice : newMicroserviceMap.values()) {
             for(JService service : microservice.getServices()) {
                 for(RestCall restCall : service.getRestCalls()) {
-                    if(Objects.nonNull(restCall.getDestMsId()) && !restCall.getDestMsId().isEmpty()) {
+                    if(Objects.nonNull(restCall.getDestFile()) && !restCall.getDestFile().isEmpty()) {
                         Microservice destMicroservice = oldMicroserviceMap.get(restCall.getDestMsId());
                         if(Objects.nonNull(destMicroservice)) {
-                            adjList.get(microserviceKey.get(microservice.getId())).add(microserviceKey.get(destMicroservice.getId()));
+                            addEdge(microserviceKey.get(microservice.getId()), microserviceKey.get(destMicroservice.getId()));
                         }
                     }
                 }
             }
         }
+
+        return;
     }
 
-    public List<String> findCycle() {
-        boolean[] visited = new boolean[vertices];
-        boolean[] recStack = new boolean[vertices];
-
-        for (int node = 0; node < vertices; node++) {
-            if (!visited[node] && detectCycle(node, visited, recStack)) {
-                return getCycle(node);
-            }
-        }
-        return new ArrayList<>(); // No cycle found
+    public void addEdge(int start, int end) {
+        adjList.computeIfAbsent(start, k -> new ArrayList<>()).add(end);
     }
 
-    private boolean detectCycle(int vertex, boolean[] visited, boolean[] recStack) {
-        if (recStack[vertex]) {
-            return true;
+    private boolean detectCycleUtil(int node, Set<Integer> visited, Set<Integer> recStack, List<Integer> path) {
+        if (recStack.contains(node)) {
+            int startIndex = path.indexOf(node);
+            return startIndex != -1; // return true if node is found in path
         }
-        if (visited[vertex]) {
+        if (visited.contains(node)) {
             return false;
         }
 
-        visited[vertex] = true;
-        recStack[vertex] = true;
+        visited.add(node);
+        recStack.add(node);
+        path.add(node);
 
-        List<Integer> children = adjList.get(vertex);
-        for (Integer child : children) {
-            parent[child] = vertex; // Track the path
-            if (detectCycle(child, visited, recStack)) {
+        List<Integer> children = adjList.get(node);
+        if (children != null) {
+            for (int child : children) {
+                if (detectCycleUtil(child, visited, recStack, path)) {
+                    return true;
+                }
+            }
+        }
+
+        recStack.remove(node);
+        path.remove(path.size() - 1);
+        return false;
+    }
+
+    public List<Integer> detectCycle() {
+        Set<Integer> visited = new HashSet<>();
+        Set<Integer> recStack = new HashSet<>();
+        List<Integer> path = new ArrayList<>();
+
+        for (int node : adjList.keySet()) {
+            if (detectCycleUtil(node, visited, recStack, path)) {
+                return path;
+            }
+        }
+        return null; // no cycle found
+    }
+
+
+
+    public boolean isInCycle(Microservice microservice) {
+        List<Integer> cycleServices = detectCycle();
+
+        for(Integer node : cycleServices) {
+            if(microservice.getId().equals(keyFromValue(node))) {
                 return true;
             }
         }
 
-        recStack[vertex] = false;
         return false;
-    }
-
-    private List<String> getCycle(int start) {
-        List<String> cycle = new ArrayList<>();
-        int current = start;
-        cycle.add(keyFromValue(start));
-        while (parent[current] != start) {
-            cycle.add(keyFromValue(parent[current]));
-            current = parent[current];
-        }
-        cycle.add(keyFromValue(start)); // To show the cycle completion
-        Collections.reverse(cycle); // To show the cycle in correct order
-        return cycle;
-    }
-
-    public boolean isInCycle(Microservice microservice) {
-        return findCycle().contains(microservice.getId());
     }
 
     private String keyFromValue(int i) {

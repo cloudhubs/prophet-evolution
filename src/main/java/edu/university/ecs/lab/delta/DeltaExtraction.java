@@ -20,6 +20,7 @@ public class DeltaExtraction {
    * @param args {@literal <branch name> [/path/to/config]}
    */
   public static void main(String[] args) throws Exception {
+    args = new String[]{"main"};
     if (args.length < 1 || args.length > 2) {
       System.err.println("Required arguments <branch> [(optional) /path/to/config]");
     }
@@ -27,9 +28,6 @@ public class DeltaExtraction {
     String branch = args[0];
     InputConfig inputConfig = ConfigUtil.validateConfig((args.length == 2) ? args[1] : "config.json");
 
-    // TESTING TODO remove
-    new IRExtractionService(inputConfig).generateSystemIntermediate();
-    // TESTING ^^^^
 
     DeltaExtractionService deltaService = new DeltaExtractionService(branch, inputConfig);
     Set<String> outputNames = deltaService.generateDelta();
