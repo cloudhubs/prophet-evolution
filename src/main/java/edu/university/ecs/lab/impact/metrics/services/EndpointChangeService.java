@@ -14,10 +14,20 @@ import java.util.stream.Collectors;
 
 import static edu.university.ecs.lab.common.utils.FlowUtils.buildFlows;
 
+/**
+ * Service to handle endpoint changes between two microservices
+ */
 public class EndpointChangeService {
+    /** Map of microservices name to data in the original system */
     private final Map<String, Microservice> oldMicroserviceMap;
+    /** Map of microservices name to data in the new (merged) system */
     private final Map<String, Microservice> newMicroserviceMap;
 
+    /**
+     * Constructor for EndpointChangeService
+     * @param oldMicroserviceMap old microservice map
+     * @param newMicroserviceMap new (after merge) microservice map
+     */
     public EndpointChangeService(Map<String, Microservice> oldMicroserviceMap, Map<String, Microservice> newMicroserviceMap) {
         this.oldMicroserviceMap = oldMicroserviceMap;
         this.newMicroserviceMap = newMicroserviceMap;
@@ -49,7 +59,9 @@ public class EndpointChangeService {
             JController newController = newControllers.stream().filter(oldController::matchClassPath).findFirst().orElse(null);
 
             List<EndpointChange> controllerChanges = getControllerEndpointChanges(oldController, newController);
-            endpointChanges.addAll(controllerChanges);
+            if (controllerChanges != null) {
+                endpointChanges.addAll(controllerChanges);
+            }
         }
 
         // Add changes for newly created controllers (oldController is null)
@@ -57,8 +69,11 @@ public class EndpointChangeService {
                 .filter(newController -> oldControllers.stream().noneMatch(newController::matchClassPath))
                 .forEach(newController -> {
                     List<EndpointChange> controllerChanges = getControllerEndpointChanges(null, newController);
-                    endpointChanges.addAll(controllerChanges);
+                    if (controllerChanges != null) {
+                        endpointChanges.addAll(controllerChanges);
+                    }
                 });
+
 
         updateEndpointChangeImpact(endpointChanges, msId);
 

@@ -1,6 +1,5 @@
 package edu.university.ecs.lab.impact.metrics.services;
 
-import edu.university.ecs.lab.common.models.Microservice;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.delta.models.Delta;
 import edu.university.ecs.lab.delta.models.SystemChange;
@@ -10,13 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Service to generate metrics pertaining to classes in the system
+ */
 public class ClassMetricsService {
-  Map<String, Microservice> microserviceMap;
-  SystemChange systemChange;
+  /** System change object containing all changes to the system */
+  private final SystemChange systemChange;
 
-  public ClassMetricsService(Map<String, Microservice> microserviceMap, SystemChange systemChange) {
-    this.microserviceMap = microserviceMap;
-    this.systemChange = systemChange;
+  /**
+   * Constructor for ClassMetricsService
+   * @param systemChange delta of the system
+   */
+  public ClassMetricsService(SystemChange systemChange) {
+      this.systemChange = systemChange;
   }
 
   /**

@@ -9,20 +9,27 @@ import lombok.Getter;
 import java.io.File;
 
 public enum ClassRole {
-  CONTROLLER(JController.class),
-  SERVICE(JService.class),
-  REPOSITORY(JClass.class),
-  ENTITY(JClass.class),
-  DTO(JClass.class),
-  UNKNOWN(null),
-  ;
+    CONTROLLER(JController.class),
+    SERVICE(JService.class),
+    REPOSITORY(JClass.class),
+    ENTITY(JClass.class),
+    DTO(JClass.class),
+    UNKNOWN(null),
+    ;
 
-  @Getter
-  private final Class<? extends JClass> classType;
+    /**
+    * Get the associated class type for a role
+    */
+    @Getter
+    private final Class<? extends JClass> classType;
 
-  ClassRole(Class<? extends JClass> classType) {
+    /**
+    * Private constructor to link enum to class type
+    * @param classType the class type to associate with the role
+    */
+    ClassRole(Class<? extends JClass> classType) {
     this.classType = classType;
-  }
+    }
 
     /**
     * Get the class role from the class type

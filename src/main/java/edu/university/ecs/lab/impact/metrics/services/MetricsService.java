@@ -13,19 +13,21 @@ import java.util.*;
  */
 public class MetricsService {
 
-  /** Map of microservices name to data in the system */
+  /** Map of microservices name to data in the old system */
   private final Map<String, Microservice> oldMicroserviceMap;
+  /** Map of microservices name to data in the new (merged) system */
   private final Map<String, Microservice> newMicroserviceMap;
 
 
-  /** Object representing changes to the system as a whole/overall changes */
-  private final SystemChange systemChange;
+    /** Service to generate overall class metrics */
   private final ClassMetricsService classMetricsService;
+  /** Service to generate metrics on a per-service basis */
   private final MicroserviceMetricsService microserviceMetricsService;
+  /** Service to generate overall system metrics */
   private final SystemMetricsService systemMetricsService;
 
   /**
-   * Constructor for MetricsService
+   * Constructor for MetricsService. Parses
    *
    * @param oldIrPath path to the original system IR
    * @param deltaPath path to the system delta
@@ -34,8 +36,8 @@ public class MetricsService {
   public MetricsService(String oldIrPath, String newIrPath, String deltaPath) throws IOException {
     oldMicroserviceMap = IRParserUtils.parseIRSystem(oldIrPath).getServiceMap();
     newMicroserviceMap = IRParserUtils.parseIRSystem(newIrPath).getServiceMap();
-    systemChange = IRParserUtils.parseSystemChange(deltaPath);
-    classMetricsService = new ClassMetricsService(oldMicroserviceMap, systemChange);
+    SystemChange systemChange = IRParserUtils.parseSystemChange(deltaPath);
+    classMetricsService = new ClassMetricsService(systemChange);
     microserviceMetricsService = new MicroserviceMetricsService(oldMicroserviceMap, newMicroserviceMap);
     systemMetricsService = new SystemMetricsService(oldMicroserviceMap, newMicroserviceMap, systemChange);
   }
@@ -43,7 +45,7 @@ public class MetricsService {
   /**
    * Generate overall metrics from the IR/delta files
    *
-   * @return system metrics
+   * @return complete system metrics
    */
   public SystemMetrics generateSystemMetrics() {
     SystemMetrics systemMetrics = new SystemMetrics();

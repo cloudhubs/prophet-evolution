@@ -28,7 +28,7 @@ public enum ErrorCodes {
     FREEMARKER_CONFIG_ERROR,
     /** Error due to malformed {@link edu.university.ecs.lab.common.config.models.InputConfig} file */
     BAD_CONFIG,
-    /** Error due to missing microservices in {@link edu.university.ecs.lab.intermediate.create.services.IRExtractionService}*/
+    /** Error due to missing microservices in {@link edu.university.ecs.lab.intermediate.create.services.IRExtractionService} */
     NO_MICROSERVICES("No microservices were detected in intermediate representation extraction. " +
             "Check your config file to make sure that the repositories are correct and" +
             "contain the correct structure for the microservices to be detected."),

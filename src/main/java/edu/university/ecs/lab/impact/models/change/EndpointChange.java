@@ -60,4 +60,8 @@ public class EndpointChange {
         return null;
     }
   }
+
+  public static boolean isChanged(Endpoint oldEndpoint, Endpoint newEndpoint) {
+
+  }
 }
