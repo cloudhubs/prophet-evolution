@@ -13,23 +13,23 @@ import java.util.List;
  */
 public interface BasicService {
 
-    /**
-     * query for travel with travel information
-     *
-     * @param info information
-     * @param  headers headers
-     * @return Response
-     */
-    Response queryForTravel(Travel info, HttpHeaders headers);
+  /**
+   * query for travel with travel information
+   *
+   * @param info information
+   * @param headers headers
+   * @return Response
+   */
+  Response queryForTravel(Travel info, HttpHeaders headers);
 
-    Response queryForTravels(List<Travel> infos, HttpHeaders headers);
+  Response queryForTravels(List<Travel> infos, HttpHeaders headers);
 
-    /**
-     * query for station id with station name
-     *
-     * @param stationName station name
-     * @param  headers headers
-     * @return Response
-     */
-    Response queryForStationId(String stationName, HttpHeaders headers);
+  /**
+   * query for station id with station name
+   *
+   * @param stationName station name
+   * @param headers headers
+   * @return Response
+   */
+  Response queryForStationId(String stationName, HttpHeaders headers);
 }

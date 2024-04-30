@@ -13,27 +13,20 @@ import javax.validation.constraints.NotNull;
 @Data
 @Entity
 public class Config {
-    @Valid
-    @Id
-    @NotNull
-    private String name;
+  @Valid @Id @NotNull private String name;
 
-    @Valid
-    @NotNull
-    private String value;
+  @Valid @NotNull private String value;
 
-    @Valid
-    private String description;
+  @Valid private String description;
 
-    public Config() {
-        this.name = "";
-        this.value = "";
-    }
+  public Config() {
+    this.name = "";
+    this.value = "";
+  }
 
-    public Config(String name, String value, String description) {
-        this.name = name;
-        this.value = value;
-        this.description = description;
-    }
-
+  public Config(String name, String value, String description) {
+    this.name = name;
+    this.value = value;
+    this.description = description;
+  }
 }

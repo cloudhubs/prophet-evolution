@@ -7,12 +7,11 @@ import lombok.Data;
  */
 @Data
 public class InsertConsignRecordResult {
-    private boolean status;
+  private boolean status;
 
-    private String message;
+  private String message;
 
-    public InsertConsignRecordResult(){
-        //Default Constructor
-    }
-
+  public InsertConsignRecordResult() {
+    // Default Constructor
+  }
 }

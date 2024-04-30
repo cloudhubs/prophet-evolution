@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface StationRepository extends CrudRepository<Station,String> {
+public interface StationRepository extends CrudRepository<Station, String> {
 
-    Station findByName(String name);
+  Station findByName(String name);
 
-    @Query(value="SELECT * from station where name in ?1", nativeQuery = true)
-    List<Station> findByNames(List<String> names);
+  @Query(value = "SELECT * from station where name in ?1", nativeQuery = true)
+  List<Station> findByNames(List<String> names);
 
-    Optional<Station> findById(String id);
+  Optional<Station> findById(String id);
 
-    @Override
-    List<Station> findAll();
+  @Override
+  List<Station> findAll();
 }

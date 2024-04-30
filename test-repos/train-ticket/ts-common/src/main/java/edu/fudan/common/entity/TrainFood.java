@@ -7,16 +7,15 @@ import java.util.List;
 import java.util.UUID;
 
 @Data
-public class TrainFood implements Serializable{
+public class TrainFood implements Serializable {
 
-    public TrainFood(){
-        //Default Constructor
-    }
+  public TrainFood() {
+    // Default Constructor
+  }
 
-    private UUID id;
+  private UUID id;
 
-    private String tripId;
+  private String tripId;
 
-    private List<Food> foodList;
-
+  private List<Food> foodList;
 }

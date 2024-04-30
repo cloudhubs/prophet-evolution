@@ -14,27 +14,27 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/api/v1/trainfoodservice")
 public class TrainFoodController {
 
-    @Autowired
-    TrainFoodService trainFoodService;
+  @Autowired TrainFoodService trainFoodService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainFoodController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TrainFoodController.class);
 
-    @GetMapping(path = "/trainfoods/welcome")
-    public String home() {
-        return "Welcome to [ Train Food Service ] !";
-    }
+  @GetMapping(path = "/trainfoods/welcome")
+  public String home() {
+    return "Welcome to [ Train Food Service ] !";
+  }
 
-    @CrossOrigin(origins = "*")
-    @GetMapping("/trainfoods")
-    public HttpEntity getAllTrainFood(@RequestHeader HttpHeaders headers) {
-        TrainFoodController.LOGGER.info("[Food Map Service][Get All TrainFoods]");
-        return ok(trainFoodService.listTrainFood(headers));
-    }
+  @CrossOrigin(origins = "*")
+  @GetMapping("/trainfoods")
+  public HttpEntity getAllTrainFood(@RequestHeader HttpHeaders headers) {
+    TrainFoodController.LOGGER.info("[Food Map Service][Get All TrainFoods]");
+    return ok(trainFoodService.listTrainFood(headers));
+  }
 
-    @CrossOrigin(origins = "*")
-    @GetMapping("/trainfoods/{tripId}")
-    public HttpEntity getTrainFoodOfTrip(@PathVariable String tripId, @RequestHeader HttpHeaders headers) {
-        TrainFoodController.LOGGER.info("[Food Map Service][Get TrainFoods By TripId]");
-        return ok(trainFoodService.listTrainFoodByTripId(tripId, headers));
-    }
+  @CrossOrigin(origins = "*")
+  @GetMapping("/trainfoods/{tripId}")
+  public HttpEntity getTrainFoodOfTrip(
+      @PathVariable String tripId, @RequestHeader HttpHeaders headers) {
+    TrainFoodController.LOGGER.info("[Food Map Service][Get TrainFoods By TripId]");
+    return ok(trainFoodService.listTrainFoodByTripId(tripId, headers));
+  }
 }

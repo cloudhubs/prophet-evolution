@@ -15,14 +15,14 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableSwagger2
 @EnableDiscoveryClient
-public class NotificationApplication{
-    public static void main(String[] args) {
-        SpringApplication.run(NotificationApplication.class, args);
-    }
+public class NotificationApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(NotificationApplication.class, args);
+  }
 
-    @LoadBalanced
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
+  @LoadBalanced
+  @Bean
+  public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    return builder.build();
+  }
 }

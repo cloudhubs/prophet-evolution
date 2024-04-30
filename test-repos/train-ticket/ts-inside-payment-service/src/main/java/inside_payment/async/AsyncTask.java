@@ -13,20 +13,23 @@ import org.springframework.web.client.RestTemplate;
 /**
  * @author fdse
  */
-@Component  
+@Component
 public class AsyncTask {
-    
-    @Autowired
-	private RestTemplate restTemplate;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AsyncTask.class);
+  @Autowired private RestTemplate restTemplate;
 
-    @Async("mySimpleAsync")
-    public Future<Boolean> sendAsyncCallToPaymentService(OutsidePaymentInfo outsidePaymentInfo) {
-        AsyncTask.LOGGER.info("[sendAsyncCallToPaymentService][Inside Payment Service, Async Task,Begin]");
-        Boolean value = restTemplate.getForObject("http://rest-service-external:16100/greet", Boolean.class);
-        AsyncTask.LOGGER.info("[sendAsyncCallToPaymentService][Inside Payment Service, Async Task][Receive call Value directly back: {}]", value);
-        return new AsyncResult<>(value);
-    }
-    
-}  
+  private static final Logger LOGGER = LoggerFactory.getLogger(AsyncTask.class);
+
+  @Async("mySimpleAsync")
+  public Future<Boolean> sendAsyncCallToPaymentService(OutsidePaymentInfo outsidePaymentInfo) {
+    AsyncTask.LOGGER.info(
+        "[sendAsyncCallToPaymentService][Inside Payment Service, Async Task,Begin]");
+    Boolean value =
+        restTemplate.getForObject("http://rest-service-external:16100/greet", Boolean.class);
+    AsyncTask.LOGGER.info(
+        "[sendAsyncCallToPaymentService][Inside Payment Service, Async Task][Receive call Value"
+            + " directly back: {}]",
+        value);
+    return new AsyncResult<>(value);
+  }
+}

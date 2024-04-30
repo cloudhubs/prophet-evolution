@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Entity;
 
-import java.util.UUID;
 
 /**
  * @author fdse
@@ -20,19 +19,18 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SecurityConfig {
 
-    @Id
-    @GeneratedValue(generator = "jpa-uuid")
-    @Column(length = 36)
-    private String id;
+  @Id
+  @GeneratedValue(generator = "jpa-uuid")
+  @Column(length = 36)
+  private String id;
 
-    private String name;
+  private String name;
 
-    private String value;
+  private String value;
 
-    private String description;
+  private String description;
 
-    public SecurityConfig() {
-        //Default Constructor
-    }
-
+  public SecurityConfig() {
+    // Default Constructor
+  }
 }

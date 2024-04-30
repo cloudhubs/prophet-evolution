@@ -1,4 +1,3 @@
-
 package org.myproject.ms.monitoring.instrument.web;
 
 import java.util.regex.Pattern;
@@ -13,28 +12,27 @@ import org.myproject.ms.monitoring.atcfg.TraceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 @Configuration
 @ConditionalOnBean(Chainer.class)
 @AutoConfigureAfter(TraceAutoConfiguration.class)
-@EnableConfigurationProperties({ ChainKeys.class, SWProp.class })
+@EnableConfigurationProperties({ChainKeys.class, SWProp.class})
 public class THAConf {
 
-	@Bean
-	@ConditionalOnMissingBean
-	public HTKInject httpTraceKeysInjector(Chainer tracer, ChainKeys traceKeys) {
-		return new HTKInject(tracer, traceKeys);
-	}
+  @Bean
+  @ConditionalOnMissingBean
+  public HTKInject httpTraceKeysInjector(Chainer tracer, ChainKeys traceKeys) {
+    return new HTKInject(tracer, traceKeys);
+  }
 
-	@Bean
-	@ConditionalOnMissingBean
-	public HSExtra httpSpanExtractor(SWProp sleuthWebProperties) {
-		return new ZHSExtra(Pattern.compile(sleuthWebProperties.getSkipPattern()));
-	}
+  @Bean
+  @ConditionalOnMissingBean
+  public HSExtra httpSpanExtractor(SWProp sleuthWebProperties) {
+    return new ZHSExtra(Pattern.compile(sleuthWebProperties.getSkipPattern()));
+  }
 
-	@Bean
-	@ConditionalOnMissingBean
-	public HSInject httpSpanInjector() {
-		return new ZHSInject();
-	}
+  @Bean
+  @ConditionalOnMissingBean
+  public HSInject httpSpanInjector() {
+    return new ZHSInject();
+  }
 }

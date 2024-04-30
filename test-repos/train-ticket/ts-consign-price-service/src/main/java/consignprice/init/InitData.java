@@ -15,22 +15,21 @@ import java.util.UUID;
  */
 @Component
 public class InitData implements CommandLineRunner {
-    @Autowired
-    ConsignPriceService service;
+  @Autowired ConsignPriceService service;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InitData.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(InitData.class);
 
-    @Override
-    public void run(String... strings) throws Exception {
-        InitData.LOGGER.info("[InitData.run][Consign price service][Init data operation]");
-        ConsignPrice config = new ConsignPrice();
-        config.setId(UUID.randomUUID().toString());
-        config.setIndex(0);
-        config.setInitialPrice(8);
-        config.setInitialWeight(1);
-        config.setWithinPrice(2);
-        config.setBeyondPrice(4);
+  @Override
+  public void run(String... strings) throws Exception {
+    InitData.LOGGER.info("[InitData.run][Consign price service][Init data operation]");
+    ConsignPrice config = new ConsignPrice();
+    config.setId(UUID.randomUUID().toString());
+    config.setIndex(0);
+    config.setInitialPrice(8);
+    config.setInitialWeight(1);
+    config.setWithinPrice(2);
+    config.setBeyondPrice(4);
 
-        service.createAndModifyPrice(config, null);
-    }
+    service.createAndModifyPrice(config, null);
+  }
 }

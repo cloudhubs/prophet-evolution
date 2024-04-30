@@ -13,12 +13,12 @@ import java.util.ArrayList;
 @Repository
 public interface TripRepository extends CrudRepository<Trip, TripId> {
 
-    Trip findByTripId(TripId tripId);
+  Trip findByTripId(TripId tripId);
 
-    void deleteByTripId(TripId tripId);
+  void deleteByTripId(TripId tripId);
 
-    @Override
-    ArrayList<Trip> findAll();
+  @Override
+  ArrayList<Trip> findAll();
 
-    ArrayList<Trip> findByRouteId(String routeId);
+  ArrayList<Trip> findByRouteId(String routeId);
 }

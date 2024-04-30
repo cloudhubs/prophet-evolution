@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SeatInfo {
-    private String orderId;
-    private int seatNo;
+  private String orderId;
+  private int seatNo;
 }

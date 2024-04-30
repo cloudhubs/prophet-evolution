@@ -10,19 +10,17 @@ import org.springframework.stereotype.Component;
  * @author fdse
  */
 @Component
-public class InitData implements CommandLineRunner{
+public class InitData implements CommandLineRunner {
 
-    @Autowired
-    ConfigService service;
+  @Autowired ConfigService service;
 
-    @Override
-    public void run(String... args) throws Exception {
-        Config config = new Config();
+  @Override
+  public void run(String... args) throws Exception {
+    Config config = new Config();
 
-        config.setName("DirectTicketAllocationProportion");
-        config.setValue("0.5");
-        config.setDescription("Allocation Proportion Of The Direct Ticket - From Start To End");
-        service.create(config,null);
-
-    }
+    config.setName("DirectTicketAllocationProportion");
+    config.setValue("0.5");
+    config.setDescription("Allocation Proportion Of The Direct Ticket - From Start To End");
+    service.create(config, null);
+  }
 }

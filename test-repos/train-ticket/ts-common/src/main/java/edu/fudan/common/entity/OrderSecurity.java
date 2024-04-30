@@ -10,12 +10,11 @@ import lombok.Data;
 @AllArgsConstructor
 public class OrderSecurity {
 
-    private int orderNumInLastOneHour;
+  private int orderNumInLastOneHour;
 
-    private int orderNumOfValidOrder;
+  private int orderNumOfValidOrder;
 
-    public OrderSecurity() {
-        //Default Constructor
-    }
-
+  public OrderSecurity() {
+    // Default Constructor
+  }
 }

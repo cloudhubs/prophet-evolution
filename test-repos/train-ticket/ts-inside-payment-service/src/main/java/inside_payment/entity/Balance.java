@@ -10,18 +10,13 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class Balance {
-    @Valid
-    @NotNull
-    private String userId;
+  @Valid @NotNull private String userId;
 
-    @Valid
-    @NotNull
-    private String balance; //NOSONAR
+  @Valid @NotNull private String balance; // NOSONAR
 
-    public Balance(){
-        //Default Constructor
-        this.userId = "";
-        this.balance = "";
-    }
-
+  public Balance() {
+    // Default Constructor
+    this.userId = "";
+    this.balance = "";
+  }
 }

@@ -1,4 +1,3 @@
-
 package org.myproject.ms.monitoring.instrument.web;
 
 import java.util.regex.Pattern;
@@ -30,7 +29,6 @@ import static javax.servlet.DispatcherType.FORWARD;
 import static javax.servlet.DispatcherType.INCLUDE;
 import static javax.servlet.DispatcherType.REQUEST;
 
-
 @Configuration
 @ConditionalOnProperty(value = "spring.sleuth.web.enabled", matchIfMissing = true)
 @ConditionalOnWebApplication
@@ -38,113 +36,113 @@ import static javax.servlet.DispatcherType.REQUEST;
 @AutoConfigureAfter(THAConf.class)
 public class TWAConf {
 
-	
-	@Configuration
-	@ConditionalOnClass(WebMvcConfigurerAdapter.class)
-	@Import(TWMConf.class)
-	protected static class TraceWebMvcAutoConfiguration {
-	}
+  @Configuration
+  @ConditionalOnClass(WebMvcConfigurerAdapter.class)
+  @Import(TWMConf.class)
+  protected static class TraceWebMvcAutoConfiguration {}
 
-	@Bean
-	public TWAsp traceWebAspect(Chainer tracer, ChainKeys traceKeys,
-			ItemNamer spanNamer) {
-		return new TWAsp(tracer, spanNamer, traceKeys);
-	}
+  @Bean
+  public TWAsp traceWebAspect(Chainer tracer, ChainKeys traceKeys, ItemNamer spanNamer) {
+    return new TWAsp(tracer, spanNamer, traceKeys);
+  }
 
-	@Bean
-	@ConditionalOnClass(name = "org.springframework.data.rest.webmvc.support.DelegatingHandlerMapping")
-	public TSDBPProcess traceSpringDataBeanPostProcessor(
-			BeanFactory beanFactory) {
-		return new TSDBPProcess(beanFactory);
-	}
+  @Bean
+  @ConditionalOnClass(
+      name = "org.springframework.data.rest.webmvc.support.DelegatingHandlerMapping")
+  public TSDBPProcess traceSpringDataBeanPostProcessor(BeanFactory beanFactory) {
+    return new TSDBPProcess(beanFactory);
+  }
 
-	@Bean
-	public FilterRegistrationBean traceWebFilter(TFilter traceFilter) {
-		FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(
-				traceFilter);
-		filterRegistrationBean.setDispatcherTypes(ASYNC, ERROR, FORWARD, INCLUDE,
-				REQUEST);
-		filterRegistrationBean.setOrder(TFilter.ORDER);
-		return filterRegistrationBean;
-	}
+  @Bean
+  public FilterRegistrationBean traceWebFilter(TFilter traceFilter) {
+    FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(traceFilter);
+    filterRegistrationBean.setDispatcherTypes(ASYNC, ERROR, FORWARD, INCLUDE, REQUEST);
+    filterRegistrationBean.setOrder(TFilter.ORDER);
+    return filterRegistrationBean;
+  }
 
-	@Bean
-	public TFilter traceFilter(Chainer tracer, ChainKeys traceKeys,
-			SkipPatternProvider skipPatternProvider, ItemReporter spanReporter,
-			HSExtra spanExtractor,
-			HTKInject httpTraceKeysInjector) {
-		return new TFilter(tracer, traceKeys, skipPatternProvider.skipPattern(),
-				spanReporter, spanExtractor, httpTraceKeysInjector);
-	}
+  @Bean
+  public TFilter traceFilter(
+      Chainer tracer,
+      ChainKeys traceKeys,
+      SkipPatternProvider skipPatternProvider,
+      ItemReporter spanReporter,
+      HSExtra spanExtractor,
+      HTKInject httpTraceKeysInjector) {
+    return new TFilter(
+        tracer,
+        traceKeys,
+        skipPatternProvider.skipPattern(),
+        spanReporter,
+        spanExtractor,
+        httpTraceKeysInjector);
+  }
 
-	@Configuration
-	@ConditionalOnClass(ManagementServerProperties.class)
-	@ConditionalOnMissingBean(SkipPatternProvider.class)
-	@EnableConfigurationProperties(SWProp.class)
-	protected static class SkipPatternProviderConfig {
+  @Configuration
+  @ConditionalOnClass(ManagementServerProperties.class)
+  @ConditionalOnMissingBean(SkipPatternProvider.class)
+  @EnableConfigurationProperties(SWProp.class)
+  protected static class SkipPatternProviderConfig {
 
-		@Bean
-		@ConditionalOnBean(ManagementServerProperties.class)
-		public SkipPatternProvider skipPatternForManagementServerProperties(
-				final ManagementServerProperties managementServerProperties,
-				final SWProp sleuthWebProperties) {
-			return new SkipPatternProvider() {
-				@Override
-				public Pattern skipPattern() {
-					return getPatternForManagementServerProperties(
-							managementServerProperties,
-							sleuthWebProperties);
-				}
-			};
-		}
+    @Bean
+    @ConditionalOnBean(ManagementServerProperties.class)
+    public SkipPatternProvider skipPatternForManagementServerProperties(
+        final ManagementServerProperties managementServerProperties,
+        final SWProp sleuthWebProperties) {
+      return new SkipPatternProvider() {
+        @Override
+        public Pattern skipPattern() {
+          return getPatternForManagementServerProperties(
+              managementServerProperties, sleuthWebProperties);
+        }
+      };
+    }
 
-		
-		static Pattern getPatternForManagementServerProperties(
-				ManagementServerProperties managementServerProperties,
-				SWProp sleuthWebProperties) {
-			String skipPattern = sleuthWebProperties.getSkipPattern();
-			if (StringUtils.hasText(skipPattern)
-					&& StringUtils.hasText(managementServerProperties.getContextPath())) {
-				return Pattern.compile(skipPattern + "|"
-						+ managementServerProperties.getContextPath() + ".*");
-			}
-			else if (StringUtils.hasText(managementServerProperties.getContextPath())) {
-				return Pattern
-						.compile(managementServerProperties.getContextPath() + ".*");
-			}
-			return defaultSkipPattern(skipPattern);
-		}
+    static Pattern getPatternForManagementServerProperties(
+        ManagementServerProperties managementServerProperties, SWProp sleuthWebProperties) {
+      String skipPattern = sleuthWebProperties.getSkipPattern();
+      if (StringUtils.hasText(skipPattern)
+          && StringUtils.hasText(managementServerProperties.getContextPath())) {
+        return Pattern.compile(
+            skipPattern + "|" + managementServerProperties.getContextPath() + ".*");
+      } else if (StringUtils.hasText(managementServerProperties.getContextPath())) {
+        return Pattern.compile(managementServerProperties.getContextPath() + ".*");
+      }
+      return defaultSkipPattern(skipPattern);
+    }
 
-		@Bean
-		@ConditionalOnMissingBean(ManagementServerProperties.class)
-		public SkipPatternProvider defaultSkipPatternBeanIfManagementServerPropsArePresent(SWProp sleuthWebProperties) {
-			return defaultSkipPatternProvider(sleuthWebProperties.getSkipPattern());
-		}
-	}
+    @Bean
+    @ConditionalOnMissingBean(ManagementServerProperties.class)
+    public SkipPatternProvider defaultSkipPatternBeanIfManagementServerPropsArePresent(
+        SWProp sleuthWebProperties) {
+      return defaultSkipPatternProvider(sleuthWebProperties.getSkipPattern());
+    }
+  }
 
-	@Bean
-	@ConditionalOnMissingClass("org.springframework.boot.actuate.autoconfigure.ManagementServerProperties")
-	@ConditionalOnMissingBean(SkipPatternProvider.class)
-	public SkipPatternProvider defaultSkipPatternBean(SWProp sleuthWebProperties) {
-		return defaultSkipPatternProvider(sleuthWebProperties.getSkipPattern());
-	}
+  @Bean
+  @ConditionalOnMissingClass(
+      "org.springframework.boot.actuate.autoconfigure.ManagementServerProperties")
+  @ConditionalOnMissingBean(SkipPatternProvider.class)
+  public SkipPatternProvider defaultSkipPatternBean(SWProp sleuthWebProperties) {
+    return defaultSkipPatternProvider(sleuthWebProperties.getSkipPattern());
+  }
 
-	private static SkipPatternProvider defaultSkipPatternProvider(
-			final String skipPattern) {
-		return new SkipPatternProvider() {
-			@Override
-			public Pattern skipPattern() {
-				return defaultSkipPattern(skipPattern);
-			}
-		};
-	}
+  private static SkipPatternProvider defaultSkipPatternProvider(final String skipPattern) {
+    return new SkipPatternProvider() {
+      @Override
+      public Pattern skipPattern() {
+        return defaultSkipPattern(skipPattern);
+      }
+    };
+  }
 
-	private static Pattern defaultSkipPattern(String skipPattern) {
-		return StringUtils.hasText(skipPattern) ? Pattern.compile(skipPattern)
-				: Pattern.compile(SWProp.DEFAULT_SKIP_PATTERN);
-	}
+  private static Pattern defaultSkipPattern(String skipPattern) {
+    return StringUtils.hasText(skipPattern)
+        ? Pattern.compile(skipPattern)
+        : Pattern.compile(SWProp.DEFAULT_SKIP_PATTERN);
+  }
 
-	interface SkipPatternProvider {
-		Pattern skipPattern();
-	}
+  interface SkipPatternProvider {
+    Pattern skipPattern();
+  }
 }

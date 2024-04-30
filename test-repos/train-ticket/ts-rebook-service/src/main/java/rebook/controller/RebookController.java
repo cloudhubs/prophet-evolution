@@ -18,27 +18,31 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/api/v1/rebookservice")
 public class RebookController {
 
-    @Autowired
-    RebookService service;
+  @Autowired RebookService service;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RebookController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(RebookController.class);
 
-    @GetMapping(path = "/welcome")
-    public String home() {
-        return "Welcome to [ Rebook Service ] !";
-    }
+  @GetMapping(path = "/welcome")
+  public String home() {
+    return "Welcome to [ Rebook Service ] !";
+  }
 
-    @PostMapping(value = "/rebook/difference")
-    public HttpEntity payDifference(@RequestBody RebookInfo info,
-                                    @RequestHeader HttpHeaders headers) {
-        RebookController.LOGGER.info("[payDifference][Pay difference][OrderId: {}]",info.getOrderId());
-        return ok(service.payDifference(info, headers));
-    }
+  @PostMapping(value = "/rebook/difference")
+  public HttpEntity payDifference(
+      @RequestBody RebookInfo info, @RequestHeader HttpHeaders headers) {
+    RebookController.LOGGER.info("[payDifference][Pay difference][OrderId: {}]", info.getOrderId());
+    return ok(service.payDifference(info, headers));
+  }
 
-    @PostMapping(value = "/rebook")
-    public HttpEntity rebook(@RequestBody RebookInfo info, @RequestHeader HttpHeaders headers) {
-        RebookController.LOGGER.info("[rebook][Rebook][OrderId: {}, Old Trip Id: {}, New Trip Id: {}, Date: {}, Seat Type: {}]", info.getOrderId(), info.getOldTripId(), info.getTripId(), info.getDate(), info.getSeatType());
-        return ok(service.rebook(info, headers));
-    }
-
+  @PostMapping(value = "/rebook")
+  public HttpEntity rebook(@RequestBody RebookInfo info, @RequestHeader HttpHeaders headers) {
+    RebookController.LOGGER.info(
+        "[rebook][Rebook][OrderId: {}, Old Trip Id: {}, New Trip Id: {}, Date: {}, Seat Type: {}]",
+        info.getOrderId(),
+        info.getOldTripId(),
+        info.getTripId(),
+        info.getDate(),
+        info.getSeatType());
+    return ok(service.rebook(info, headers));
+  }
 }

@@ -10,13 +10,12 @@ import java.util.UUID;
 @Repository
 public interface TrainFoodRepository extends CrudRepository<TrainFood, String> {
 
-    TrainFood findById(UUID id);
+  TrainFood findById(UUID id);
 
-    @Override
-    List<TrainFood> findAll();
+  @Override
+  List<TrainFood> findAll();
 
+  TrainFood findByTripId(String tripId);
 
-    TrainFood findByTripId(String tripId);
-
-    void deleteById(UUID id);
+  void deleteById(UUID id);
 }

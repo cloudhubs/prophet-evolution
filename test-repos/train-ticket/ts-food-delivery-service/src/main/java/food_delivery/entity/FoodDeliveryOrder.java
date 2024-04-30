@@ -18,23 +18,23 @@ import edu.fudan.common.entity.Food;
 @NoArgsConstructor
 public class FoodDeliveryOrder {
 
-    @Id
-    @GeneratedValue(generator = "jpa-uuid")
-    @Column(length = 36)
-    private String id;
+  @Id
+  @GeneratedValue(generator = "jpa-uuid")
+  @Column(length = 36)
+  private String id;
 
-    private String stationFoodStoreId;
+  private String stationFoodStoreId;
 
-    @ElementCollection(targetClass = Food.class)
-    private List<Food> foodList;
+  @ElementCollection(targetClass = Food.class)
+  private List<Food> foodList;
 
-    private String tripId;
+  private String tripId;
 
-    private int seatNo;
+  private int seatNo;
 
-    private String createdTime;
+  private String createdTime;
 
-    private String deliveryTime;
+  private String deliveryTime;
 
-    private double deliveryFee;
+  private double deliveryFee;
 }

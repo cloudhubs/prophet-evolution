@@ -20,13 +20,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 public class TrainApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(TrainApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(TrainApplication.class, args);
+  }
 
-    @LoadBalanced
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
+  @LoadBalanced
+  @Bean
+  public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    return builder.build();
+  }
 }

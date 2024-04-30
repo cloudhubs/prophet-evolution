@@ -14,18 +14,17 @@ import edu.fudan.common.entity.Food;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class StationFoodStoreInfo {
 
-    private String id;
+  private String id;
 
-    private String stationId;
+  private String stationId;
 
-    private String storeName;
+  private String storeName;
 
-    private String telephone;
+  private String telephone;
 
-    private String businessTime;
+  private String businessTime;
 
-    private double deliveryFee;
+  private double deliveryFee;
 
-    private List<Food> foodList;
-
+  private List<Food> foodList;
 }

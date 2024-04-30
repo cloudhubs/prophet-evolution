@@ -10,38 +10,37 @@ import java.util.Date;
 @Data
 public class SoldTicket {
 
-    private Date travelDate;
+  private Date travelDate;
 
-    private String trainNumber;
+  private String trainNumber;
 
-    private int noSeat;
+  private int noSeat;
 
-    private int businessSeat;
+  private int businessSeat;
 
-    private int firstClassSeat;
+  private int firstClassSeat;
 
-    private int secondClassSeat;
+  private int secondClassSeat;
 
-    private int hardSeat;
+  private int hardSeat;
 
-    private int softSeat;
+  private int softSeat;
 
-    private int hardBed;
+  private int hardBed;
 
-    private int softBed;
+  private int softBed;
 
-    private int highSoftBed;
+  private int highSoftBed;
 
-    public SoldTicket(){
-        noSeat = 0;
-        businessSeat = 0;
-        firstClassSeat = 0;
-        secondClassSeat = 0;
-        hardSeat = 0;
-        softSeat = 0;
-        hardBed = 0;
-        softBed = 0;
-        highSoftBed = 0;
-    }
-
+  public SoldTicket() {
+    noSeat = 0;
+    businessSeat = 0;
+    firstClassSeat = 0;
+    secondClassSeat = 0;
+    hardSeat = 0;
+    softSeat = 0;
+    hardBed = 0;
+    softBed = 0;
+    highSoftBed = 0;
+  }
 }

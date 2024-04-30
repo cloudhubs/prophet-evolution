@@ -5,10 +5,10 @@ package auth.constant;
  */
 public class AuthConstant {
 
-    private AuthConstant() {
-        throw new IllegalStateException("Utility class");
-    }
+  private AuthConstant() {
+    throw new IllegalStateException("Utility class");
+  }
 
-    public static final String ROLE_USER = "ROLE_USER";
-    public static final String ROLE_ADMIN = "ROLE_ADMIN";
+  public static final String ROLE_USER = "ROLE_USER";
+  public static final String ROLE_ADMIN = "ROLE_ADMIN";
 }

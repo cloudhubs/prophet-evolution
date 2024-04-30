@@ -1,20 +1,16 @@
-
 package org.myproject.ms.monitoring.antn;
-
 
 class SleuthAnnotatedParameter {
 
-	int parameterIndex;
+  int parameterIndex;
 
-	SpanTag annotation;
+  SpanTag annotation;
 
-	Object argument;
+  Object argument;
 
-	SleuthAnnotatedParameter(int parameterIndex, SpanTag annotation,
-			Object argument) {
-		this.parameterIndex = parameterIndex;
-		this.annotation = annotation;
-		this.argument = argument;
-	}
-
+  SleuthAnnotatedParameter(int parameterIndex, SpanTag annotation, Object argument) {
+    this.parameterIndex = parameterIndex;
+    this.annotation = annotation;
+    this.argument = argument;
+  }
 }

@@ -8,10 +8,9 @@ import lombok.Data;
 @Data
 public class GetOrderByIdInfo {
 
-    private String orderId;
+  private String orderId;
 
-    public GetOrderByIdInfo() {
-        //Default Constructor
-    }
-
+  public GetOrderByIdInfo() {
+    // Default Constructor
+  }
 }

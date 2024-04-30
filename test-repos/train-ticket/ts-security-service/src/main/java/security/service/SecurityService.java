@@ -9,14 +9,13 @@ import security.entity.*;
  */
 public interface SecurityService {
 
-    Response findAllSecurityConfig(HttpHeaders headers);
+  Response findAllSecurityConfig(HttpHeaders headers);
 
-    Response addNewSecurityConfig(SecurityConfig info, HttpHeaders headers);
+  Response addNewSecurityConfig(SecurityConfig info, HttpHeaders headers);
 
-    Response modifySecurityConfig(SecurityConfig info, HttpHeaders headers);
+  Response modifySecurityConfig(SecurityConfig info, HttpHeaders headers);
 
-    Response deleteSecurityConfig(String id, HttpHeaders headers);
+  Response deleteSecurityConfig(String id, HttpHeaders headers);
 
-    Response check(String accountId, HttpHeaders headers);
-
+  Response check(String accountId, HttpHeaders headers);
 }

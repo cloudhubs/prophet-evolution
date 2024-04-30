@@ -13,27 +13,21 @@ import java.util.UUID;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Assurance {
 
-    private UUID id;
+  private UUID id;
 
-    /**
-     * which order the assurance is related to
-     */
-    @NotNull
-    private UUID orderId;
+  /** which order the assurance is related to */
+  @NotNull private UUID orderId;
 
-    /**
-     * the type of assurance
-     */
-    private AssuranceType type;
+  /** the type of assurance */
+  private AssuranceType type;
 
-    public Assurance(){
-        this.orderId = UUID.randomUUID();
-    }
+  public Assurance() {
+    this.orderId = UUID.randomUUID();
+  }
 
-    public Assurance(UUID id, UUID orderId, AssuranceType type){
-        this.id = id;
-        this.orderId = orderId;
-        this.type = type;
-    }
-
+  public Assurance(UUID id, UUID orderId, AssuranceType type) {
+    this.id = id;
+    this.orderId = orderId;
+    this.type = type;
+  }
 }

@@ -8,10 +8,9 @@ import lombok.Data;
 @Data
 public class GetAccountByIdInfo {
 
-    private String accountId;
+  private String accountId;
 
-    public GetAccountByIdInfo() {
-        //Default Constructor
-    }
-
+  public GetAccountByIdInfo() {
+    // Default Constructor
+  }
 }

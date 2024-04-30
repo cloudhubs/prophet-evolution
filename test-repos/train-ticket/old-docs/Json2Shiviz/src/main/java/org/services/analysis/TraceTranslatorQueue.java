@@ -1,24 +1,24 @@
-///**
+/// **
 // * Created by hh on 2017-07-08.
 // */
-///**
+/// **
 // * Created by Administrator on 2017/7/11.
 // */
-//package org.services.analysis;
+// package org.services.analysis;
 //
-//import java.io.*;
-//import java.util.*;
-//import java.util.stream.Collectors;
-//import org.json.JSONArray;
-//import org.json.JSONException;
-//import org.json.JSONObject;
-//import org.services.analysis.Clock;
-//import org.services.analysis.Span;
+// import java.io.*;
+// import java.util.*;
+// import java.util.stream.Collectors;
+// import org.json.JSONArray;
+// import org.json.JSONException;
+// import org.json.JSONObject;
+// import org.services.analysis.Clock;
+// import org.services.analysis.Span;
 //
-///**
+/// **
 // * Created by hh on 2017-07-08.
 // */
-//public class TraceTranslatorQueue {
+// public class TraceTranslatorQueue {
 //    public static void main(String[] args) throws JSONException {
 //
 ////
@@ -136,24 +136,29 @@
 //                        String ipv4 = endpoint.getString("ipv4");
 ////                            String port = String.valueOf(endpoint.get("port"));
 //
-//                        if(content.get("serverName")!=null && instance_id.indexOf(content.get("serverName")) != -1){
+//                        if(content.get("serverName")!=null &&
+// instance_id.indexOf(content.get("serverName")) != -1){
 //                            String key = content.get("serverName") + ":" + ipv4;
 //                            String new_instance_id;
 //                            if(states.containsKey(key)){
-//                                new_instance_id = content.get("serverName") + ":" + states.get(key) + ":" + ipv4;
+//                                new_instance_id = content.get("serverName") + ":" +
+// states.get(key) + ":" + ipv4;
 //                            }else{
 //                                new_instance_id = content.get("serverName") + ":" + ipv4;
 //                            }
 //
 //                            content.put("server_instance_id", new_instance_id);
 //                        }
-//                        if(content.get("clientName")!=null  && instance_id.indexOf(content.get("clientName")) != -1){
+//                        if(content.get("clientName")!=null  &&
+// instance_id.indexOf(content.get("clientName")) != -1){
 //                            String key = content.get("clientName") + ":" + ipv4;
 //                            String new_instance_id;
 //                            if(states.containsKey(key)){
-//                                new_instance_id = content.get("clientName") + ":" + states.get(key) + ":" + ipv4;
+//                                new_instance_id = content.get("clientName") + ":" +
+// states.get(key) + ":" + ipv4;
 //                            }else{
-////                                    new_instance_id = ipv4 + ":" + content.get("clientName") + ":" + port;
+////                                    new_instance_id = ipv4 + ":" + content.get("clientName") +
+// ":" + port;
 //                                new_instance_id = content.get("clientName") + ":" + ipv4 ;
 //                            }
 //                            content.put("client_instance_id", new_instance_id);
@@ -204,19 +209,25 @@
 //
 //
 //
-//                if(content.get("serverName") != null && (content.get("classname") != null || content.get("methodname") != null)){
+//                if(content.get("serverName") != null && (content.get("classname") != null ||
+// content.get("methodname") != null)){
 //                    content.put("api",
-//                            content.get("serverName") + "." + content.get("classname") + "." + content.get("methodname"));
-//                }else if(content.get("hostId") != null && (content.get("class") != null || content.get("method") != null)){
+//                            content.get("serverName") + "." + content.get("classname") + "." +
+// content.get("methodname"));
+//                }else if(content.get("hostId") != null && (content.get("class") != null ||
+// content.get("method") != null)){
 //                    content.put("api",
-//                            content.get("hostId") + "." + content.get("class") + "." + content.get("method"));
+//                            content.get("hostId") + "." + content.get("class") + "." +
+// content.get("method"));
 //                }
 //                if (name.contains("message:")) {
 //                    if(content.get("serverName") != null){
 //                        if ("message:input".equals(name)) {
-//                            content.put("api", content.get("serverName") + "." + "message_received");
+//                            content.put("api", content.get("serverName") + "." +
+// "message_received");
 //                        }else if("message:output".equals(name)){
-//                            content.put("api", content.get("serverName") + "." + "message_received");
+//                            content.put("api", content.get("serverName") + "." +
+// "message_received");
 //                        }
 //                    }else if(content.get("clientName") != null){
 //                        if ("message:input".equals(name)) {
@@ -364,7 +375,8 @@
 //        });
 //
 //        List<List<HashMap<String,String>>> list = new ArrayList<List<HashMap<String,String>>>();
-//        HashMap<List<HashMap<String,String>>, Boolean> failures = new HashMap<List<HashMap<String,String>>, Boolean>();
+//        HashMap<List<HashMap<String,String>>, Boolean> failures = new
+// HashMap<List<HashMap<String,String>>, Boolean>();
 //        traceIds.forEach((n,s) -> {
 //            List l = logs.stream().filter(elem -> {
 //                return n.equals(elem.get("traceId"));
@@ -382,7 +394,8 @@
 //
 //    }
 //
-//    public static HashMap<String,Integer> findSrcClock(List<Clock> allClocks, String traceId, String spanId, String type){
+//    public static HashMap<String,Integer> findSrcClock(List<Clock> allClocks, String traceId,
+// String spanId, String type){
 //        HashMap<String,Integer> clock = null;
 //        Clock item;
 //
@@ -464,7 +477,8 @@
 //        return forwardLogs;
 //    }
 //
-//    public static void setChilds(HashMap<String,List<String>> spanRelation, Span entrance, HashMap<String, Span> spans){
+//    public static void setChilds(HashMap<String,List<String>> spanRelation, Span entrance,
+// HashMap<String, Span> spans){
 //        Span s = entrance;
 //
 //        if(spanRelation.containsKey(s.getSpanId())){
@@ -478,7 +492,8 @@
 //        }
 //    }
 //
-//    public static void traverse(Span entrance, List<HashMap<String,String>> forwardLogs, List<HashMap<String,String>> backwardLogs, HashMap<String, Span> spans){
+//    public static void traverse(Span entrance, List<HashMap<String,String>> forwardLogs,
+// List<HashMap<String,String>> backwardLogs, HashMap<String, Span> spans){
 //        //from the entrance to end
 //        Span s = entrance;
 //
@@ -569,11 +584,14 @@
 //            List<HashMap<String,String>> childsLogs = new ArrayList<HashMap<String,String>>();
 //
 //            while(iterator1.hasNext()){
-//                List<HashMap<String,String>> childForwardLogs = new ArrayList<HashMap<String,String>>();
-//                List<HashMap<String,String>> childBackwardLogs = new ArrayList<HashMap<String,String>>();
+//                List<HashMap<String,String>> childForwardLogs = new
+// ArrayList<HashMap<String,String>>();
+//                List<HashMap<String,String>> childBackwardLogs = new
+// ArrayList<HashMap<String,String>>();
 //                String childId = iterator1.next();
 //                traverse(spans.get(childId), childForwardLogs, childBackwardLogs, spans);
-//                childsLogs.addAll(mergeForwardAndBackwardLogs(childForwardLogs,childBackwardLogs));
+//
+// childsLogs.addAll(mergeForwardAndBackwardLogs(childForwardLogs,childBackwardLogs));
 //            }
 //
 //            forwardLogs.addAll(childsLogs);
@@ -582,7 +600,9 @@
 //
 //    }
 //
-//    public static List<HashMap<String,String>> mergeForwardAndBackwardLogs(List<HashMap<String,String>> forwardLogs, List<HashMap<String,String>> backwardLogs){
+//    public static List<HashMap<String,String>>
+// mergeForwardAndBackwardLogs(List<HashMap<String,String>> forwardLogs,
+// List<HashMap<String,String>> backwardLogs){
 //        Stack<HashMap<String,String>> stack = new Stack<HashMap<String,String>>();
 //        backwardLogs.forEach(n ->{
 //            stack.push(n);
@@ -596,7 +616,8 @@
 //    }
 //
 //    public static List<HashMap<String,String>> clock2(List<HashMap<String,String>> logs){
-//        HashMap<String,HashMap<String,Integer>> clocks = new HashMap<String,HashMap<String,Integer>>();
+//        HashMap<String,HashMap<String,Integer>> clocks = new
+// HashMap<String,HashMap<String,Integer>>();
 //        List<Clock> allClocks = new ArrayList<Clock>();
 //
 //        List<HashMap<String,String>> list = sortLog(logs);
@@ -606,7 +627,8 @@
 //                HashMap<String,Integer> clock = clocks.get(n.get("host"));
 //
 //                if(n.get("src") != null){
-//                    HashMap<String,Integer> srcClock = findSrcClock(allClocks, n.get("traceId"), n.get("spanId"), n.get("type"));
+//                    HashMap<String,Integer> srcClock = findSrcClock(allClocks, n.get("traceId"),
+// n.get("spanId"), n.get("type"));
 //
 //                    Iterator<Map.Entry<String,Integer>> iterator = srcClock.entrySet().iterator();
 //                    while (iterator.hasNext()) {
@@ -630,12 +652,14 @@
 //                n.put("clock",clock.toString());
 //
 //                clocks.put(n.get("host"), clock);
-//                allClocks.add(new Clock(n.get("type"), n.get("host"), n.get("src"), n.get("traceId"), n.get("spanId"), (HashMap<String,Integer>)clock.clone()));
+//                allClocks.add(new Clock(n.get("type"), n.get("host"), n.get("src"),
+// n.get("traceId"), n.get("spanId"), (HashMap<String,Integer>)clock.clone()));
 //            }else{
 //                HashMap<String,Integer> clock = new HashMap<String,Integer>();
 //
 //                if(n.get("src") != null){
-//                    HashMap<String,Integer> srcClock = findSrcClock(allClocks, n.get("traceId"), n.get("spanId"), n.get("type"));
+//                    HashMap<String,Integer> srcClock = findSrcClock(allClocks, n.get("traceId"),
+// n.get("spanId"), n.get("type"));
 //
 //                    Iterator<Map.Entry<String,Integer>> iterator = srcClock.entrySet().iterator();
 //                    while (iterator.hasNext()) {
@@ -657,7 +681,8 @@
 //                n.put("clock",clock.toString());
 //
 //                clocks.put(n.get("host"), clock);
-//                allClocks.add(new Clock(n.get("type"), n.get("host"), n.get("src"), n.get("traceId"), n.get("spanId"), (HashMap<String,Integer>)clock.clone()));
+//                allClocks.add(new Clock(n.get("type"), n.get("host"), n.get("src"),
+// n.get("traceId"), n.get("spanId"), (HashMap<String,Integer>)clock.clone()));
 //            }
 //        });
 //
@@ -665,7 +690,8 @@
 //    }
 //
 //    public static List<HashMap<String,String>> clock(List<HashMap<String,String>> logs){
-//        HashMap<String,HashMap<String,Integer>> clocks = new HashMap<String,HashMap<String,Integer>>();
+//        HashMap<String,HashMap<String,Integer>> clocks = new
+// HashMap<String,HashMap<String,Integer>>();
 //
 //        List<HashMap<String,String>> list = logs.stream().sorted((log1,log2) -> {
 //            Long time1 = Long.valueOf(log1.get("timestamp"));
@@ -678,7 +704,8 @@
 //                HashMap<String,Integer> clock = clocks.get(n.get("host"));
 //
 //                if(n.get("src") != null){
-//                    HashMap<String,Integer> srcClock = (HashMap<String,Integer>)clocks.get(n.get("src")).clone();
+//                    HashMap<String,Integer> srcClock =
+// (HashMap<String,Integer>)clocks.get(n.get("src")).clone();
 //
 //                    Iterator<Map.Entry<String,Integer>> iterator = srcClock.entrySet().iterator();
 //                    while (iterator.hasNext()) {
@@ -705,7 +732,8 @@
 //                HashMap<String,Integer> clock = new HashMap<String,Integer>();
 //
 //                if(n.get("src") != null){
-//                    HashMap<String,Integer> srcClock = (HashMap<String,Integer>)clocks.get(n.get("src")).clone();
+//                    HashMap<String,Integer> srcClock =
+// (HashMap<String,Integer>)clocks.get(n.get("src")).clone();
 //
 //                    Iterator<Map.Entry<String,Integer>> iterator = srcClock.entrySet().iterator();
 //                    while (iterator.hasNext()) {
@@ -838,7 +866,8 @@
 ////        return true;
 ////    }
 //
-////    public static boolean writeFile(String path, List<List<HashMap<String,String>>> logs, HashMap<List<HashMap<String,String>>, Boolean> failures){
+////    public static boolean writeFile(String path, List<List<HashMap<String,String>>> logs,
+// HashMap<List<HashMap<String,String>>, Boolean> failures){
 ////        File writer = new File(path);
 ////        BufferedWriter out = null;
 ////        try{
@@ -908,7 +937,8 @@
 ////        return true;
 ////    }
 //
-//    public static boolean writeFile(String path, List<List<HashMap<String,String>>> logs, HashMap<List<HashMap<String,String>>, Boolean> failures){
+//    public static boolean writeFile(String path, List<List<HashMap<String,String>>> logs,
+// HashMap<List<HashMap<String,String>>, Boolean> failures){
 //        File writer = new File(path);
 //        BufferedWriter out = null;
 //        try{
@@ -1015,4 +1045,4 @@
 //
 //        return true;
 //    }
-//}
+// }

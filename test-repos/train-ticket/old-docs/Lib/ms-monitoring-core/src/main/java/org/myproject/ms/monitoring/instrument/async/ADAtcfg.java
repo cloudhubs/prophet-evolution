@@ -1,5 +1,3 @@
-
-
 package org.myproject.ms.monitoring.instrument.async;
 
 import java.util.concurrent.Executor;
@@ -19,7 +17,6 @@ import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-
 @EnableAsync
 @Configuration
 @ConditionalOnProperty(value = "spring.sleuth.async.enabled", matchIfMissing = true)
@@ -27,29 +24,28 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @AutoConfigureAfter(ACAtcfg.class)
 public class ADAtcfg {
 
-	@Autowired private BeanFactory beanFactory;
+  @Autowired private BeanFactory beanFactory;
 
-	@Configuration
-	@ConditionalOnMissingBean(AsyncConfigurer.class)
-	@ConditionalOnProperty(value = "spring.sleuth.async.configurer.enabled", matchIfMissing = true)
-	static class DefaultAsyncConfigurerSupport extends AsyncConfigurerSupport {
+  @Configuration
+  @ConditionalOnMissingBean(AsyncConfigurer.class)
+  @ConditionalOnProperty(value = "spring.sleuth.async.configurer.enabled", matchIfMissing = true)
+  static class DefaultAsyncConfigurerSupport extends AsyncConfigurerSupport {
 
-		@Autowired private BeanFactory beanFactory;
+    @Autowired private BeanFactory beanFactory;
 
-		@Override
-		public Executor getAsyncExecutor() {
-			return new LTExec(this.beanFactory, new SimpleAsyncTaskExecutor());
-		}
-	}
+    @Override
+    public Executor getAsyncExecutor() {
+      return new LTExec(this.beanFactory, new SimpleAsyncTaskExecutor());
+    }
+  }
 
-	@Bean
-	public TAAsp traceAsyncAspect(Chainer tracer, ChainKeys traceKeys) {
-		return new TAAsp(tracer, traceKeys, this.beanFactory);
-	}
+  @Bean
+  public TAAsp traceAsyncAspect(Chainer tracer, ChainKeys traceKeys) {
+    return new TAAsp(tracer, traceKeys, this.beanFactory);
+  }
 
-	@Bean
-	public EBPProc executorBeanPostProcessor() {
-		return new EBPProc(this.beanFactory);
-	}
-
+  @Bean
+  public EBPProc executorBeanPostProcessor() {
+    return new EBPProc(this.beanFactory);
+  }
 }

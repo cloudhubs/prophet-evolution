@@ -16,31 +16,27 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WaitListOrderVO {
-    private String accountId;
+  private String accountId;
 
-    private String contactsId;
+  private String contactsId;
 
-    private String tripId;
+  private String tripId;
 
-    private int seatType;
+  private int seatType;
 
-    private String date;
+  private String date;
 
-    private String from;
+  private String from;
 
-    private String to;
+  private String to;
 
-    private String price;
+  private String price;
 
+  public Date getDate() {
+    return StringUtils.String2Date(date);
+  }
 
-    public Date getDate(){
-        return StringUtils.String2Date(date);
-    }
-
-    public void setDate(Date date){
-        this.date = StringUtils.Date2String(date);
-    }
-
-
+  public void setDate(Date date) {
+    this.date = StringUtils.Date2String(date);
+  }
 }
-

@@ -11,29 +11,34 @@ import java.util.Date;
 @Data
 public class TransferTravelInfo {
 
-    private String startStation;
+  private String startStation;
 
-    private String viaStation;
+  private String viaStation;
 
-    private String endStation;
+  private String endStation;
 
-    private String travelDate;
+  private String travelDate;
 
-    private String trainType;
+  private String trainType;
 
-    public TransferTravelInfo() {
-        //Empty Constructor
-    }
+  public TransferTravelInfo() {
+    // Empty Constructor
+  }
 
-    public TransferTravelInfo(String startStation, String viaStation, String endStation, String travelDate, String trainType) {
-        this.startStation = startStation;
-        this.viaStation = viaStation;
-        this.endStation = endStation;
-        this.travelDate = travelDate;
-        this.trainType = trainType;
-    }
+  public TransferTravelInfo(
+      String startStation,
+      String viaStation,
+      String endStation,
+      String travelDate,
+      String trainType) {
+    this.startStation = startStation;
+    this.viaStation = viaStation;
+    this.endStation = endStation;
+    this.travelDate = travelDate;
+    this.trainType = trainType;
+  }
 
-    public Date getTravelDate() {
-        return StringUtils.String2Date(travelDate);
-    }
+  public Date getTravelDate() {
+    return StringUtils.String2Date(travelDate);
+  }
 }

@@ -9,14 +9,12 @@ import org.springframework.http.HttpHeaders;
  */
 public interface TokenService {
 
-    /**
-     * get token by dto
-     *
-     * @param dto dto
-     * @param  headers headers
-     * @return Response
-     */
-    Response getToken(BasicAuthDto dto, HttpHeaders headers);
-
-
+  /**
+   * get token by dto
+   *
+   * @param dto dto
+   * @param headers headers
+   * @return Response
+   */
+  Response getToken(BasicAuthDto dto, HttpHeaders headers);
 }

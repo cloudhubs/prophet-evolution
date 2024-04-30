@@ -12,18 +12,18 @@ import java.util.List;
 @Data
 public class TransferTravelResult {
 
-    private List<TripResponse> firstSectionResult;
+  private List<TripResponse> firstSectionResult;
 
-    private List<TripResponse> secondSectionResult;
+  private List<TripResponse> secondSectionResult;
 
-    public TransferTravelResult() {
-        //Default Constructor
-    }
+  public TransferTravelResult() {
+    // Default Constructor
+  }
 
-    public TransferTravelResult(List<TripResponse> firstSectionResult, List<TripResponse> secondSectionResult) {
+  public TransferTravelResult(
+      List<TripResponse> firstSectionResult, List<TripResponse> secondSectionResult) {
 
-        this.firstSectionResult = firstSectionResult;
-        this.secondSectionResult = secondSectionResult;
-    }
-
+    this.firstSectionResult = firstSectionResult;
+    this.secondSectionResult = secondSectionResult;
+  }
 }

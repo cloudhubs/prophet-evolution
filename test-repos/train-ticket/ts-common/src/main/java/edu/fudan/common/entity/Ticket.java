@@ -8,19 +8,19 @@ import lombok.Data;
 @Data
 public class Ticket {
 
-    private int seatNo;
+  private int seatNo;
 
-    private String startStation;
+  private String startStation;
 
-    private String destStation;
+  private String destStation;
 
-    public Ticket(){
-        //Default Constructor
-    }
+  public Ticket() {
+    // Default Constructor
+  }
 
-    public Ticket(int seatNo, String startStation, String destStation) {
-        this.seatNo = seatNo;
-        this.startStation = startStation;
-        this.destStation = destStation;
-    }
+  public Ticket(int seatNo, String startStation, String destStation) {
+    this.seatNo = seatNo;
+    this.startStation = startStation;
+    this.destStation = destStation;
+  }
 }

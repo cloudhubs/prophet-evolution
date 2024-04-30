@@ -12,10 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Config {
 
-    private String name;
+  private String name;
 
-    private String value;
+  private String value;
 
-    private String description;
-
+  private String description;
 }

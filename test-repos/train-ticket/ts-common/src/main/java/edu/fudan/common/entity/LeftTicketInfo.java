@@ -11,18 +11,14 @@ import java.util.Set;
  */
 @Data
 public class LeftTicketInfo {
-    @Valid
-    @NotNull
-    private Set<Ticket> soldTickets;
+  @Valid @NotNull private Set<Ticket> soldTickets;
 
-    public LeftTicketInfo(){
-        //Default Constructor
-    }
+  public LeftTicketInfo() {
+    // Default Constructor
+  }
 
-    @Override
-    public String toString() {
-        return "LeftTicketInfo{" +
-                "soldTickets=" + soldTickets +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "LeftTicketInfo{" + "soldTickets=" + soldTickets + '}';
+  }
 }

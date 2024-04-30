@@ -23,13 +23,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 public class InsidePaymentApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(InsidePaymentApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(InsidePaymentApplication.class, args);
+  }
 
-    @LoadBalanced
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
+  @LoadBalanced
+  @Bean
+  public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    return builder.build();
+  }
 }

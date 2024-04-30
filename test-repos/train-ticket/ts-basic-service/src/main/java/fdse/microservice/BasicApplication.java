@@ -23,13 +23,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 public class BasicApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BasicApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(BasicApplication.class, args);
+  }
 
-	@LoadBalanced
-	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder builder) {
-		return builder.build();
-	}
+  @LoadBalanced
+  @Bean
+  public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    return builder.build();
+  }
 }

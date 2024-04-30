@@ -11,10 +11,5 @@ import org.springframework.stereotype.Component;
 @Configuration
 public class EmailConfig {
 
-    @Autowired
-    EmailProperties emailProperties;
-
-
-
-
+  @Autowired EmailProperties emailProperties;
 }

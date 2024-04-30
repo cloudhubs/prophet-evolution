@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Queues {
 
-    public final static String queueName = "food_delivery";
+  public static final String queueName = "food_delivery";
 
-    @Bean
-    public Queue emailQueue() {
-        return new Queue(queueName);
-    }
+  @Bean
+  public Queue emailQueue() {
+    return new Queue(queueName);
+  }
 }
