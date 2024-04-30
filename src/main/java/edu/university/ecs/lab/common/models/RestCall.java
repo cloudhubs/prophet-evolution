@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.enums.HttpMethod;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.Objects;

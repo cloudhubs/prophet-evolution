@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.Objects;
+
 /** Represents a method declaration in Java. */
 @Data
 @AllArgsConstructor
@@ -21,4 +23,16 @@ public class Method {
   private String returnType;
   //  private List<Annotation> annotations;
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Method method = (Method) o;
+    return Objects.equals(methodName, method.methodName) && Objects.equals(protection, method.protection) && Objects.equals(parameterList, method.parameterList) && Objects.equals(returnType, method.returnType);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(methodName, protection, parameterList, returnType);
+  }
 }

@@ -1,11 +1,13 @@
 package edu.university.ecs.lab.common.config.models;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 /** Model to represent the configuration JSON file input */
 @Getter
+@Setter
 public class InputConfig {
 
   /** The name of the system analyzed */

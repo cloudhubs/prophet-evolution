@@ -1,16 +1,14 @@
 package edu.university.ecs.lab.common.models;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@EqualsAndHashCode
 public class JController extends JClass {
   public JController(@NonNull JClass jClass) {
     classPath = jClass.getClassPath();
