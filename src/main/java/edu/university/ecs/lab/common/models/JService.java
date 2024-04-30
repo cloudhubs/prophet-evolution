@@ -5,23 +5,38 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonArray;
+
 @Getter
 @Setter
-@AllArgsConstructor
-public class JService extends JClass {
-  public JService(@NonNull JClass jClass) {
-    classPath = jClass.getClassPath();
-    packageName = jClass.getPackageName();
-    className = jClass.getClassName();
-    methods = jClass.getMethods();
-    fields = jClass.getFields();
-    methodCalls = jClass.getMethodCalls();
+public class JService extends JClass implements JsonSerializable {
+  private List<RestCall> restCalls;
 
-    restCalls = new ArrayList<>();
+  public JService(@NonNull JClass jClass) {
+    super(
+        jClass.getClassName(),
+        jClass.getClassPath(),
+        jClass.getPackageName(),
+        jClass.getClassRole(),
+        jClass.getMethods(),
+        jClass.getFields(),
+        jClass.getMethodCalls(),
+        jClass.getMsId()
+    );
+    this.restCalls = new ArrayList<>();
   }
 
-  private List<RestCall> restCalls;
+  @Override
+  public JsonObject toJsonObject() {
+    JsonObjectBuilder builder = super.createBuilder();
+
+    builder.add("restCalls", listToJsonArray(restCalls));
+
+    return builder.build();
+  }
 }

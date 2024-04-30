@@ -39,7 +39,13 @@
             <hr class="mt-4" />
             <hr class="mb-4 mt-1" />
             <div>
-                <h2 class="mb-4 text-xl font-semibold text-sky-600">Overall System Metrics</h2>
+                <h2 class="mb-2 text-xl font-semibold text-sky-600">Overall System Metrics</h2>
+                <div class="mb-4 text-sm">
+                    <div><span class="font-semibold text-sky-800">ADCS Score:</span> ${systemMetrics.getNewAdcsScore()}</div>
+                    <div class="text-xs mb-2 text-gray-400">Average number of directly connected services (ADCS): the average of ADS metric of all services.</div>
+                    <div><span class="font-semibold text-sky-800">SCF Score:</span> ${systemMetrics.getNewScfScore()}</div>
+                    <div class="text-xs mb-2 text-gray-400">Service Coupling Factor (SCF): measure of the density of a graph's connectivity. SCF = SC/(N2 - N)</div>
+                </div>
                 <div class="space-y-2">
                     <div class="rounded-lg bg-gray-100 px-4 py-2">
                         <div class="pb-2">
@@ -47,44 +53,130 @@
                         </div>
                         <ul class="space-y-2 pb-2">
                             <#list systemMetrics.getClassMetrics() as classMetric>
-                            <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">
-                                <div class="pb-2 font-semibold uppercase italic text-slate-900">${classMetric.getClassRole().name()}</div>
-                                <ul>
-                                <#list classMetric.getMetricsAsMap() as key, value>
-                                    <li class="flex items-center gap-4">
-                                        <div class="font-semibold text-sky-800">${key}:</div>
-                                        <div>${value}</div>
-                                    </li>
-                                </#list>
-                                </ul>
-                            </li>
+                                <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">
+                                    <div class="pb-2 font-semibold uppercase italic text-slate-900">${classMetric.getClassRole().name()}</div>
+                                    <ul>
+                                        <#list classMetric.getMetricsAsMap() as key, value>
+                                            <li class="flex items-center gap-4">
+                                                <div class="font-semibold text-sky-800">${key}:</div>
+                                                <div>${value}</div>
+                                            </li>
+                                        </#list>
+                                    </ul>
+                                </li>
                             </#list>
                         </ul>
                     </div>
-<#--                    <div class="rounded-lg bg-gray-100 px-4 py-2">-->
-<#--                        <div class="pb-2">-->
-<#--                            <div class="font-semibold text-sky-500">Dependency Metrics:</div>-->
-<#--                        </div>-->
-<#--                        <ul class="space-y-2 pb-2">-->
-<#--                            <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">-->
-<#--                                <div class="pb-2 font-semibold uppercase italic text-slate-900">${dependencyMetric.getClassRole().getName()}</div>-->
-<#--                                <ul>-->
-<#--                                    <li class="flex items-center gap-4">-->
-<#--                                        <div class="font-semibold text-sky-800">${dependencyMetric.key()}:</div>-->
-<#--                                        <div>${dependencyMetric.value()}</div>-->
-<#--                                    </li>-->
-<#--                                </ul>-->
-<#--                            </li>-->
-<#--                        </ul>-->
-<#--                    </div>-->
                 </div>
             </div>
             <hr class="mt-4" />
             <hr class="mb-4 mt-1" />
             <div>
                 <h2 class="mb-4 text-xl font-semibold text-violet-800">Metrics by Service</h2>
+                <div class="rounded-lg bg-pink-50 px-4 py-4 my-2 text-sm">
+                    <div>
+                        <div><span class="font-semibold text-pink-800">ADS Score</span></div>
+                        <p class="text-xs mb-2 text-gray-400">
+                            Absolute Dependence of the Service (ADS): number of services on which the service depends. In other words, ADS is the number of services that S1 calls for its operation to be complete.
+                        </p>
+                        <div><span class="font-semibold text-pink-800">SIUC Score</span></div>
+                        <p class="text-xs mb-2 text-gray-400">
+                            Service Interface Usage Cohesion (SIUC): this metric quantifies the client usage patterns of service operations when a client invokes a service.
+                        </p>
+                        <div><span class="font-semibold text-pink-800">SIDC Score</span></div>
+                        <p class="text-xs mb-2 text-gray-400">
+                            Service Interface Data Cohesion (SIDC): this metric quantifies the cohesion of a service based on the cohesiveness of the operations exposed in its interface, which means operations sharing the same type of input parameter.
+                        </p>
+                    </div>
+                </div>
                 <ul class="space-y-1">
-                    <li class="flex items-center gap-4 rounded-lg bg-gray-100 px-4 py-2"></li>
+                    <#list systemMetrics.getMicroserviceMetrics() as service>
+                        <li class="rounded-lg bg-gray-100 px-4 py-2">
+                            <div class="font-semibold text-violet-900 mb-2">${service.getId()}</div>
+                            <div class="text-sm">
+                                <div><span class="font-semibold font-sans text-gray-800">ADS Score:</span> ${service.getNewAdsScore()}</div>
+                                <div><span class="font-semibold font-sans text-gray-800">SIUC Score:</span> ${service.getNewSiucScore()}</div>
+                                <div><span class="font-semibold font-sans text-gray-800">SIDC Score:</span> ${service.getNewSidc2Score()}</div>
+                            </div>
+                            <div class="mt-2 mb-1 font-semibold text-teal-600">Call Changes:</div>
+                            <ul class="text-sm space-y-1">
+                                <#list service.getDependencyMetrics().getCallChanges() as change>
+                                    <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">
+                                        <div class="mb-4">
+                                            <div><span class="font-semibold font-sans text-teal-800">Dest. Service:</span> ${(change.getNewLink().getMsDestination())!"null"}</div>
+                                            <div><span class="font-semibold font-sans text-teal-800">Dest. Route:</span> ${(change.getNewCall().getApi())!"null"}</div>
+                                            <div class="font-mono uppercase"><span class="font-semibold font-sans text-teal-800 normal-case">HttpMethod:</span> ${(change.getNewCall().getHttpMethod())!"null"}</div>
+                                        </div>
+                                        <div ><span class="font-semibold font-sans text-violet-800">Method Name:</span> {$change.getNewCall().getMethodName()}</div>
+                                        <div class="mb-2 italic text-gray-500"><span class="font-semibold font-sans not-italic text-violet-800">FilePath:</span> ${(change.getNewCall().getSourceFile())!"null"}</div>
+
+                                        <div><span class="font-semibold text-red-800">Change:</span> ${change.getChangeType().name()}</div>
+                                        <div><span class="font-semibold text-red-800">Impact:</span> ${change.getImpact().name()}</div>
+                                        <div><span class="font-semibold text-red-800">Risk:</span> [TODO]</div>
+                                    </li>
+                                </#list>
+                            </ul>
+                            <div class="mt-2 mb-1 font-semibold text-teal-600">Endpoint Changes:</div>
+                            <ul class="text-sm space-y-1">
+                                <#list service.getDependencyMetrics().getEndpointChanges() as change>
+                                    <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">
+                                        <#assign old = change.getNewEndpoint()>
+                                        <#assign new = change.getOldEndpoint()>
+                                        <div class="font-mono"><span class="font-semibold font-sans text-teal-800">Endpoint:</span>
+                                            <#if old.getUrl() != new.getUrl()>
+                                                <span class="text-red-800 font-semibold">${old.getUrl()} &rarr; ${new.getUrl()}</span>
+                                            <#else>
+                                                ${new.getUrl()}
+                                            </#if>
+                                        </div>
+                                        <div class="font-mono"><span class="font-semibold font-sans text-teal-800">HttpMethod:</span>
+                                            <#if old.getHttpMethod() != new.getHttpMethod()>
+                                                <span class="text-red-800 font-semibold">${old.getHttpMethod()} &rarr; ${new.getHttpMethod()}</span>
+                                            <#else>
+                                                ${new.getHttpMethod()}
+                                            </#if>
+                                        </div>
+                                        <div class="font-mono"><span class="font-semibold font-sans text-teal-800">Parameters:</span>
+                                            <#if old.getParameterList() != new.getParameterList()>
+                                                <span class="text-red-800 font-semibold">${old.getParameterList()} &rarr; ${new.getParameterList()}</span>
+                                            <#else>
+                                                ${new.getParameterList()}
+                                            </#if>
+                                        </div>
+                                        <div class="font-mono mb-2"><span class="font-semibold font-sans text-teal-800">Return:</span>
+                                            <#if old.getReturnType() != new.getReturnType()>
+                                                <span class="text-red-800 font-semibold">${old.getReturnType()} &rarr; ${new.getReturnType()}</span>
+                                            <#else>
+                                                ${new.getReturnType()}
+                                            </#if>
+                                        </div>
+                                        <div class="mb-2"><span class="font-semibold font-sans text-violet-800">Method Name:</span>
+                                            <#if old.getMethodName() != new.getMethodName()>
+                                                <span class="text-red-800 font-semibold">${old.getMethodName()} &rarr; ${new.getMethodName()}</span>
+                                            <#else>
+                                                ${new.getMethodName()}
+                                            </#if>
+                                        </div>
+                                        <div><span class="font-semibold text-red-800">Change:</span>
+                                            ${change.getChangeType().name()}
+                                        </div>
+                                        <div><span class="font-semibold text-red-800">Impact:</span>
+                                            ${change.getImpact().name()}
+                                        </div>
+                                        <div><span class="font-semibold text-red-800">Risk:</span> [TODO]</div>
+                                    </li>
+                                </#list>
+                            </ul>
+<#--                            <div class="mt-2 mb-1 font-semibold text-blue-700">Entity Changes:</div>-->
+<#--                            <ul class="text-sm">-->
+<#--                                <#list service.getEntityChangeList() as change>-->
+<#--                                    <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">-->
+
+<#--                                    </li>-->
+<#--                                </#list>-->
+<#--                            </ul>-->
+                        </li>
+                    </#list>
                 </ul>
             </div>
         </div>

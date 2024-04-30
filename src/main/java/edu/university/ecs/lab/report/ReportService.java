@@ -2,10 +2,8 @@ package edu.university.ecs.lab.report;
 
 import edu.university.ecs.lab.common.models.MsSystem;
 import edu.university.ecs.lab.common.utils.IRParserUtils;
-import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.impact.metrics.services.MetricsService;
 import edu.university.ecs.lab.impact.models.SystemMetrics;
-import edu.university.ecs.lab.impact.models.change.Metric;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -19,12 +17,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static edu.university.ecs.lab.common.models.enums.ErrorCodes.FREEMARKER_CONFIG_ERROR;
+import static edu.university.ecs.lab.common.models.enums.ErrorCodes.TEMPLATE_PROCESS_ERROR;
+
 /** To use this class, simply call the constructor and then run generateReport() */
 public class ReportService {
-
-  private static final int FREEMARKER_CONFIG_ERROR = 2;
-  private static final int IO_EXCEPTION = 3;
-  private static final int TEMPLATE_PROCESS_ERROR = 4;
+  // TODO get this from the config.json file
   private static final String OUTPUT_PATH = "./out/";
   private static final String TEMPLATE_NAME = "report.ftl";
   private static Configuration config;
@@ -35,19 +33,15 @@ public class ReportService {
 
   /** Destination branch (branch where we are merging INTO, usually main/master) */
   private final String baseBranch;
-
   private final String baseCommit;
+
 
   /** Source branch (branch where pull request is being made FROM)_ */
   private final String compareBranch;
-
   private final String compareCommit;
 
   /** The path to the original system IR */
   private final String intermediatePath;
-
-  /** The path to the system delta */
-  private final String deltaPath;
 
   private final MetricsService metricsService;
 
@@ -55,9 +49,11 @@ public class ReportService {
    * Constructor for ReportService
    *
    * @param baseBranch branch merging into, usually main/master
+   * @param baseCommit commit merging into, on baseBranch
    * @param compareBranch base comparing from, usually feature branch
+   * @param compareCommit commit comparing from, on compareBranch
    * @param intermediatePath path to the original system IR
-   * @param deltaPath path to the system delta
+   * @param newIntermediatePath path to the new system IR
    * @throws NullPointerException if either path is null
    */
   ReportService(
@@ -66,15 +62,15 @@ public class ReportService {
       String compareBranch,
       String compareCommit,
       String intermediatePath,
+      String newIntermediatePath,
       String deltaPath)
       throws NullPointerException, IOException {
     this.intermediatePath = Objects.requireNonNull(intermediatePath);
-    this.deltaPath = Objects.requireNonNull(deltaPath);
-    this.metricsService = new MetricsService(intermediatePath, deltaPath);
     this.baseBranch = baseBranch;
     this.compareBranch = compareBranch;
     this.baseCommit = baseCommit;
     this.compareCommit = compareCommit;
+    this.metricsService = new MetricsService(intermediatePath, newIntermediatePath, deltaPath);
   }
 
   /** Generate freemarker report, should be put into /out by default */
@@ -82,7 +78,6 @@ public class ReportService {
     /* Create a data-model */
     Map<String, Object> root = new HashMap<>();
     MsSystem system = IRParserUtils.parseIRSystem(intermediatePath);
-    SystemChange deltas = IRParserUtils.parseSystemChange(deltaPath);
 
     /* Base System Information */
     root.put("msName", system.getSystemName());
@@ -91,7 +86,6 @@ public class ReportService {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a");
     root.put("dateTime", LocalDateTime.now().format(formatter));
 
-    // TODO make this dynamic from config file
     root.put("branch1", baseBranch);
     root.put("commit1", baseCommit);
     root.put("branch2", compareBranch);
@@ -99,10 +93,8 @@ public class ReportService {
 
     /* Metrics */
     SystemMetrics systemMetrics = metricsService.generateSystemMetrics();
-    List<Metric> serviceMetrics = metricsService.getPlaceholders();
 
     root.put("systemMetrics", systemMetrics);
-    root.put("serviceMetrics", serviceMetrics);
 
     /* Get the template (uses cache internally) */
     Template template = null;
@@ -112,12 +104,9 @@ public class ReportService {
       Writer out = new FileWriter(OUTPUT_PATH + getReportFileName());
       template.process(root, out);
       out.close();
-    } catch (IOException e) {
-      System.err.println("Error reading template: " + e.getMessage());
-      System.exit(IO_EXCEPTION);
-    } catch (TemplateException e) {
+    } catch (IOException | TemplateException e) {
       System.err.println("Error processing template: " + e.getMessage());
-      System.exit(TEMPLATE_PROCESS_ERROR);
+      System.exit(TEMPLATE_PROCESS_ERROR.ordinal());
     }
   }
 
@@ -144,7 +133,7 @@ public class ReportService {
       config.setSQLDateAndTimeTimeZone(TimeZone.getDefault());
     } catch (IOException e) {
       System.err.println("Error configuring Freemarker: " + e.getMessage());
-      System.exit(FREEMARKER_CONFIG_ERROR);
+      System.exit(FREEMARKER_CONFIG_ERROR.ordinal());
     }
   }
 }

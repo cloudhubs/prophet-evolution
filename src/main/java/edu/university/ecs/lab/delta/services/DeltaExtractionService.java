@@ -1,215 +1,153 @@
 package edu.university.ecs.lab.delta.services;
 
-import edu.university.ecs.lab.common.models.enums.ClassRole;
-import edu.university.ecs.lab.common.utils.FullCimetUtils;
+import edu.university.ecs.lab.common.config.models.InputConfig;
+import edu.university.ecs.lab.common.config.models.InputRepository;
+import edu.university.ecs.lab.common.models.JClass;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
-import edu.university.ecs.lab.delta.utils.DeltaComparisonUtils;
+import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.utils.GitFetchUtils;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Repository;
 
-import javax.json.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static edu.university.ecs.lab.common.models.enums.ErrorCodes.DELTA_EXTRACTION_FAIL;
+import static edu.university.ecs.lab.common.utils.SourceToObjectUtils.parseClass;
 
 /**
  * Service for extracting the differences between a local and remote repository and generating delta
- * son.
  */
 public class DeltaExtractionService {
-  /** The GitFetchUtils object for fetching git differences */
-  private final GitFetchUtils gitFetchUtils = new GitFetchUtils();
 
-  /** Service to compare service dependency model to the git differences */
-  private final DeltaComparisonUtils comparisonUtils = new DeltaComparisonUtils();
+  /** The branch to compare to */
+  private final String branch;
+
+  /** Config file, defaults to config.json */
+  private final InputConfig config;
 
   /**
-   * Wrapper of {@link GitFetchUtils#establishLocalEndpoint(String)} a local endpoint for the given
-   * repository path.
+   * Constructor for the delta extraction service.
    *
-   * @param path the path to the repository
-   * @return the repository object
-   * @throws IOException if an I/O error occurs
+   * @param branch the branch to compare to
+   * @param config input configuration file
    */
-  public Repository establishLocalEndpoint(String path) throws IOException {
-    return gitFetchUtils.establishLocalEndpoint(path);
+  public DeltaExtractionService(String branch, InputConfig config) {
+    this.branch = branch;
+    this.config = config;
   }
 
   /**
-   * Wrapper of {@link GitFetchUtils#fetchRemoteDifferences(Repository, String)} fetch the
-   * differences between the local repository (established from {@link
-   * #establishLocalEndpoint(String)} and remote repository.
-   *
-   * @param repo the repository object established by {@link #establishLocalEndpoint(String)}
-   * @param branch the branch name to compare to the local repository
-   * @return the list of differences
-   * @throws Exception if an error from {@link GitFetchUtils#fetchRemoteDifferences(Repository,
-   *     String)}
+   * Top level generate the delta between the local and remote repository.
+   * @return set of output file names generated
    */
-  public List<DiffEntry> fetchRemoteDifferences(Repository repo, String branch) throws Exception {
-    return gitFetchUtils.fetchRemoteDifferences(repo, branch);
+  public Set<String> generateDelta() {
+    Set<String> outputNames = new HashSet<>();
+
+    // iterate through each repository path
+    for (InputRepository inputRepository : config.getRepositories()) {
+        try (Repository localRepo = GitFetchUtils.establishLocalEndpoint(config.getLocalPath(inputRepository))) {
+            // point to local repository
+
+            // extract remote differences with local
+            List<DiffEntry> differences = GitFetchUtils.fetchRemoteDifferences(localRepo, branch);
+
+            // process/write differences to delta output
+            String outputFile = this.processDifferences(differences, inputRepository);
+            outputNames.add(outputFile);
+        } catch (Exception e) {
+            System.err.println("Error extracting delta: " + e.getMessage());
+            System.exit(DELTA_EXTRACTION_FAIL.ordinal());
+        }
+    }
+    return outputNames;
   }
 
   /**
    * Process the differences between the local and remote repository and write the differences to a
-   * file. Differences can be generated from {@link #fetchRemoteDifferences(Repository, String)}
+   * file. Differences can be generated from {@link GitFetchUtils#fetchRemoteDifferences(Repository, String)}
    *
-   * @param path the path to the microservice TLD
-   * @param repo the repository object established by {@link #establishLocalEndpoint(String)}
-   * @param diffEntries the list of differences extracted from {@link
-   *     #fetchRemoteDifferences(Repository, String)}
-   * @throws IOException if an I/O error occurs
+   * @param diffEntries the list of differences extracted
+   * @param inputRepo   the input repo to handle
+   * @return the name of the output file generated
+   * @throws IOException  if a failure occurs while trying to write to the file
    */
-  public void processDifferences(
-      String msPath, Repository repo, List<DiffEntry> diffEntries, String path)
-      throws IOException, InterruptedException {
+  public String processDifferences(List<DiffEntry> diffEntries, InputRepository inputRepo) throws IOException {
 
-    advanceLocalRepo(path);
+    // Set local repo to latest commit
+    advanceLocalRepo(inputRepo);
 
-    JsonObjectBuilder finalOutputBuilder = Json.createObjectBuilder();
+    // All java files
+    List<DiffEntry> filteredEntries = diffEntries.stream()
+            .filter(diffEntry ->
+                    {
+                      if (DiffEntry.ChangeType.DELETE.equals(diffEntry.getChangeType())) {
+                        return diffEntry.getOldPath().endsWith(".java");
+                      } else {
+                        return diffEntry.getNewPath().endsWith(".java");
+                      }
+                    })
+            .collect(Collectors.toUnmodifiableList());
 
-    // Lists for changed objects aka files
-    List<JsonObject> controllers = new ArrayList<>();
-    List<JsonObject> services = new ArrayList<>();
-    List<JsonObject> dtos = new ArrayList<>();
-    List<JsonObject> repositories = new ArrayList<>();
-    List<JsonObject> entities = new ArrayList<>();
+    SystemChange systemChange = new SystemChange();
 
     // process each difference
-    for (DiffEntry entry : diffEntries) {
-      // skip non-Java files but also include deleted files
-      if (!entry.getNewPath().endsWith(".java") && !entry.getNewPath().equals("/dev/null")) {
-        continue;
+    for (DiffEntry entry : filteredEntries) {
+      String basePath = config.getLocalPath(inputRepo) + "/";
+      System.out.println("Extracting changes from: " + basePath);
+
+      boolean isDeleted = DiffEntry.ChangeType.DELETE.equals(entry.getChangeType());
+      String localPath = isDeleted ? basePath + entry.getOldPath() : basePath + entry.getNewPath();
+      File classFile = new File(localPath);
+
+      JClass jClass = null;
+      try {
+        if (!Objects.equals(DiffEntry.ChangeType.DELETE, entry.getChangeType())) {
+          jClass = parseClass(classFile, config);
+        } else {
+          // TODO implement delete logic (remove the continue;)
+          System.out.println("Deleted file detected, not yet implemented: " + classFile.getAbsolutePath());
+          continue;
+        }
+      } catch (IOException e) {
+        System.err.println("Error parsing class file: " + classFile.getAbsolutePath());
+        System.err.println(e.getMessage());
+        System.exit(DELTA_EXTRACTION_FAIL.ordinal());
       }
 
-      // String changeURL = gitFetchUtils.getGithubFileUrl(repo, entry);
-      System.out.println("Extracting changes from: " + msPath);
-      String oldPath = msPath + "/" + entry.getOldPath();
-      String newPath = msPath + "/" + entry.getNewPath();
-
-      JsonObject deltaChanges = JsonValue.EMPTY_JSON_OBJECT;
-
-      ClassRole classRole = null;
-      // If the new path is null, it is a delete and we use old path to parse classtype, otherwise
-      // we use newpath
-      String localPath =
-          "./" + (entry.getNewPath().equals("/dev/null") ? entry.getOldPath() : entry.getNewPath());
-      File file = new File(entry.getNewPath().equals("/dev/null") ? oldPath : newPath);
-
-      if (file.getName().contains("Controller")) {
-        controllers.add(
-            constructObjectFromDelta(
-                ClassRole.CONTROLLER,
-                getDeltaChanges(entry, file, ClassRole.CONTROLLER, localPath, path),
-                entry,
-                localPath));
-      } else if (file.getName().contains("Service")) {
-        services.add(
-            constructObjectFromDelta(
-                ClassRole.SERVICE,
-                getDeltaChanges(entry, file, ClassRole.SERVICE, localPath, path),
-                entry,
-                localPath));
-      } else if (file.getName().toLowerCase().contains("dto")) {
-        dtos.add(
-            constructObjectFromDelta(
-                ClassRole.DTO,
-                getDeltaChanges(entry, file, ClassRole.DTO, localPath, path),
-                entry,
-                localPath));
-      } else if (file.getName().contains("Repository")) {
-        repositories.add(
-            constructObjectFromDelta(
-                ClassRole.REPOSITORY,
-                getDeltaChanges(entry, file, ClassRole.REPOSITORY, localPath, path),
-                entry,
-                localPath));
-      } else if (file.getParent().toLowerCase().contains("entity")
-          || file.getParent().toLowerCase().contains("model")) {
-        entities.add(
-            constructObjectFromDelta(
-                ClassRole.ENTITY,
-                getDeltaChanges(entry, file, ClassRole.ENTITY, localPath, path),
-                entry,
-                localPath));
-      }
+      systemChange.addChange(jClass, entry, localPath);
 
       System.out.println(
           "Change impact of type " + entry.getChangeType() + " detected in " + entry.getNewPath());
     }
 
-    // write differences to output file
-    finalOutputBuilder.add("controllers", convertListToJsonArray(controllers));
-    finalOutputBuilder.add("services", convertListToJsonArray(services));
-    finalOutputBuilder.add("repositories", convertListToJsonArray(repositories));
-    finalOutputBuilder.add("dtos", convertListToJsonArray(dtos));
-    finalOutputBuilder.add("entities", convertListToJsonArray(entities));
 
     String outputName = "./out/delta-changes-[" + (new Date()).getTime() + "].json";
-    FullCimetUtils.pathToDelta = outputName;
-    MsJsonWriter.writeJsonToFile(finalOutputBuilder.build(), outputName);
+
+    MsJsonWriter.writeJsonToFile(systemChange.toJsonObject(), outputName);
 
     System.out.println("Delta extracted: " + outputName);
+
+    return outputName;
   }
 
-  private static JsonObject getDeltaChanges(
-      DiffEntry entry, File file, ClassRole classRole, String localPath, String rootPath) {
-    switch (entry.getChangeType()) {
-      case MODIFY:
-        return DeltaComparisonUtils.extractDeltaChanges(
-            new File(rootPath + localPath.substring(1)), classRole);
-      case COPY:
-      case DELETE:
-        break;
-      case RENAME:
-      case ADD:
-        return DeltaComparisonUtils.extractDeltaChanges(
-            new File(rootPath + localPath.substring(1)), classRole);
-      default:
-        break;
+  /**
+   * Advance the local repository to the latest commit on the remote branch.
+   *
+   * @param inputRepository the input repository to advance
+   */
+  private void advanceLocalRepo(InputRepository inputRepository) {
+    try {
+      ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", "origin/main");
+      processBuilder.directory(new File(Path.of(config.getLocalPath(inputRepository)).toAbsolutePath().toString()));
+      processBuilder.redirectErrorStream(true);
+      Process process = processBuilder.start();
+      int exitCode = process.waitFor();
+    } catch (IOException | InterruptedException e) {
+      System.err.println("Error advancing local repository: " + e.getMessage());
+      System.exit(DELTA_EXTRACTION_FAIL.ordinal());
     }
-
-    return JsonValue.EMPTY_JSON_OBJECT;
-  }
-
-  private static JsonObject constructObjectFromDelta(
-      ClassRole classRole, JsonObject deltaChanges, DiffEntry entry, String path) {
-    JsonObjectBuilder jout = Json.createObjectBuilder();
-    String msName =
-        (entry.getNewPath().equals("/dev/null")
-            ? entry.getOldPath().substring(0, entry.getOldPath().indexOf('/'))
-            : entry.getNewPath().substring(0, entry.getNewPath().indexOf('/')));
-    jout.add("localPath", path);
-    jout.add("changeType", entry.getChangeType().name());
-    jout.add("commitId", entry.getNewId().name());
-    if (classRole == ClassRole.CONTROLLER) {
-      jout.add("cChange", deltaChanges);
-
-    } else if (classRole == ClassRole.SERVICE) {
-      jout.add("sChange", deltaChanges);
-
-    } else {
-      jout.add("changes", deltaChanges);
-    }
-    jout.add("msName", msName);
-
-    return jout.build();
-  }
-
-  private static void advanceLocalRepo(String path) throws IOException, InterruptedException {
-    ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", "origin/main");
-    processBuilder.directory(new File(Path.of(path).toAbsolutePath().toString()));
-    processBuilder.redirectErrorStream(true);
-    Process process = processBuilder.start();
-    int exitCode = process.waitFor();
-  }
-
-  private static JsonArray convertListToJsonArray(List<JsonObject> jsonObjectList) {
-    JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-    for (JsonObject jsonObject : jsonObjectList) {
-      arrayBuilder.add(jsonObject);
-    }
-    return arrayBuilder.build();
   }
 }
