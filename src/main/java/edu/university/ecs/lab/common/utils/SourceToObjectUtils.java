@@ -184,12 +184,9 @@ public class SourceToObjectUtils {
               break;
           }
 
-          if (httpMethod == null) {
-            System.err.println("Could not determine httpMethod for endpoint: " + url + " in " + md.getNameAsString() + " in " + sourceFile.getName());
-            continue;
+          if (httpMethod != null) {
+            endpoints.add(new Endpoint(parseMethod(md), url, decorator, httpMethod, msId));
           }
-
-          endpoints.add(new Endpoint(parseMethod(md), url, decorator, httpMethod, msId));
         }
       }
     }

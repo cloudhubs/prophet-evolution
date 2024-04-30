@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.util.List;
@@ -81,5 +82,54 @@ public class RestCall extends MethodCall {
   public String getId() {
     return msId + "#" + calledFrom + "[" + httpMethod + "]"
             + "->" + destMsId + ":" + destEndpoint;
+  }
+
+  /**
+   * Represents a call as an endpoint source.
+   */
+  @Getter
+  @EqualsAndHashCode
+  public static class EndpointCall implements JsonSerializable {
+    @SerializedName("src-msId")
+    private String msId;
+    @SerializedName("src-id")
+    private String id;
+    @SerializedName("src-file")
+    private String srcFile;
+
+    /**
+     * Convert constructor to EndpointCall
+     * @param call RestCall object
+     */
+    public EndpointCall(RestCall call, JService service) {
+      this.msId = call.getMsId();
+      this.id = call.getId();
+      this.srcFile = service.getClassPath();
+    }
+
+    /**
+     * Check if the given call matches this call.
+     *
+     * @param call The call to compare with
+     * @return True if the calls match, false otherwise
+     */
+    public boolean matches(RestCall call) {
+      return this.msId.equals(call.getMsId()) && this.id.equals(call.getId());
+    }
+
+    /**
+     * @return Converted JsonObject of RestCall object
+     */
+    @Override
+    public JsonObject toJsonObject() {
+      // Get "restCall" methodCalls in service
+      JsonObjectBuilder restCallBuilder = Json.createObjectBuilder();
+
+      restCallBuilder.add("src-msId", msId);
+      restCallBuilder.add("src-id", id);
+      restCallBuilder.add("src-file", srcFile);
+
+      return restCallBuilder.build();
+    }
   }
 }

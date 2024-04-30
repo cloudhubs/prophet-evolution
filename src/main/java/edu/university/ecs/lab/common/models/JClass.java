@@ -16,8 +16,6 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.*;
  * declarations, method calls, fields, etc.
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @ToString
 @Builder
 public class JClass implements JsonSerializable {
@@ -42,6 +40,28 @@ public class JClass implements JsonSerializable {
     return classRole.name() + ":" + msId + "#" + className;
   }
 
+  public void setClassPath(String classPath) {
+    this.classPath = classPath.replaceAll("\\\\", "/");
+  }
+
+  public JClass(String className,
+                String classPath,
+                String packageName,
+                ClassRole classRole,
+                List<Method> methods,
+                List<Field> fields,
+                List<MethodCall> methodCalls,
+                String msId) {
+    this.className = className;
+    setClassPath(classPath);
+    this.packageName = packageName;
+    this.classRole = classRole;
+    this.methods = methods;
+    this.fields = fields;
+    this.methodCalls = methodCalls;
+    this.msId = msId;
+  }
+
   /**
    * Convert a single JClass to a JsonObject
    *
@@ -56,7 +76,7 @@ public class JClass implements JsonSerializable {
     JsonObjectBuilder jClassBuilder = Json.createObjectBuilder();
 
     jClassBuilder.add("className", this.className);
-    jClassBuilder.add("classPath", this.classPath.replaceAll("\\\\", "/"));
+    jClassBuilder.add("classPath", this.classPath);
     jClassBuilder.add("packageName", this.packageName);
     jClassBuilder.add("classRole", this.classRole.name());
     jClassBuilder.add("msId", msId);

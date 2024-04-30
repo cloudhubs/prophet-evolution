@@ -14,7 +14,6 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class JService extends JClass implements JsonSerializable {
   private List<RestCall> restCalls;
 

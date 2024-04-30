@@ -19,34 +19,46 @@ public class EndpointChange {
   List<Link> oldLinkList;
   List<Link> newLinkList;
   ChangeType changeType;
+  boolean isChanged;
 
   EndpointImpact impact;
   List<RestCall> brokenRestCalls;
 
 
-  public EndpointChange(
+  private EndpointChange(
       Endpoint oldEndpoint,
       Endpoint newEndpoint,
       List<Link> oldLinkList,
       List<Link> newLinkList,
       ChangeType changeType) {
+
     this.oldEndpoint = oldEndpoint;
     this.newEndpoint = newEndpoint;
     this.oldLinkList = oldLinkList;
     this.newLinkList = newLinkList;
     this.changeType = changeType;
+
+    // TODO decide impact in this class
     this.impact = EndpointImpact.NONE;
+
+    //TODO set is changed
+    this.isChanged = isChanged(oldEndpoint, newEndpoint);
   }
 
   /**
-   * Build the changes between two controllers.
+   * Build the changes between two endpoints.
    *
-   * @param oldController
-   * @param newController
-   * @return
+   * @param oldEnd original endpoint
+   * @param newEnd new endpoint
+   * @return object representing change between the two endpoints
    */
   public static EndpointChange buildChange(Endpoint oldEnd, Endpoint newEnd) {
-
+    if (oldEnd == null && newEnd == null) {
+      return null;
+    }
+    if (oldEnd == null) {
+      //return addOrDeleteControllerChange(newEnd, newEnd.getSrcCalls(), ChangeType.ADD);
+    }
     return null;
   }
 
@@ -62,6 +74,6 @@ public class EndpointChange {
   }
 
   public static boolean isChanged(Endpoint oldEndpoint, Endpoint newEndpoint) {
-
+    return false;
   }
 }

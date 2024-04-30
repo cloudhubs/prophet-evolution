@@ -36,6 +36,7 @@ public class MetricsService {
   public MetricsService(String oldIrPath, String newIrPath, String deltaPath) throws IOException {
     oldMicroserviceMap = IRParserUtils.parseIRSystem(oldIrPath).getServiceMap();
     newMicroserviceMap = IRParserUtils.parseIRSystem(newIrPath).getServiceMap();
+
     SystemChange systemChange = IRParserUtils.parseSystemChange(deltaPath);
     classMetricsService = new ClassMetricsService(systemChange);
     microserviceMetricsService = new MicroserviceMetricsService(oldMicroserviceMap, newMicroserviceMap);

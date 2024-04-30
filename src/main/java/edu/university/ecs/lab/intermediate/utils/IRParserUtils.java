@@ -25,7 +25,7 @@ public class IRParserUtils {
                                         .findAny()
                                         .ifPresent(endpoint -> {
                                             restCall.setDestination(controller);
-                                            endpoint.addCall(restCall);
+                                            endpoint.addCall(restCall, service);
                                         });
                             });
                         }
