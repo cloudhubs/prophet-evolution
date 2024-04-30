@@ -39,11 +39,11 @@ public class GitFetchUtils {
    * Fetch the differences between the local repository and the remote repository.
    *
    * @param repo the repository object established by {@link #establishLocalEndpoint(String)}
-   * @param branch the branch name to compare to the local repository
+   * @param commit the commit to compare to the local repository
    * @return the list of differences
    * @throws Exception as generated from {@link FetchCommand#call()} or {@link DiffCommand#call()}
    */
-  public static List<DiffEntry> fetchRemoteDifferences(Repository repo, String branch)
+  public static List<DiffEntry> fetchRemoteDifferences(Repository repo, String commit)
       throws Exception {
     try (Git git = new Git(repo)) {
       // fetch latest changes from remote
@@ -53,9 +53,9 @@ public class GitFetchUtils {
         // get the difference between local main and origin/main
         return git.diff()
             .setOldTree(prepareLocalTreeParser(repo))
-            .setNewTree(
-                prepareRemoteTreeParser(
-                    reader, repo, "refs/remotes/origin/" + branch)) // current local branch
+                .setNewTree(
+                        prepareRemoteTreeParser(
+                                reader, repo, commit))
             .call();
       }
     }
@@ -67,15 +67,15 @@ public class GitFetchUtils {
    *
    * @param reader the jgit reader
    * @param repo the jgit repository object
-   * @param ref the reference to the repository branch
+   * @param sourceCommit the commit hash of the source branch
    * @return the canonical tree parser
    * @throws IOException if an I/O error occurs from parsing the tree
    */
   private static CanonicalTreeParser prepareRemoteTreeParser(
-      ObjectReader reader, Repository repo, String ref) throws IOException {
+      ObjectReader reader, Repository repo, String sourceCommit) throws IOException {
     try (RevWalk walk = new RevWalk(reader)) {
-      Ref head = repo.exactRef(ref);
-      RevCommit commit = repo.parseCommit(head.getObjectId());
+      ObjectId commitObj = repo.resolve(sourceCommit);
+      RevCommit commit = repo.parseCommit(commitObj);
       RevTree tree = walk.parseTree(commit.getTree().getId());
 
       CanonicalTreeParser treeParser = new CanonicalTreeParser();

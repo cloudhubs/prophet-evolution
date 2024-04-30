@@ -3,6 +3,7 @@ package edu.university.ecs.lab.delta.services;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.JClass;
+import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.utils.GitFetchUtils;
@@ -26,7 +27,7 @@ public class DeltaExtractionService {
   private final String branch;
 
   /** The Commit to compare to */
-  private final String commit;
+  private final String sourceCommit;
 
   /** Config file, defaults to config.json */
   private final InputConfig config;
@@ -39,7 +40,7 @@ public class DeltaExtractionService {
    */
   public DeltaExtractionService(String branch, String commit, InputConfig config) {
     this.branch = branch;
-    this.commit = commit;
+    this.sourceCommit = commit;
     this.config = config;
   }
 
@@ -58,7 +59,7 @@ public class DeltaExtractionService {
         // point to local repository
 
         // extract remote differences with local
-        List<DiffEntry> differences = GitFetchUtils.fetchRemoteDifferences(localRepo, branch);
+        List<DiffEntry> differences = GitFetchUtils.fetchRemoteDifferences(localRepo, sourceCommit);
 
         // process/write differences to delta output
         String outputFile = this.processDifferences(differences, inputRepository);
@@ -134,7 +135,7 @@ public class DeltaExtractionService {
           "Change impact of type " + entry.getChangeType() + " detected in " + entry.getNewPath());
     }
 
-    String outputName = "./out/delta-changes-[" + (new Date()).getTime() + "].json";
+    String outputName = "./out/delta-changes-[" + branch + "-" + sourceCommit + "].json";
 
     MsJsonWriter.writeJsonToFile(systemChange.toJsonObject(), outputName);
 
@@ -150,7 +151,7 @@ public class DeltaExtractionService {
    */
   private void advanceLocalRepo(InputRepository inputRepository) {
     try {
-      ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", "origin/main");
+      ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", sourceCommit);
       processBuilder.directory(
           new File(Path.of(config.getLocalPath(inputRepository)).toAbsolutePath().toString()));
       processBuilder.redirectErrorStream(true);

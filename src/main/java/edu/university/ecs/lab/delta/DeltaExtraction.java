@@ -14,7 +14,7 @@ import java.util.*;
  */
 public class DeltaExtraction {
   /**
-   * Compares the branch specified in the configuration file to the most recent commit on the remote
+   * Compares the branch specified in the Rest Extraction file to a commit on the remote
    * repository branch name specified in the arguments and generates the delta file.
    *
    * @param args {@literal <branch name> <commit> [/path/to/config]} TODO branch WILL NOT WORK unless it is
