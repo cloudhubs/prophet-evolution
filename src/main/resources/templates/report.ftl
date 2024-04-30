@@ -99,7 +99,7 @@
                                 <div><span class="font-semibold font-sans text-gray-800">SIDC Score:</span> ${service.getNewSidc2Score()}</div>
                             </div>
                             <div class="mt-2 mb-1 font-semibold text-teal-600">Call Changes:</div>
-                            <ul class="text-sm">
+                            <ul class="text-sm space-y-1">
                                 <#list service.getDependencyMetrics().getCallChanges() as change>
                                     <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">
                                         <div class="mb-4">
@@ -117,7 +117,7 @@
                                 </#list>
                             </ul>
                             <div class="mt-2 mb-1 font-semibold text-teal-600">Endpoint Changes:</div>
-                            <ul class="text-sm">
+                            <ul class="text-sm space-y-1">
                                 <#list service.getDependencyMetrics().getEndpointChanges() as change>
                                     <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">
                                         <#assign old = change.getNewEndpoint()>
@@ -167,7 +167,7 @@
                                     </li>
                                 </#list>
                             </ul>
-                            <div class="mt-2 mb-1 font-semibold text-blue-700">Entity Changes:</div>
+<#--                            <div class="mt-2 mb-1 font-semibold text-blue-700">Entity Changes:</div>-->
 <#--                            <ul class="text-sm">-->
 <#--                                <#list service.getEntityChangeList() as change>-->
 <#--                                    <li class="gap-4 rounded-lg bg-gray-200 px-4 py-2">-->
