@@ -3,7 +3,6 @@ package edu.university.ecs.lab.delta.services;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.JClass;
-import edu.university.ecs.lab.common.utils.SourceToObjectUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.utils.GitFetchUtils;
@@ -16,6 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static edu.university.ecs.lab.common.models.enums.ErrorCodes.DELTA_EXTRACTION_FAIL;
+import static edu.university.ecs.lab.common.utils.SourceToObjectUtils.parseClass;
 
 /**
  * Service for extracting the differences between a local and remote repository and generating delta
@@ -105,9 +105,9 @@ public class DeltaExtractionService {
       JClass jClass = null;
       try {
         if (!Objects.equals(DiffEntry.ChangeType.DELETE, entry.getChangeType())) {
-          jClass = SourceToObjectUtils.parseClass(classFile, config);
+          jClass = parseClass(classFile, config);
         } else {
-          // TODO delete logic and remove the continue;
+          // TODO implement delete logic (remove the continue;)
           System.out.println("Deleted file detected, not yet implemented: " + classFile.getAbsolutePath());
           continue;
         }

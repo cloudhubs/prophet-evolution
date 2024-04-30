@@ -1,10 +1,8 @@
 package edu.university.ecs.lab.impact.metrics.services;
 
 import edu.university.ecs.lab.common.models.*;
-import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import edu.university.ecs.lab.impact.models.change.EndpointChange;
-import edu.university.ecs.lab.impact.models.change.Link;
 import edu.university.ecs.lab.impact.models.enums.EndpointImpact;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,40 +42,24 @@ public class EndpointChangeService {
         Objects.requireNonNull(oldMicroservice, "Old microservice cannot be null during endpoint metrics collection.");
         Objects.requireNonNull(newMicroservice, "Old microservice cannot be null during endpoint metrics collection.");
 
-        String msId = newMicroservice.getId();
-
-        // Find all their endpoints
-        List<JController> oldControllers = oldMicroservice.getControllers();
-        List<JController> newControllers = newMicroservice.getControllers();
-
-
         // Build endpoint changes
         List<EndpointChange> endpointChanges = new ArrayList<>();
 
         // Parse existing and deleted controllers (if deleted, newController is null)
-        for (JController oldController : oldControllers) {
-            JController newController = newControllers.stream().filter(oldController::matchClassPath).findFirst().orElse(null);
-
-            List<EndpointChange> controllerChanges = getControllerEndpointChanges(oldController, newController);
-            if (controllerChanges != null) {
-                endpointChanges.addAll(controllerChanges);
-            }
+        for (JController oldController : oldMicroservice.getControllers()) {
+            JController newController = newMicroservice.getControllers().stream().filter(oldController::matchClassPath).findFirst().orElse(null);
+            endpointChanges.addAll(getControllerEndpointChanges(oldController, newController));
         }
 
         // Add changes for newly created controllers (oldController is null)
-        newControllers.stream()
-                .filter(newController -> oldControllers.stream().noneMatch(newController::matchClassPath))
-                .forEach(newController -> {
-                    List<EndpointChange> controllerChanges = getControllerEndpointChanges(null, newController);
-                    if (controllerChanges != null) {
-                        endpointChanges.addAll(controllerChanges);
-                    }
-                });
+        newMicroservice.getControllers().stream()
+                .filter(newController -> oldMicroservice.getControllers().stream().noneMatch(newController::matchClassPath))
+                .forEach(newController -> endpointChanges.addAll(getControllerEndpointChanges(null, newController)));
 
 
-        updateEndpointChangeImpact(endpointChanges, msId);
+        endpointChanges.forEach(this::checkBreakingDependentCall);
 
-        return filterNoImpact(endpointChanges);
+        return filterNoChange(endpointChanges);
     }
 
     /**
@@ -95,10 +77,9 @@ public class EndpointChangeService {
             Objects.requireNonNull(singleController, "Both controllers are null during metrics collection, this should not happen.");
             return singleController.getEndpoints().stream()
                     .map(endpoint ->
-                            EndpointChange.addOrDeleteControllerChange(
-                                    endpoint,
-                                    getEndpointLinks(endpoint, singleController.getMsId(), isDelete),
-                                    isDelete ? ChangeType.DELETE : ChangeType.ADD))
+                            EndpointChange.buildChange(
+                                    isDelete ? endpoint : null,
+                                    isDelete ? null : endpoint))
                     .collect(Collectors.toList());
         }
 
@@ -138,57 +119,17 @@ public class EndpointChangeService {
     }
 
 
-    private void updateEndpointChangeImpact(List<EndpointChange> endpointChangeList, String microserviceName) {
-        // Check for CALL_TO_DEPRECATED_ENDPOINT
-        for(EndpointChange endpointChange : endpointChangeList) {
-            if (Objects.isNull(endpointChange.getOldEndpoint()) || Objects.isNull(endpointChange.getNewEndpoint())) {
-                continue;
-            }
-            if(!checkInconsistentEndpoint(endpointChange)) {
-                if (!checkUnusedCall(endpointChange, microserviceName)) {
-                    checkBreakingDependentCall(endpointChange, microserviceName);
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Get's all links that exist between the endpoint and services that call
-     * this endpoint
-     *
-     * @param endpoint
-     * @param microserviceName
-     * @return
-     */
-    // TODO lets just store this in the endpoint object as we parse it in the delta
-    private List<Link> getEndpointLinks(Endpoint endpoint, String microserviceName, boolean oldMap) {
-        List<Link> linkList = new ArrayList<>();
-
-        for (Microservice microservice : (oldMap ? oldMicroserviceMap.values() : newMicroserviceMap.values())) {
-            if (microservice.getId().equals(microserviceName)) {
-                continue;
-            }
-
-            for (JService service : microservice.getServices()) {
-                for (RestCall restCall : service.getRestCalls()) {
-                    if (endpoint.getUrl().equals(restCall.getDestEndpoint())) {
-                        linkList.add(new Link(microservice.getId(), microserviceName));
-                    }
-                }
-            }
-        }
-
-        return linkList;
-    }
-
-    private boolean checkBreakingDependentCall(EndpointChange endpointChange, String microserviceName) {
+    // TODO see if we can move this into the endpoint change class as a static method, and even better set it during constructor
+    // TODO update logic now that we have the new rest call changes
+    private void checkBreakingDependentCall(EndpointChange endpointChange) {
         List<RestCall> brokenRestCalls = new ArrayList<>();
 
-        // Not directly breaking dependents if it isn't a delete
+        // Not directly breaking dependents if it isn't DELETE
         if(endpointChange.getChangeType() != ChangeType.DELETE) {
-            return false;
+            return;
         }
+
+        String microserviceName = endpointChange.getOldEndpoint().getMsId();
 
         for(Microservice microservice : newMicroserviceMap.values()) {
             if(microservice.getId().equals(microserviceName)) {
@@ -204,75 +145,22 @@ public class EndpointChangeService {
             }
         }
 
-
         // No impact if no dependent calls were found
         if(brokenRestCalls.isEmpty()) {
-            return false;
+            return;
         }
-
 
         endpointChange.setBrokenRestCalls(brokenRestCalls);
-        endpointChange.setImpact(EndpointImpact.BREAKING_DEPENDENT_CALL);
+        endpointChange.setImpact(EndpointImpact.BROKE_DEPENDENT_CALLS);
 
-        return true;
     }
 
-    private boolean checkUnusedCall(EndpointChange endpointChange, String microserviceName) {
-        /*
-            If we remove an endpoint that make a call to a service with an api call that will no longer be called
-            TODO Must be done via flows so WIP, no way to easily create flows from delta change + IR (must merge probably)
-         */
-        if(endpointChange.getChangeType() != ChangeType.DELETE) {
-            return false;
-        }
-
-        Microservice oldMicroservice = oldMicroserviceMap.get(microserviceName);
-        Microservice newMicroservice = oldMicroserviceMap.get(microserviceName);
-
-        List<Flow> oldFlows = buildFlows(oldMicroservice);
-        List<Flow> newFlows = buildFlows(newMicroservice);
-
-        for(Flow flow : oldFlows) {
-            // If the flow contains the same controller methodName as the endpoint deleted && it calls a service method
-            if(flow.getControllerMethod().getMethodName().equals(endpointChange.getOldEndpoint().getMethodName())
-            && Objects.nonNull(flow.getServiceMethodCall()) && Objects.nonNull(flow.getService())) {
-
-                // If we find a restcall whose parent is the same service method called in the flow, it is now cut off
-                // TODO assumption here is only one endpoint calls a service method, not necessarily true
-                for(RestCall restCall : ((JService) flow.getService()).getRestCalls()) {
-                    if(restCall.getMsId().equals(flow.getServiceMethod().getMethodName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-
-    private boolean checkInconsistentEndpoint(EndpointChange endpointChange) {
-        if(endpointChange.getChangeType() != ChangeType.MODIFY) {
-            return false;
-        }
-
-        if(Objects.equals(endpointChange.getOldEndpoint().getUrl(), endpointChange.getNewEndpoint().getUrl())
-        && checkParameterEquivalence(endpointChange.getOldEndpoint().getParameterList(), endpointChange.getNewEndpoint().getParameterList())
-        && Objects.equals(endpointChange.getOldEndpoint().getReturnType(), endpointChange.getNewEndpoint().getReturnType())) {
-            return false;
-        }
-
-        endpointChange.setImpact(EndpointImpact.INCONSISTENT_ENDPOINT);
-        return true;
-    }
-
-    // TODO technically this isn't accurate, we can say if the same parameters but different order isn't really a change
-    private boolean checkParameterEquivalence(String paramListOld, String paramListNew) {
-
-        return Objects.equals(paramListOld, paramListNew);
-    }
-
-    private List<EndpointChange> filterNoImpact(List<EndpointChange> endpointChanges) {
-        return endpointChanges.stream().filter(endpointChange -> !(endpointChange.getImpact() == EndpointImpact.NONE)).collect(Collectors.toList());
+    /**
+     * Filter out endpoint changes that have not changed
+     * @param endpointChanges list of endpoint changes
+     * @return list of endpoint changes that have changed
+     */
+    private List<EndpointChange> filterNoChange(List<EndpointChange> endpointChanges) {
+        return endpointChanges.stream().filter(endpointChange -> !endpointChange.isChanged()).collect(Collectors.toList());
     }
 }

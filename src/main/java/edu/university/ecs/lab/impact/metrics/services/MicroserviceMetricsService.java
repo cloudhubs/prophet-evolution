@@ -200,6 +200,4 @@ public class MicroserviceMetricsService {
         return links.size();
     }
 
-
-
 }

@@ -57,14 +57,6 @@ public class Delta implements JsonSerializable, JsonDeserializer<Delta> {
     this.msId = msId;
   }
 
-  /**
-   * Get the class role of the changed class
-   * @return the class role of the changed class
-   */
-  public ClassRole getClassRole() {
-    return changedClass.getClassRole();
-  }
-
 
   /**
    *

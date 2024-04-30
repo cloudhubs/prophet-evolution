@@ -46,7 +46,7 @@ public class SystemMetricsService {
         maximum oriented edges the graph can have.
      */
     public double calculateSCF(Map<String, Microservice> microserviceMap) {
-        Set<Link> links = new HashSet<Link>();
+        Set<Link> links = new HashSet<>();
 
         for(Microservice microservice : microserviceMap.values()) {
             for (JService service : microservice.getServices()) {

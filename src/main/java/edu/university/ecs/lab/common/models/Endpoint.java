@@ -100,8 +100,7 @@ public class Endpoint extends Method implements JsonSerializable {
    */
   public boolean isSameEndpoint(Endpoint other) {
     return Objects.equals(httpMethod, other.getHttpMethod())
-            && Objects.equals(url, other.getUrl())
-            && Objects.equals(decorator, other.getDecorator());
+            && Objects.equals(url, other.getUrl());
   }
 
   /**

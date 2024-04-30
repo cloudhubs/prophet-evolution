@@ -1,7 +1,6 @@
 package edu.university.ecs.lab.impact.metrics.services;
 
 import edu.university.ecs.lab.common.models.*;
-import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import edu.university.ecs.lab.impact.models.change.CallChange;
 import edu.university.ecs.lab.impact.models.enums.RestCallImpact;
@@ -180,7 +179,7 @@ public class CallChangeService {
         Check if there is at least 1 other restcall making a call to the same endpoint
      */
     private boolean checkUnusedEndpoint(CallChange callChange) {
-        // If the change to our RestCall isn't a delete
+        // If the change to our RestCall isn't a DELETE
         if(callChange.getChangeType() == ChangeType.ADD) {
             return false;
         }
@@ -198,7 +197,7 @@ public class CallChangeService {
         }
 
         // If not one is found, the endpoint is now unused
-        callChange.setImpact(RestCallImpact.UNUSED_ENDPOINT);
+        callChange.setImpact(RestCallImpact.CAUSE_UNUSED_ENDPOINT);
         return true;
     }
 

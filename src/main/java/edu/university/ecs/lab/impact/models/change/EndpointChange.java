@@ -6,9 +6,8 @@ import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import edu.university.ecs.lab.impact.models.enums.EndpointImpact;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -16,8 +15,8 @@ public class EndpointChange {
 
   Endpoint oldEndpoint;
   Endpoint newEndpoint;
-  List<Link> oldLinkList;
-  List<Link> newLinkList;
+  Set<Link> oldLinks;
+  Set<Link> newLinks;
   ChangeType changeType;
   boolean isChanged;
 
@@ -28,52 +27,64 @@ public class EndpointChange {
   private EndpointChange(
       Endpoint oldEndpoint,
       Endpoint newEndpoint,
-      List<Link> oldLinkList,
-      List<Link> newLinkList,
-      ChangeType changeType) {
+      Set<Link> oldLinks,
+      Set<Link> newLinks,
+      ChangeType endpointChangeType) {
 
     this.oldEndpoint = oldEndpoint;
     this.newEndpoint = newEndpoint;
-    this.oldLinkList = oldLinkList;
-    this.newLinkList = newLinkList;
-    this.changeType = changeType;
+    this.oldLinks = oldLinks;
+    this.newLinks = newLinks;
+    this.changeType = endpointChangeType;
 
-    // TODO decide impact in this class
-    this.impact = EndpointImpact.NONE;
-
-    //TODO set is changed
-    this.isChanged = isChanged(oldEndpoint, newEndpoint);
+    this.isChanged = isChanged();
+    this.impact = determineImpact();
   }
 
   /**
-   * Build the changes between two endpoints.
+   * Build the changes between two endpoints. This represents all cases (ADD|DELETE|MODIFY) of the endpoint.
    *
    * @param oldEnd original endpoint
    * @param newEnd new endpoint
    * @return object representing change between the two endpoints
    */
   public static EndpointChange buildChange(Endpoint oldEnd, Endpoint newEnd) {
-    if (oldEnd == null && newEnd == null) {
-      return null;
-    }
-    if (oldEnd == null) {
-      //return addOrDeleteControllerChange(newEnd, newEnd.getSrcCalls(), ChangeType.ADD);
-    }
-    return null;
+    if (oldEnd == null && newEnd == null) {throw new IllegalArgumentException("Both endpoints cannot be null");}
+
+    ChangeType changeType =
+            oldEnd == null ? ChangeType.ADD :
+            newEnd == null ? ChangeType.DELETE : ChangeType.MODIFY;
+
+    return new EndpointChange(oldEnd, newEnd, Link.fromEndpoint(oldEnd), Link.fromEndpoint(newEnd), changeType);
+
   }
 
-  public static EndpointChange addOrDeleteControllerChange(Endpoint endpoint, List<Link> linkList, ChangeType changeType) {
-    switch (changeType) {
-      case ADD:
-        return new EndpointChange(null, endpoint, new ArrayList<>(), linkList, changeType);
-      case DELETE:
-        return new EndpointChange(endpoint, null, linkList, new ArrayList<>(), changeType);
-      default:
-        return null;
-    }
+  public boolean isChanged() {
+    if (this.changeType == ChangeType.ADD || this.changeType == ChangeType.DELETE) {return true;}
+
+    return !(
+        this.oldEndpoint.getParameterList().equals(this.newEndpoint.getParameterList()) &&
+        this.oldEndpoint.getReturnType().equals(this.newEndpoint.getReturnType())
+    );
   }
 
-  public static boolean isChanged(Endpoint oldEndpoint, Endpoint newEndpoint) {
-    return false;
+  private EndpointImpact determineImpact() {
+    if (!isChanged) {return EndpointImpact.NONE;}
+
+    EndpointImpact im = EndpointImpact.fromChangeType(changeType);
+
+    if (newEndpoint != null && newEndpoint.getSrcCalls().isEmpty()) {
+      im = EndpointImpact.NOT_USED;
+    }
+
+    if (changeType == ChangeType.MODIFY) {
+      if (!oldEndpoint.getSrcCalls().isEmpty() && newEndpoint.getSrcCalls().isEmpty()) {
+        im = EndpointImpact.NOW_UNUSED;
+      }
+    }
+
+    // TODO check broken dependent calls
+
+    return im;
   }
 }
