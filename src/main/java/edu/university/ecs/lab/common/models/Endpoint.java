@@ -106,6 +106,7 @@ public class Endpoint extends Method implements JsonSerializable {
 
   /**
    * Compare this endpoint to another (changed) endpoint to determine if they are the same.
+   *
    * @param other the endpoint to compare to
    * @return true if the endpoints are the same, false otherwise
    */

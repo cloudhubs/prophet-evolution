@@ -32,8 +32,6 @@ public class RestCall extends MethodCall {
    */
   private String httpMethod;
 
-
-
   /**
    * Constructor for RestCall
    *
@@ -63,8 +61,8 @@ public class RestCall extends MethodCall {
   }
 
   /**
-   * Set the destination of this call to the given controller. Does not change the destEndpoint as this is used
-   * to determine if this is called, and the controller endpoints may have parameters.
+   * Set the destination of this call to the given controller. Does not change the destEndpoint as
+   * this is used to determine if this is called, and the controller endpoints may have parameters.
    *
    * @param destController The controller to set as the destination
    */
@@ -73,14 +71,15 @@ public class RestCall extends MethodCall {
     setDestFile(destController.getClassPath());
   }
 
-  /** Set and sanitize the destination file. Private because {@link #setDestination(JController)} should be used instead */
+  /**
+   * Set and sanitize the destination file. Private because {@link #setDestination(JController)}
+   * should be used instead
+   */
   private void setDestFile(String destFile) {
     this.destFile = destFile.replaceAll("\\\\", "/");
   }
 
-  /**
-   * Set the destination of this call to a deleted file
-   */
+  /** Set the destination of this call to a deleted file */
   public void setDestinationAsDeleted() {
     setDestFile(DEST_DELETED);
     this.destMsId = DEST_DELETED;
@@ -88,6 +87,7 @@ public class RestCall extends MethodCall {
 
   /**
    * Check if the destination of this call is a deleted file
+   *
    * @return True if the destination is a deleted file, false otherwise
    */
   public boolean pointsToDeletedFile() {

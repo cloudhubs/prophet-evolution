@@ -34,6 +34,7 @@ public class SystemChangeDTO implements JsonSerializable {
 
   /**
    * Convert a {@link SystemChange} to a {@link SystemChangeDTO}.
+   *
    * @param systemChange the system change to convert
    */
   public SystemChangeDTO(SystemChange systemChange) {
@@ -46,6 +47,7 @@ public class SystemChangeDTO implements JsonSerializable {
 
   /**
    * Convert this DTO to a {@link SystemChange}.
+   *
    * @return the system change
    */
   public SystemChange toSystemChange() {

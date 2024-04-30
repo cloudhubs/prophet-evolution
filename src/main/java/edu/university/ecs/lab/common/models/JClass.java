@@ -27,14 +27,20 @@ public class JClass implements JsonSerializable {
 
   /** Full java package name of the class e.g. com.cloudhubs.trainticket.food.entity */
   protected String packageName;
-  /** Role of the class in the microservice system. See {@link ClassRole} for possibilities. Will match with subtype where applicable */
+
+  /**
+   * Role of the class in the microservice system. See {@link ClassRole} for possibilities. Will
+   * match with subtype where applicable
+   */
   protected ClassRole classRole;
+
   /** List of methods in the class */
   protected List<Method> methods;
 
   /** List of class variables e.g. (private String username;) */
   @SerializedName("variables")
   protected List<Field> fields;
+
   /** List of method invocations made from within this class e.g. obj.method() */
   protected List<MethodCall> methodCalls;
 
@@ -49,6 +55,7 @@ public class JClass implements JsonSerializable {
 
   /**
    * Set the class path of the class. This will replace all "\\" with "/" for readability.
+   *
    * @param classPath The class path to set
    */
   public void setClassPath(String classPath) {
@@ -95,7 +102,6 @@ public class JClass implements JsonSerializable {
   public JsonObject toJsonObject() {
     return createBuilder().build();
   }
-
 
   protected JsonObjectBuilder createBuilder() {
     JsonObjectBuilder jClassBuilder = Json.createObjectBuilder();

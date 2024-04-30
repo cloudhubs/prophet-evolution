@@ -3,7 +3,8 @@ package edu.university.ecs.lab.common.models.enums;
 import lombok.Getter;
 
 /**
- * Enum to represent Spring methodName and HttpMethod combinations and determine HttpMethod from methodName.
+ * Enum to represent Spring methodName and HttpMethod combinations and determine HttpMethod from
+ * methodName.
  */
 @Getter
 public enum RestTemplate {

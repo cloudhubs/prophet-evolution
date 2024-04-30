@@ -20,6 +20,7 @@ public class JController extends JClass implements JsonSerializable {
 
   /**
    * Convert constructor for a JController object. Initializes endpoints to an empty list
+   *
    * @param jClass the JClass object to convert
    */
   public JController(JClass jClass) {

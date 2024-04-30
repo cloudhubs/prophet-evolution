@@ -167,9 +167,6 @@ public class IRExtractionService {
    * @return the output file name
    */
   private String getOutputFileName() {
-    return config.getOutputPath()
-        + "/rest-extraction-output-["
-        + (new Date()).getTime()
-        + "].json";
+    return config.getOutputPath() + "/rest-extraction-output-[" + (new Date()).getTime() + "].json";
   }
 }

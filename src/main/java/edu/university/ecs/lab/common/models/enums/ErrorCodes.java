@@ -55,7 +55,6 @@ public enum ErrorCodes {
     return message;
   }
 
-
   ErrorCodes() {
     this.message = "";
   }
