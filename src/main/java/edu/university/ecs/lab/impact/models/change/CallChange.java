@@ -2,6 +2,7 @@ package edu.university.ecs.lab.impact.models.change;
 
 import edu.university.ecs.lab.common.models.RestCall;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
+import edu.university.ecs.lab.impact.models.enums.RestCallImpact;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +21,7 @@ public class CallChange {
   Link oldLink;
   Link newLink;
   ChangeType changeType;
-  RestImpact impact;
+  RestCallImpact impact;
 
   public CallChange(RestCall oldCall, RestCall newCall, ChangeType changeType) {
     this.oldCall = oldCall;
@@ -28,15 +29,6 @@ public class CallChange {
     this.changeType = changeType;
     this.oldLink = Objects.isNull(oldCall) ? null : new Link(oldCall);
     this.newLink = Objects.isNull(newCall) ? null : new Link(newCall);
-    this.impact = RestImpact.NONE;
-
-    setChangeType(changeType);
-    setImpact();
-  }
-
-  private void setImpact() {
-    if (Objects.nonNull(newLink) && newLink.getMsDestination().equals("?")) {
-      impact = RestImpact.CALL_TO_DEPRECATED_ENDPOINT;
-    }
+    this.impact = RestCallImpact.NONE;
   }
 }

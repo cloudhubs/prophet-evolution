@@ -4,35 +4,41 @@ import com.github.javaparser.ast.body.VariableDeclarator;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
-import java.util.Objects;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 /** Represents a field attribute in a Java class or in our case a JClass. */
-@Data
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class Field {
+@Getter
+@Setter
+public class Field implements JsonSerializable {
+  /** Java class type of the class variable e.g. String */
   @SerializedName("variableType")
   private String fieldType;
 
+  /** Name of the class variable e.g. username */
   @SerializedName("variableName")
   private String fieldName;
 
+  /**
+   * Constructor for object representing a class variable.
+   *
+   * @param variable the variable declarator representing this field
+   */
   public Field(VariableDeclarator variable) {
     setFieldName(variable.getNameAsString());
     setFieldType(variable.getTypeAsString());
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Field field = (Field) o;
-    return Objects.equals(fieldType, field.fieldType) && Objects.equals(fieldName, field.fieldName);
-  }
+  public JsonObject toJsonObject() {
+    JsonObjectBuilder builder = Json.createObjectBuilder();
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(fieldType, fieldName);
+    builder.add("variableType", getFieldType());
+    builder.add("variableName", getFieldName());
+    return builder.build();
   }
 }

@@ -1,38 +1,42 @@
 package edu.university.ecs.lab.common.models;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
-import java.util.Objects;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 /** Represents a method declaration in Java. */
-@Data
 @AllArgsConstructor
-@NoArgsConstructor
-@ToString
-public class Method {
-  private String methodName;
-  private String protection;
+@Getter
+@Setter
+public class Method implements JsonSerializable {
+  /** Name of the method */
+  protected String methodName;
 
+  // Protection Not Yet Implemented
+  // protected String protection;
+
+  /** List of parameters in the method as a string like: [String userId, String money] */
   @SerializedName("parameter")
-  private String parameterList;
+  protected String parameterList;
 
-  private String returnType;
-  //  private List<Annotation> annotations;
+  /** Java return type of the method */
+  protected String returnType;
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Method method = (Method) o;
-    return Objects.equals(methodName, method.methodName) && Objects.equals(protection, method.protection) && Objects.equals(parameterList, method.parameterList) && Objects.equals(returnType, method.returnType);
+  public JsonObject toJsonObject() {
+    return createBuilder().build();
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(methodName, protection, parameterList, returnType);
+  protected JsonObjectBuilder createBuilder() {
+    JsonObjectBuilder methodObjectBuilder = Json.createObjectBuilder();
+
+    methodObjectBuilder.add("methodName", methodName);
+    methodObjectBuilder.add("parameter", parameterList);
+    methodObjectBuilder.add("returnType", returnType);
+
+    return methodObjectBuilder;
   }
 }

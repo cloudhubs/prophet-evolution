@@ -3,15 +3,16 @@ package edu.university.ecs.lab.common.config;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import edu.university.ecs.lab.common.config.models.InputConfig;
-import edu.university.ecs.lab.common.config.models.InputRepository;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 
+import static edu.university.ecs.lab.common.models.enums.ErrorCodes.BAD_CONFIG;
+
+/** Utility class for reading and validating the input config file */
 public class ConfigUtil {
-  /** Exit code: invalid config path */
-  private static final int BAD_CONFIG = 2;
+
+  /** Prevent instantiation */
+  private ConfigUtil() {}
 
   /**
    * Validate the input config file
@@ -24,16 +25,18 @@ public class ConfigUtil {
 
     if (inputConfig.getClonePath() == null) {
       System.err.println("Config file requires attribute \"clonePath\"");
-      System.exit(BAD_CONFIG);
+      System.exit(BAD_CONFIG.ordinal());
     } else if (inputConfig.getOutputPath() == null) {
       System.err.println("Config file requires attribute \"outputPath\"");
-      System.exit(BAD_CONFIG);
+      System.exit(BAD_CONFIG.ordinal());
     } else if (inputConfig.getRepositories() == null) {
       System.err.println("Config file requires attribute \"repositories\"");
-      System.exit(BAD_CONFIG);
+      System.exit(BAD_CONFIG.ordinal());
     }
 
     // TODO ? Add in more necessary params of input config
+    // TODO validate that clonePath and outputPath are valid RELATIVE directories starting with "./"
+    // from the working directory
 
     return inputConfig;
   }
@@ -50,33 +53,11 @@ public class ConfigUtil {
       jsonReader = new JsonReader(new FileReader(configPath));
     } catch (FileNotFoundException e) {
       System.err.println("Config file not found: " + configPath);
-      System.exit(BAD_CONFIG);
+      System.exit(BAD_CONFIG.ordinal());
     }
 
     Gson gson = new Gson();
 
     return gson.fromJson(jsonReader, InputConfig.class);
-  }
-
-  /**
-   * This method parses a repository url and extracts the repository name
-   *
-   * @param repositoryUrl the repository url to parsing
-   * @return the repository name
-   */
-  public static String getRepositoryName(String repositoryUrl) {
-    //    System.out.println("Extracting repo from url: " + repositoryUrl);
-
-    // Extract repository name from the URL
-    int lastSlashIndex = repositoryUrl.lastIndexOf('/');
-    int lastDotIndex = repositoryUrl.lastIndexOf('.');
-    return repositoryUrl.substring(lastSlashIndex + 1, lastDotIndex);
-  }
-
-  public static String getRepositoryClonePath(
-      InputConfig inputConfig, InputRepository inputRepository) {
-    return inputConfig.getClonePath()
-        + File.separator
-        + getRepositoryName(inputRepository.getRepoUrl());
   }
 }

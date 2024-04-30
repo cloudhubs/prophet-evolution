@@ -12,5 +12,6 @@ public class FullCimetUtils {
 
   public static String pathToIR;
   public static String pathToDelta;
+  public static String pathToNewIR;
   public static Set<String> microservicePaths = new HashSet<>();
 }

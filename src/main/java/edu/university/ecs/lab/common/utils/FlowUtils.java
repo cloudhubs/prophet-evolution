@@ -155,14 +155,14 @@ public class FlowUtils {
   // TODO Should this be find first? Could it not have multiple?
   private static MethodCall findServiceMethodCall(Flow flow) {
     return flow.getController().getMethodCalls().stream()
-        .filter(mc -> mc.getParentMethod().equals(flow.getControllerMethod().getMethodName()))
+        .filter(mc -> mc.getMsId().equals(flow.getControllerMethod().getMethodName()))
         .findFirst()
         .orElse(null);
   }
 
   private static Field findServiceField(Flow flow) {
     return flow.getController().getFields().stream()
-        .filter(f -> f.getFieldName().equals(flow.getServiceMethodCall().getCalledFieldName()))
+        .filter(f -> f.getFieldName().equals(flow.getServiceMethodCall().getObjectName()))
         .findFirst()
         .orElse(null);
   }
@@ -185,14 +185,14 @@ public class FlowUtils {
 
   private static MethodCall findRepositoryMethodCall(Flow flow) {
     return flow.getService().getMethodCalls().stream()
-        .filter(mc -> mc.getParentMethod().equals(flow.getServiceMethod().getMethodName()))
+        .filter(mc -> mc.getMsId().equals(flow.getServiceMethod().getMethodName()))
         .findFirst()
         .orElse(null);
   }
 
   private static Field findRepositoryField(Flow flow) {
     return flow.getService().getFields().stream()
-        .filter(f -> f.getFieldName().equals(flow.getRepositoryMethodCall().getCalledFieldName()))
+        .filter(f -> f.getFieldName().equals(flow.getRepositoryMethodCall().getObjectName()))
         .findFirst()
         .orElse(null);
   }

@@ -7,9 +7,21 @@ import edu.university.ecs.lab.impact.models.ClassMetrics;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+/** Service to generate metrics pertaining to classes in the system */
 public class ClassMetricsService {
-  public ClassMetricsService() {}
+  /** System change object containing all changes to the system */
+  private final SystemChange systemChange;
+
+  /**
+   * Constructor for ClassMetricsService
+   *
+   * @param systemChange delta of the system
+   */
+  public ClassMetricsService(SystemChange systemChange) {
+    this.systemChange = systemChange;
+  }
 
   /**
    * Generate set of metrics pertaining to modified classes as a whole in the system, organized by
@@ -17,7 +29,7 @@ public class ClassMetricsService {
    *
    * @return list of class metrics, one of each class role
    */
-  public List<ClassMetrics> generateAllClassMetrics(SystemChange systemChange) {
+  public List<ClassMetrics> generateAllClassMetrics() {
     List<ClassMetrics> classMetricsList = new ArrayList<>();
 
     classMetricsList.add(
@@ -33,17 +45,17 @@ public class ClassMetricsService {
 
   /**
    * Generate metrics for a specific class role, helper method for {@link
-   * #generateAllClassMetrics(SystemChange)}
+   * #generateAllClassMetrics()}
    *
    * @param classRole role of the class
    * @param changeList list of changes to classes of that role
    * @return metrics for that class role
    */
-  private ClassMetrics generateMetricsForRole(ClassRole classRole, List<Delta> changeList) {
+  private ClassMetrics generateMetricsForRole(ClassRole classRole, Map<String, Delta> changeList) {
     ClassMetrics classMetrics = new ClassMetrics();
     classMetrics.setClassRole(classRole);
 
-    for (Delta delta : changeList) {
+    for (Delta delta : changeList.values()) {
       switch (delta.getChangeType()) {
         case ADD:
           classMetrics.incrementAddedClassCount();

@@ -1,40 +1,39 @@
 package edu.university.ecs.lab.delta;
 
+import edu.university.ecs.lab.common.config.ConfigUtil;
+import edu.university.ecs.lab.common.config.models.InputConfig;
+import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.delta.services.DeltaExtractionService;
-import org.eclipse.jgit.diff.DiffEntry;
-import org.eclipse.jgit.lib.Repository;
 
 import java.util.*;
 
-/** Service for extracting the differences between a local and remote repository. */
+/**
+ * Service for extracting the differences between a local and remote repository. TODO: notice how
+ * {@link DeltaExtractionService#generateDelta()} returns a set of file names, we should make this
+ * all 1 file for the multi-repo case.
+ */
 public class DeltaExtraction {
   /**
-   * main method entry point to delta extraction
+   * Compares the branch specified in the configuration file to the most recent commit on the remote
+   * repository branch name specified in the arguments and generates the delta file.
    *
-   * @param args [branch] [list containing /path/to/repo(s)]
+   * @param args {@literal <branch name> [/path/to/config]} TODO branch WILL NOT WORK unless it is
+   *     main, see DeltaExtractionService#advanceLocalRepo(InputRepository) for why
    */
   public static void main(String[] args) throws Exception {
-    DeltaExtractionService deltaService = new DeltaExtractionService();
-    if (args.length < 2) {
-      System.err.println("Required arguments <branch> <list of paths...>");
+    //    args = new String[] {"main"};
+    if (args.length < 1 || args.length > 2) {
+      System.err.println("Required arguments <branch> [(optional) /path/to/config]");
     }
 
     String branch = args[0];
-    String[] paths = Arrays.copyOfRange(args, 1, args.length);
+    InputConfig inputConfig =
+        ConfigUtil.validateConfig((args.length == 2) ? args[1] : "config.json");
 
-    // iterate through each repository path
-    for (String path : paths) {
-      // point to local repository
-      Repository localRepo = deltaService.establishLocalEndpoint(path);
+    DeltaExtractionService deltaService = new DeltaExtractionService(branch, inputConfig);
+    List<String> outputNames = deltaService.generateDelta();
 
-      // extract remote differences with local
-      List<DiffEntry> differences = deltaService.fetchRemoteDifferences(localRepo, branch);
-
-      // process/write differences to delta output
-      deltaService.processDifferences(path, localRepo, differences, path);
-
-      // close repository after use
-      localRepo.close();
-    }
+    // TODO make work for multi-repo case
+    FullCimetUtils.pathToDelta = outputNames.get(0);
   }
 }

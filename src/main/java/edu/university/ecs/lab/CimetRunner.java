@@ -5,14 +5,12 @@ import edu.university.ecs.lab.delta.DeltaExtraction;
 import edu.university.ecs.lab.intermediate.create.IRExtraction;
 import edu.university.ecs.lab.intermediate.merge.IRMergeRunner;
 import edu.university.ecs.lab.report.ReportRunner;
-import org.apache.commons.lang3.ArrayUtils;
-
-import java.util.Arrays;
 
 public class CimetRunner {
 
   /**
-   * Main method for full report
+   * Main method for full report TODO adapt for case of already having the initial IR (the previous
+   * merged/newIR) aka not running IRExtraction
    *
    * @param args /path/to/config/file <base branch> <base commit> <compare branch> <compare commit>
    */
@@ -25,17 +23,20 @@ public class CimetRunner {
       return;
     }
 
+    String configPath = args[0];
+    String baseBranch = args[1];
+    String baseCommit = args[2];
+    String compareBranch = args[3];
+    String compareCommit = args[4];
+
     // RUN IR EXTRACTION
     System.out.println("Starting IR Extraction...");
-    String[] IRExtractionArgs = Arrays.copyOfRange(args, 0, 1);
+    String[] IRExtractionArgs = {configPath};
     IRExtraction.main(IRExtractionArgs);
 
     // RUN DELTA
     System.out.println("Starting Delta Extraction...");
-    String[] deltaArgs =
-        ArrayUtils.addAll(
-            Arrays.copyOfRange(args, 3, 4),
-            FullCimetUtils.microservicePaths.toArray(new String[0]));
+    String[] deltaArgs = {baseBranch, configPath};
     DeltaExtraction.main(deltaArgs);
 
     // RUN IR MERGE
@@ -45,7 +46,15 @@ public class CimetRunner {
 
     // RUN REPORT
     System.out.println("Starting Report Creation...");
-    String[] reportArgs = ArrayUtils.addAll(Arrays.copyOfRange(args, 1, 5), IRMergeArgs);
+    String[] reportArgs = {
+      baseBranch,
+      baseCommit,
+      compareBranch,
+      compareCommit,
+      FullCimetUtils.pathToIR,
+      FullCimetUtils.pathToNewIR,
+      FullCimetUtils.pathToDelta
+    };
     ReportRunner.main(reportArgs);
   }
 }

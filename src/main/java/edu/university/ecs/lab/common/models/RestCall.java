@@ -2,106 +2,168 @@ package edu.university.ecs.lab.common.models;
 
 import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.enums.HttpMethod;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-import java.util.Objects;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
 /**
  * Represents an extension of a method call. A rest call exists at the service level and represents
  * a call to an endpoint mapping.
  */
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
 public class RestCall extends MethodCall {
+  /** String constant for a deleted file TODO not yet implemented */
+  public static final String DEST_DELETED = "DELETED";
+
   /** The api url that is targeted in rest call */
-  private String api = "";
+  @SerializedName("dest-endpoint")
+  private String destEndpoint;
+
+  @SerializedName("dest-msId")
+  private String destMsId;
+
+  @SerializedName("dest-file")
+  private String destFile;
 
   /**
    * The httpMethod of the api endpoint e.g. GET, POST, PUT see semantics.models.enums.httpMethod
    */
-  private String httpMethod = "";
+  private String httpMethod;
 
-  /** Expected return type of the api call */
-  //  private String returnType = "";
-
-  private int responseTypeIndex = -1;
-
-  @SerializedName("source-file")
-  private String sourceFile = "";
-
-  @SerializedName("call-dest")
-  private String destFile = "";
-
-  private static final RestCall[] restTemplates = {
-    new RestCall("getForObject", HttpMethod.GET, 1),
-    new RestCall("getForEntity", HttpMethod.GET, 1),
-    new RestCall("postForObject", HttpMethod.POST, 2),
-    new RestCall("postForEntity", HttpMethod.POST, 2),
-    new RestCall("put", HttpMethod.PUT, 1),
-    new RestCall("exchange", HttpMethod.GET, 3),
-    new RestCall("delete", HttpMethod.DELETE, 0), // TODO: delete doesn't work
-  };
-
-  public RestCall(String methodName, HttpMethod httpMethod, int responseTypeIndex) {
-    setMethodName(methodName);
-    setHttpMethod(httpMethod.toString());
-    setResponseTypeIndex(responseTypeIndex);
+  /**
+   * Constructor for RestCall
+   *
+   * @param methodName Name of the method
+   * @param objectName Name of the object
+   * @param calledFrom Name of the method that contains this call
+   * @param msId Name of the service that contains this method
+   * @param httpMethod The http method of the call
+   * @param destEndpoint The endpoint of the call
+   * @param destMsId The destination service of the call
+   * @param destFile The destination file of the call
+   */
+  public RestCall(
+      String methodName,
+      String objectName,
+      String calledFrom,
+      String msId,
+      HttpMethod httpMethod,
+      String destEndpoint,
+      String destMsId,
+      String destFile) {
+    super(methodName, objectName, calledFrom, msId);
+    this.httpMethod = httpMethod.name();
+    this.destEndpoint = destEndpoint;
+    this.destMsId = destMsId;
+    this.destFile = destFile;
   }
 
-  public RestCall(MethodCall methodCall) {
-    methodName = methodCall.getMethodName();
-    calledFieldName = methodCall.getCalledFieldName();
-    parentMethod = methodCall.getParentMethod();
+  /**
+   * Set the destination of this call to the given controller. Does not change the destEndpoint as
+   * this is used to determine if this is called, and the controller endpoints may have parameters.
+   *
+   * @param destController The controller to set as the destination
+   */
+  public void setDestination(JController destController) {
+    this.destMsId = destController.getMsId();
+    setDestFile(destController.getClassPath());
   }
 
-  public static RestCall findByName(String methodName) {
-    for (RestCall template : restTemplates) {
-      if (template.getMethodName().equals(methodName)) {
-        return template;
-      }
+  /**
+   * Set and sanitize the destination file. Private because {@link #setDestination(JController)}
+   * should be used instead
+   */
+  private void setDestFile(String destFile) {
+    this.destFile = destFile.replaceAll("\\\\", "/");
+  }
+
+  /** Set the destination of this call to a deleted file */
+  public void setDestinationAsDeleted() {
+    setDestFile(DEST_DELETED);
+    this.destMsId = DEST_DELETED;
+  }
+
+  /**
+   * Check if the destination of this call is a deleted file
+   *
+   * @return True if the destination is a deleted file, false otherwise
+   */
+  public boolean pointsToDeletedFile() {
+    return DEST_DELETED.equals(destFile);
+  }
+
+  /**
+   * Get a string representation of this call
+   *
+   * @return The string representation
+   */
+  public String getId() {
+    return msId + "#" + calledFrom + "[" + httpMethod + "]" + "->" + destMsId + ":" + destEndpoint;
+  }
+
+  /**
+   * @return Converted JsonObject of RestCall object
+   */
+  public JsonObject toJsonObject() {
+    // Get "restCall" methodCalls in service
+    JsonObjectBuilder restCallBuilder = super.createBuilder();
+
+    restCallBuilder.add("httpMethod", httpMethod);
+    restCallBuilder.add("dest-endpoint", destEndpoint);
+    restCallBuilder.add("dest-msId", destMsId);
+    restCallBuilder.add("dest-file", destFile);
+
+    return restCallBuilder.build();
+  }
+
+  /** Represents a call as an endpoint source. */
+  @Getter
+  public static class EndpointCall implements JsonSerializable {
+    @SerializedName("src-msId")
+    private String msId;
+
+    @SerializedName("src-id")
+    private String id;
+
+    @SerializedName("src-file")
+    private String srcFile;
+
+    /**
+     * Convert constructor to EndpointCall
+     *
+     * @param call RestCall object
+     */
+    public EndpointCall(RestCall call, JService service) {
+      this.msId = call.getMsId();
+      this.id = call.getId();
+      this.srcFile = service.getClassPath();
     }
-    return null;
-  }
 
-  public static RestCall findCallByName(String methodName) {
-    switch (methodName) {
-      case "getForObject":
-        return new RestCall("getForObject", HttpMethod.GET, 1);
-      case "getForEntity":
-        return new RestCall("getForEntity", HttpMethod.GET, 1);
-      case "postForObject":
-        return new RestCall("postForObject", HttpMethod.POST, 2);
-      case "postForEntity":
-        return new RestCall("postForEntity", HttpMethod.POST, 2);
-      case "put":
-        return new RestCall("put", HttpMethod.PUT, 1);
-      case "exchange":
-        return new RestCall("exchange", HttpMethod.GET, 3);
-      case "delete":
-        new RestCall("delete", HttpMethod.DELETE, 0);
+    /**
+     * Check if the given call matches this call.
+     *
+     * @param call The call to compare with
+     * @return True if the calls match, false otherwise
+     */
+    public boolean matches(RestCall call) {
+      return this.msId.equals(call.getMsId()) && this.id.equals(call.getId());
     }
 
-    return null;
-  }
+    /**
+     * @return Converted JsonObject of RestCall object
+     */
+    @Override
+    public JsonObject toJsonObject() {
+      // Get "restCall" methodCalls in service
+      JsonObjectBuilder restCallBuilder = Json.createObjectBuilder();
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    if (!super.equals(o)) return false;
-    RestCall restCall = (RestCall) o;
-    return responseTypeIndex == restCall.responseTypeIndex
-        && Objects.equals(api, restCall.api)
-        && Objects.equals(httpMethod, restCall.httpMethod)
-        && Objects.equals(sourceFile, restCall.sourceFile);
-  }
+      restCallBuilder.add("src-msId", msId);
+      restCallBuilder.add("src-id", id);
+      restCallBuilder.add("src-file", srcFile);
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(super.hashCode(), api, httpMethod, responseTypeIndex, sourceFile, destFile);
+      return restCallBuilder.build();
+    }
   }
 }

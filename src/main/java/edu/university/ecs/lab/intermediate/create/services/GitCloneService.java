@@ -1,6 +1,5 @@
 package edu.university.ecs.lab.intermediate.create.services;
 
-import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.utils.FullCimetUtils;
@@ -8,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /** Service for cloning remote repositories to the local file system. */
@@ -20,15 +17,15 @@ public class GitCloneService {
   private final InputConfig inputConfig;
 
   /**
-   * This method clones a remote repository to the local file system
+   * This method clones a remote repository to the local file system. Postcondition: the repository
+   * has been cloned to the local file system.
    *
-   * @param inputRepository the repo to be cloned
-   * @return list of service paths
+   * @param inputRepository repository representation from the config file
    * @throws Exception if Git clone failed
    */
   public void cloneRemote(InputRepository inputRepository) throws Exception {
 
-    String relativeClonePath = ConfigUtil.getRepositoryClonePath(inputConfig, inputRepository);
+    String relativeClonePath = inputConfig.getLocalPath(inputRepository);
     FullCimetUtils.microservicePaths.add(relativeClonePath);
 
     ProcessBuilder processBuilder =
@@ -67,37 +64,5 @@ public class GitCloneService {
       throw new Exception(
           "Git clone of " + inputRepository.getRepoUrl() + " failed with status code: " + exitCode);
     }
-
-    // output = output.replaceAll("\\\\", "/");
-
-    // add microservices to path
-
-  }
-
-  public List<String> getMicroservicePaths(InputRepository inputRepository) throws Exception {
-    List<String> microservicePaths = new ArrayList<>();
-    String relativeClonePath = ConfigUtil.getRepositoryClonePath(inputConfig, inputRepository);
-
-    if (Objects.nonNull(inputRepository.getPaths()) && inputRepository.getPaths().length > 0) {
-      for (String subPath : inputRepository.getPaths()) {
-        String path;
-
-        if (subPath.substring(0, 1).equals(File.separator)) {
-          path = relativeClonePath + subPath;
-        } else {
-          path = relativeClonePath + File.separator + subPath;
-        }
-
-        File f = new File(path);
-
-        if (f.isDirectory()) {
-          microservicePaths.add(path);
-        }
-      }
-    } else {
-      microservicePaths.add(relativeClonePath);
-    }
-
-    return microservicePaths;
   }
 }

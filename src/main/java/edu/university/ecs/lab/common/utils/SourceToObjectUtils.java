@@ -5,8 +5,14 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.*;
-import edu.university.ecs.lab.intermediate.create.utils.StringParserUtils;
+import edu.university.ecs.lab.common.config.models.InputConfig;
+import edu.university.ecs.lab.common.config.models.InputRepository;
+import edu.university.ecs.lab.common.models.enums.ClassRole;
+import edu.university.ecs.lab.common.models.enums.HttpMethod;
+import edu.university.ecs.lab.common.models.enums.RestTemplate;
+import edu.university.ecs.lab.intermediate.utils.StringParserUtils;
 import edu.university.ecs.lab.common.models.*;
+import javassist.NotFoundException;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,33 +21,19 @@ import java.util.List;
 import java.util.Objects;
 
 /** Static utility class for parsing a file and returning associated models from code structure. */
-public class JParserUtils {
+public class SourceToObjectUtils {
 
-  public static JController parseController(File sourceFile) throws IOException {
-    JClass jClass = parseClass(sourceFile);
-    if (Objects.isNull(jClass)) {
-      return null;
-    }
-
-    JController controller = new JController(jClass);
-    controller.setEndpoints(parseEndpoints(sourceFile));
-    return controller;
-  }
-
-  public static JService parseService(File sourceFile) throws IOException {
-    JClass jClass = parseClass(sourceFile);
-    if (Objects.isNull(jClass)) {
-      return null;
-    }
-
-    JService service = new JService(jClass);
-
-    service.setRestCalls(parseRestCalls(sourceFile));
-
-    return service;
-  }
-
-  public static JClass parseClass(File sourceFile) throws IOException {
+  /**
+   * Parse a Java class file and return a JClass object. The class role will be determined by {@link
+   * ClassRole#fromSourceFile(File)} and the returned object will be of correct {@link JClass}
+   * subclass type where applicable.
+   *
+   * @param sourceFile the file to parse
+   * @return the JClass object representing the file
+   * @throws IOException on parse error
+   */
+  // TODO move this logic to JClass
+  public static JClass parseClass(File sourceFile, InputConfig config) throws IOException {
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
     String packageName = StringParserUtils.findPackage(cu);
@@ -49,19 +41,94 @@ public class JParserUtils {
       return null;
     }
 
-    JClass jClass = new JClass();
+    String msId = getMicroserviceName(sourceFile, config);
 
-    jClass.setClassPath("." + File.separator + sourceFile.getPath().split(File.separator, 4)[3]);
-    jClass.setClassName(sourceFile.getName().replace(".java", ""));
-    jClass.setPackageName(packageName);
+    JClass jClass =
+        JClass.builder()
+            .classPath(getRepositoryPath(sourceFile, config))
+            .className(sourceFile.getName().replace(".java", ""))
+            .packageName(packageName)
+            .methods(parseMethods(cu))
+            .fields(parseFields(sourceFile))
+            .methodCalls(parseMethodCalls(sourceFile, msId))
+            .msId(msId)
+            .classRole(ClassRole.fromSourceFile(sourceFile))
+            .build();
 
-    //    jClass.setClassRole(ClassRole.CONTROLLER);
-
-    jClass.setMethods(parseMethods(cu));
-    jClass.setFields(parseFields(sourceFile));
-    jClass.setMethodCalls(parseMethodCalls(sourceFile));
+    // Handle special class roles
+    if (jClass.getClassRole() == ClassRole.CONTROLLER) {
+      JController controller = new JController(jClass);
+      controller.setEndpoints(parseEndpoints(msId, sourceFile));
+      return controller;
+    } else if (jClass.getClassRole() == ClassRole.SERVICE) {
+      JService service = new JService(jClass);
+      service.setRestCalls(parseRestCalls(sourceFile, msId));
+      return service;
+    }
 
     return jClass;
+  }
+
+  /**
+   * Get the service name from the given file. This is determined by the file path and config.
+   *
+   * @param sourceFile the file to parse
+   * @return the service name of the file, null if not found TODO this logic is now in {@link
+   *     InputRepository#getServiceNameFromPath(String)}, refactor and delete
+   */
+  private static String getMicroserviceName(File sourceFile, InputConfig config) {
+    // Get the path beginning with repoName/serviceName/...
+    String filePath = getRepositoryPath(sourceFile, config);
+
+    // Find correct repository from config
+    for (InputRepository repo : config.getRepositories()) {
+      if (filePath.startsWith(repo.getName())) {
+        for (String servicePath : repo.getPaths()) {
+          // remove repoName/ from the path
+          String subPath = filePath.substring(repo.getName().length() + 1);
+
+          if (subPath.startsWith(servicePath)) {
+            try {
+              return repo.getServiceNameFromPath(servicePath);
+            } catch (NotFoundException e) {
+              System.err.println(
+                  "Failed to get service name from path \"" + filePath + "\": " + e.getMessage());
+            }
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Get the path from the repository TLD of the file from the clonePath directory. This will look
+   * like repoName/serviceName/path/to/file.java
+   *
+   * @param sourceFile the file to get the path of
+   * @param config system input config file
+   * @return the relative path of the file after ./clonePath/ TODO this logic should be put in
+   *     {@link InputRepository}, refactor and delete
+   */
+  private static String getRepositoryPath(File sourceFile, InputConfig config) {
+    // Get the file path start from the clonePath directory
+    String filePath = sourceFile.getAbsolutePath();
+    String clonePath = config.getClonePath();
+
+    // Sanitize clonePath
+    clonePath = clonePath.replace("./", "").replace(".\\", "");
+
+    int clonePathIndex = filePath.indexOf(clonePath);
+
+    if (clonePathIndex == -1) {
+      System.err.println(
+          "Error: File path does not contain clone path when trying to get relativePath: "
+              + filePath);
+      return filePath;
+    }
+
+    return filePath.substring(clonePathIndex + clonePath.length() + 1);
   }
 
   public static List<Method> parseMethods(CompilationUnit cu) {
@@ -75,7 +142,7 @@ public class JParserUtils {
     return methods;
   }
 
-  public static List<Endpoint> parseEndpoints(File sourceFile) throws IOException {
+  public static List<Endpoint> parseEndpoints(String msId, File sourceFile) throws IOException {
     List<Endpoint> endpoints = new ArrayList<>();
 
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
@@ -91,44 +158,42 @@ public class JParserUtils {
 
       // loop through methods
       for (MethodDeclaration md : cid.findAll(MethodDeclaration.class)) {
-        Endpoint endpoint = new Endpoint(parseMethod(md));
 
         // loop through annotations
         for (AnnotationExpr ae : md.getAnnotations()) {
-          endpoint.setUrl(StringParserUtils.mergePaths(classLevelPath, pathFromAnnotation(ae)));
-          endpoint.setDecorator(ae.getNameAsString());
-
+          String url = StringParserUtils.mergePaths(classLevelPath, pathFromAnnotation(ae));
+          String decorator = ae.getNameAsString();
+          String httpMethod = null;
+          // TODO move logic to enum
           switch (ae.getNameAsString()) {
             case "GetMapping":
-              endpoint.setHttpMethod("GET");
+              httpMethod = "GET";
               break;
             case "PostMapping":
-              endpoint.setHttpMethod("POST");
+              httpMethod = "POST";
               break;
             case "DeleteMapping":
-              endpoint.setHttpMethod("DELETE");
+              httpMethod = "DELETE";
               break;
             case "PutMapping":
-              endpoint.setHttpMethod("PUT");
+              httpMethod = "PUT";
               break;
             case "RequestMapping":
               if (ae.toString().contains("RequestMethod.POST")) {
-                endpoint.setHttpMethod("POST");
+                httpMethod = "POST";
               } else if (ae.toString().contains("RequestMethod.DELETE")) {
-                endpoint.setHttpMethod("DELETE");
+                httpMethod = "DELETE";
               } else if (ae.toString().contains("RequestMethod.PUT")) {
-                endpoint.setHttpMethod("PUT");
+                httpMethod = "PUT";
               } else {
-                endpoint.setHttpMethod("GET");
+                httpMethod = "GET";
               }
               break;
           }
 
-          if (endpoint.getHttpMethod() == null) {
-            continue;
+          if (httpMethod != null) {
+            endpoints.add(new Endpoint(parseMethod(md), url, decorator, httpMethod, msId));
           }
-
-          endpoints.add(endpoint);
         }
       }
     }
@@ -137,9 +202,6 @@ public class JParserUtils {
   }
 
   public static Method parseMethod(MethodDeclaration md) {
-    Method method = new Method();
-    method.setMethodName(md.getNameAsString());
-
     // Get params and returnType
     NodeList<Parameter> parameterList = md.getParameters();
     StringBuilder parameter = new StringBuilder();
@@ -156,13 +218,10 @@ public class JParserUtils {
       }
     }
 
-    method.setParameterList(parameter.toString());
-    method.setReturnType(md.getTypeAsString());
-
-    return method;
+    return new Method(md.getNameAsString(), parameter.toString(), md.getTypeAsString());
   }
 
-  public static List<RestCall> parseRestCalls(File sourceFile) throws IOException {
+  public static List<RestCall> parseRestCalls(File sourceFile, String msId) throws IOException {
     List<RestCall> restCalls = new ArrayList<>();
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
@@ -171,24 +230,26 @@ public class JParserUtils {
       // loop through methods
 
       for (MethodDeclaration md : cid.findAll(MethodDeclaration.class)) {
-        String parentMethodName = md.getNameAsString();
+        String calledFromMethodName = md.getNameAsString();
 
         // loop through method calls
         for (MethodCallExpr mce : md.findAll(MethodCallExpr.class)) {
-          MethodCall methodCall = new MethodCall();
           String methodName = mce.getNameAsString();
           Expression scope = mce.getScope().orElse(null);
 
-          RestCall restCall = RestCall.findCallByName(methodName);
-          String calledServiceName = getCalledServiceName(scope);
+          RestTemplate callTemplate = RestTemplate.findCallByName(methodName);
+          String calledServiceName = getCallingObjectName(scope);
 
+          HttpMethod httpMethod;
           // Are we a rest call
-          if (!Objects.isNull(restCall)
+          if (!Objects.isNull(callTemplate)
               && Objects.nonNull(calledServiceName)
               && calledServiceName.equals("restTemplate")) {
             // get http methods for exchange method
-            if (restCall.getMethodName().equals("exchange")) {
-              restCall.setHttpMethod(getHttpMethodForExchange(mce.getArguments().toString()));
+            if (callTemplate.getMethodName().equals("exchange")) {
+              httpMethod = RestTemplate.getHttpMethodForExchange(mce.getArguments().toString());
+            } else {
+              httpMethod = callTemplate.getHttpMethod();
             }
 
             // TODO find a more graceful way of handling/validating this can be passed up
@@ -196,14 +257,18 @@ public class JParserUtils {
               continue;
             }
 
-            restCall.setApi(parseURL(mce, cid));
-            restCall.setParentMethod(parentMethodName);
-            restCall.setCalledFieldName(getCalledServiceName(scope));
-            restCall.setSourceFile(
-                "." + File.separator + sourceFile.getPath().split(File.separator, 4)[3]);
+            RestCall call =
+                new RestCall(
+                    callTemplate.getMethodName(),
+                    calledServiceName,
+                    calledFromMethodName,
+                    msId,
+                    httpMethod,
+                    parseURL(mce, cid),
+                    "",
+                    "");
 
-            restCalls.add(restCall);
-            // System.out.println(restCall);
+            restCalls.add(call);
           }
         }
       }
@@ -211,7 +276,7 @@ public class JParserUtils {
     return restCalls;
   }
 
-  public static List<MethodCall> parseMethodCalls(File sourceFile) throws IOException {
+  public static List<MethodCall> parseMethodCalls(File sourceFile, String msId) throws IOException {
     CompilationUnit cu = StaticJavaParser.parse(sourceFile);
     List<MethodCall> methodCalls = new ArrayList<>();
 
@@ -224,25 +289,21 @@ public class JParserUtils {
 
         // loop through method calls
         for (MethodCallExpr mce : md.findAll(MethodCallExpr.class)) {
-          MethodCall methodCall = new MethodCall();
           String methodName = mce.getNameAsString();
           Expression scope = mce.getScope().orElse(null);
 
-          RestCall restCall = RestCall.findCallByName(methodName);
-          String calledServiceName = getCalledServiceName(scope);
+          RestTemplate template = RestTemplate.findCallByName(methodName);
+          String calledServiceName = getCallingObjectName(scope);
 
           // Are we a rest call
-          if (!Objects.isNull(restCall)
+          if (!Objects.isNull(template)
               && Objects.nonNull(calledServiceName)
               && calledServiceName.equals("restTemplate")) {
             // do nothing, we only want regular methodCalls
             // System.out.println(restCall);
           } else if (Objects.nonNull(calledServiceName)) {
-            methodCall.setParentMethod(parentMethodName);
-            methodCall.setMethodName(methodName);
-            methodCall.setCalledFieldName(getCalledServiceName(scope));
-
-            methodCalls.add(methodCall);
+            methodCalls.add(
+                new MethodCall(methodName, getCallingObjectName(scope), parentMethodName, msId));
           }
         }
       }
@@ -288,7 +349,13 @@ public class JParserUtils {
     return "";
   }
 
-  private static String getCalledServiceName(Expression scope) {
+  /**
+   * Get the name of the object a method is being called from (callingObj.methodName())
+   *
+   * @param scope the scope to search
+   * @return the name of the object the method is being called from
+   */
+  private static String getCallingObjectName(Expression scope) {
     String calledServiceID = null;
     if (Objects.nonNull(scope) && scope instanceof NameExpr) {
       NameExpr fae = scope.asNameExpr();
@@ -305,6 +372,8 @@ public class JParserUtils {
    * @param cid the class or interface to search
    * @return the URL found
    */
+  // TODO: what is URL here? Is it the URL of the service? Or the URL of the method call? Rename to
+  // avoid confusion
   private static String parseURL(MethodCallExpr mce, ClassOrInterfaceDeclaration cid) {
     if (mce.getArguments().isEmpty()) {
       return "";
@@ -359,6 +428,7 @@ public class JParserUtils {
     return ""; // URL not found in subtree
   }
 
+  // TODO format to what? add comments please
   private static String formatURL(StringLiteralExpr stringLiteralExpr) {
     String str = stringLiteralExpr.toString();
     str = str.replace("http://", "");
@@ -383,23 +453,5 @@ public class JParserUtils {
     }
 
     return str;
-  }
-
-  /**
-   * Get the HTTP method for the JSF exchange() method call.
-   *
-   * @param arguments the arguments of the exchange() method
-   * @return the HTTP method extracted
-   */
-  private static String getHttpMethodForExchange(String arguments) {
-    if (arguments.contains("HttpMethod.POST")) {
-      return "POST";
-    } else if (arguments.contains("HttpMethod.PUT")) {
-      return "PUT";
-    } else if (arguments.contains("HttpMethod.DELETE")) {
-      return "DELETE";
-    } else {
-      return "GET"; // default
-    }
   }
 }
