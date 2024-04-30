@@ -4,13 +4,11 @@ import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.enums.HttpMethod;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import java.util.List;
 
 /**
  * Represents an extension of a method call. A rest call exists at the service level and represents
@@ -21,6 +19,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class RestCall extends MethodCall {
   public static final String DEST_DELETED = "FILE_DELETED";
+
   /** The api url that is targeted in rest call */
   @SerializedName("dest-endpoint")
   private String destEndpoint;
@@ -30,6 +29,7 @@ public class RestCall extends MethodCall {
 
   @SerializedName("dest-file")
   private String destFile;
+
   /**
    * The httpMethod of the api endpoint e.g. GET, POST, PUT see semantics.models.enums.httpMethod
    */
@@ -37,13 +37,25 @@ public class RestCall extends MethodCall {
 
   public void setDestFile(String destFile) {
     this.destFile = destFile.replaceAll("\\\\", "/");
-    if(!destFile.equals("FILE_DELETED")) {
-      this.destMsId = this.getDestFile().substring(this.getDestFile().indexOf("/") + 1).substring(0, this.getDestFile().substring(this.getDestFile().indexOf("/") + 1).indexOf("/"));
+    if (!destFile.equals("FILE_DELETED")) {
+      this.destMsId =
+          this.getDestFile()
+              .substring(this.getDestFile().indexOf("/") + 1)
+              .substring(
+                  0,
+                  this.getDestFile().substring(this.getDestFile().indexOf("/") + 1).indexOf("/"));
     }
   }
 
-  public RestCall(String methodName, String objectName, String calledFrom, String msId,
-                  HttpMethod httpMethod, String destEndpoint, String destMsId, String destFile) {
+  public RestCall(
+      String methodName,
+      String objectName,
+      String calledFrom,
+      String msId,
+      HttpMethod httpMethod,
+      String destEndpoint,
+      String destMsId,
+      String destFile) {
     super(methodName, objectName, calledFrom, msId);
     this.httpMethod = httpMethod.name();
     this.destEndpoint = destEndpoint;
@@ -80,25 +92,25 @@ public class RestCall extends MethodCall {
   }
 
   public String getId() {
-    return msId + "#" + calledFrom + "[" + httpMethod + "]"
-            + "->" + destMsId + ":" + destEndpoint;
+    return msId + "#" + calledFrom + "[" + httpMethod + "]" + "->" + destMsId + ":" + destEndpoint;
   }
 
-  /**
-   * Represents a call as an endpoint source.
-   */
+  /** Represents a call as an endpoint source. */
   @Getter
   @EqualsAndHashCode
   public static class EndpointCall implements JsonSerializable {
     @SerializedName("src-msId")
     private String msId;
+
     @SerializedName("src-id")
     private String id;
+
     @SerializedName("src-file")
     private String srcFile;
 
     /**
      * Convert constructor to EndpointCall
+     *
      * @param call RestCall object
      */
     public EndpointCall(RestCall call, JService service) {

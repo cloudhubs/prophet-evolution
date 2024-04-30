@@ -1,14 +1,11 @@
 package edu.university.ecs.lab.impact.models.change;
 
-import edu.university.ecs.lab.common.models.Microservice;
 import edu.university.ecs.lab.common.models.RestCall;
-import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import edu.university.ecs.lab.impact.models.enums.RestCallImpact;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -33,6 +30,5 @@ public class CallChange {
     this.oldLink = Objects.isNull(oldCall) ? null : new Link(oldCall);
     this.newLink = Objects.isNull(newCall) ? null : new Link(newCall);
     this.impact = RestCallImpact.NONE;
-
   }
 }

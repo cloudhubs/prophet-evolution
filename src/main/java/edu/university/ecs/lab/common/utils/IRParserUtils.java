@@ -11,15 +11,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 
-/**
- * Utility class for parsing IR and delta files previously created.
- */
+/** Utility class for parsing IR and delta files previously created. */
 public class IRParserUtils {
   /** Gson parser */
-  private static final Gson gson = new GsonBuilder().registerTypeAdapter(Delta.class, new Delta()).create();
+  private static final Gson gson =
+      new GsonBuilder().registerTypeAdapter(Delta.class, new Delta()).create();
 
   /**
    * Read in an IR (original or merged/new) file and parse it into a MsSystem object.
+   *
    * @param irFileName the file path/name of the IR file to parse
    * @return the parsed MsSystem object
    * @throws IOException if an I/O error occurs
@@ -35,6 +35,7 @@ public class IRParserUtils {
 
   /**
    * Read in a delta file and parse it into a SystemChange object.
+   *
    * @param deltaFileName the file path/name of the delta file to parse
    * @return the parsed SystemChange object
    * @throws IOException if an I/O error occurs

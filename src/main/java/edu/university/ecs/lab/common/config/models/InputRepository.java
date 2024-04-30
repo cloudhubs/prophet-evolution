@@ -11,8 +11,7 @@ public class InputRepository {
   private String repoUrl;
 
   /** Commit number the service originated from */
-  @Setter
-  private String baseCommit;
+  @Setter private String baseCommit;
 
   /** The paths to each microservice TLD in the repository */
   private String[] paths;
@@ -30,9 +29,9 @@ public class InputRepository {
   }
 
   /**
-   * This method returns the service name from the input ms path.
-   * Validates that the given path is within the paths written in the config. Handles
-   * case that the microservice is not in a top level directory.
+   * This method returns the service name from the input ms path. Validates that the given path is
+   * within the paths written in the config. Handles case that the microservice is not in a top
+   * level directory.
    *
    * @param path the path to the service
    * @return the service name

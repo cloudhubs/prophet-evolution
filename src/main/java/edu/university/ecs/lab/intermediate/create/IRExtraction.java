@@ -8,12 +8,13 @@ import edu.university.ecs.lab.intermediate.create.services.IRExtractionService;
 import static edu.university.ecs.lab.common.models.enums.ErrorCodes.BAD_ARGS;
 
 /**
- * {@link IRExtraction} is the main entry point for the intermediate extraction process, relying
- * on {@link IRExtractionService}.
+ * {@link IRExtraction} is the main entry point for the intermediate extraction process, relying on
+ * {@link IRExtractionService}.
  *
  * <p>The IR extraction process is responsible for cloning remote services, scanning through each
  * local repo and extracting rest endpoints/calls, and writing each service and endpoints to
  * intermediate representation.
+ *
  * <p>
  */
 public class IRExtraction {
@@ -26,13 +27,13 @@ public class IRExtraction {
    */
   public static void main(String[] args) throws Exception {
     if (args.length > 1) {
-        System.err.println("Usage: java -jar IRExtraction.jar [/path/to/config/file]");
-        System.exit(BAD_ARGS.ordinal());
-
+      System.err.println("Usage: java -jar IRExtraction.jar [/path/to/config/file]");
+      System.exit(BAD_ARGS.ordinal());
     }
 
     // Get input config
-    InputConfig inputConfig = ConfigUtil.validateConfig((args.length == 1) ? args[0] : "config.json");
+    InputConfig inputConfig =
+        ConfigUtil.validateConfig((args.length == 1) ? args[0] : "config.json");
 
     IRExtractionService irExtractionService = new IRExtractionService(inputConfig);
     String outputFileName = irExtractionService.generateSystemIntermediate();

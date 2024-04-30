@@ -15,47 +15,46 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
 
 @AllArgsConstructor
 public class SystemChangeDTO implements JsonSerializable {
-    @SerializedName("controllers")
-    private List<Delta> controllers;
+  @SerializedName("controllers")
+  private List<Delta> controllers;
 
-    @SerializedName("services")
-    private List<Delta> services;
+  @SerializedName("services")
+  private List<Delta> services;
 
-    @SerializedName("dtos")
-    private List<Delta> dtos;
+  @SerializedName("dtos")
+  private List<Delta> dtos;
 
-    @SerializedName("repositories")
-    private List<Delta> repositories;
+  @SerializedName("repositories")
+  private List<Delta> repositories;
 
-    @SerializedName("entities")
-    private List<Delta> entities;
-    
-    public SystemChangeDTO(SystemChange systemChange) {
-        this.controllers = new ArrayList<>(systemChange.getControllers().values());
-        this.services = new ArrayList<>(systemChange.getServices().values());
-        this.dtos = new ArrayList<>(systemChange.getDtos().values());
-        this.repositories = new ArrayList<>(systemChange.getRepositories().values());
-        this.entities = new ArrayList<>(systemChange.getEntities().values());
-    }
-    
-    public SystemChange toSystemChange() {
-        return new SystemChange(
-                controllers.stream().collect(Collectors.toMap(Delta::getLocalPath, delta -> delta)),
-                services.stream().collect(Collectors.toMap(Delta::getLocalPath, delta -> delta)),
-                dtos.stream().collect(Collectors.toMap(Delta::getLocalPath, delta -> delta)),
-                repositories.stream().collect(Collectors.toMap(Delta::getLocalPath, delta -> delta)),
-                entities.stream().collect(Collectors.toMap(Delta::getLocalPath, delta -> delta))
-        );
-    }
+  @SerializedName("entities")
+  private List<Delta> entities;
 
-    @Override
-    public JsonObject toJsonObject() {
-        JsonObjectBuilder finalOutputBuilder = Json.createObjectBuilder();
-        finalOutputBuilder.add("controllers", listToJsonArray(controllers));
-        finalOutputBuilder.add("services", listToJsonArray(services));
-        finalOutputBuilder.add("repositories", listToJsonArray(repositories));
-        finalOutputBuilder.add("dtos", listToJsonArray(dtos));
-        finalOutputBuilder.add("entities", listToJsonArray(entities));
-        return finalOutputBuilder.build();
-    }
+  public SystemChangeDTO(SystemChange systemChange) {
+    this.controllers = new ArrayList<>(systemChange.getControllers().values());
+    this.services = new ArrayList<>(systemChange.getServices().values());
+    this.dtos = new ArrayList<>(systemChange.getDtos().values());
+    this.repositories = new ArrayList<>(systemChange.getRepositories().values());
+    this.entities = new ArrayList<>(systemChange.getEntities().values());
+  }
+
+  public SystemChange toSystemChange() {
+    return new SystemChange(
+        controllers.stream().collect(Collectors.toMap(Delta::getLocalPath, delta -> delta)),
+        services.stream().collect(Collectors.toMap(Delta::getLocalPath, delta -> delta)),
+        dtos.stream().collect(Collectors.toMap(Delta::getLocalPath, delta -> delta)),
+        repositories.stream().collect(Collectors.toMap(Delta::getLocalPath, delta -> delta)),
+        entities.stream().collect(Collectors.toMap(Delta::getLocalPath, delta -> delta)));
+  }
+
+  @Override
+  public JsonObject toJsonObject() {
+    JsonObjectBuilder finalOutputBuilder = Json.createObjectBuilder();
+    finalOutputBuilder.add("controllers", listToJsonArray(controllers));
+    finalOutputBuilder.add("services", listToJsonArray(services));
+    finalOutputBuilder.add("repositories", listToJsonArray(repositories));
+    finalOutputBuilder.add("dtos", listToJsonArray(dtos));
+    finalOutputBuilder.add("entities", listToJsonArray(entities));
+    return finalOutputBuilder.build();
+  }
 }

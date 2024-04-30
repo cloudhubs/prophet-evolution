@@ -20,8 +20,10 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.*;
 @Builder
 public class JClass implements JsonSerializable {
   protected String className;
+
   /** Path like repoName/.../serviceName/.../file.java */
   protected String classPath;
+
   protected String packageName;
   protected ClassRole classRole;
   protected List<Method> methods;
@@ -44,14 +46,15 @@ public class JClass implements JsonSerializable {
     this.classPath = classPath.replaceAll("\\\\", "/");
   }
 
-  public JClass(String className,
-                String classPath,
-                String packageName,
-                ClassRole classRole,
-                List<Method> methods,
-                List<Field> fields,
-                List<MethodCall> methodCalls,
-                String msId) {
+  public JClass(
+      String className,
+      String classPath,
+      String packageName,
+      ClassRole classRole,
+      List<Method> methods,
+      List<Field> fields,
+      List<MethodCall> methodCalls,
+      String msId) {
     this.className = className;
     setClassPath(classPath);
     this.packageName = packageName;
@@ -88,7 +91,8 @@ public class JClass implements JsonSerializable {
   }
 
   /**
-   * Check if the given class is the same as this class. This is true if they have the same classPath.
+   * Check if the given class is the same as this class. This is true if they have the same
+   * classPath.
    *
    * @param other The class to compare with
    * @return True if the classes are the same, false otherwise

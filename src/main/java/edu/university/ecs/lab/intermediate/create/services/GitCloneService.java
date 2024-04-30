@@ -1,6 +1,5 @@
 package edu.university.ecs.lab.intermediate.create.services;
 
-import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.utils.FullCimetUtils;
@@ -8,8 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /** Service for cloning remote repositories to the local file system. */

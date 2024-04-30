@@ -4,7 +4,6 @@ import edu.university.ecs.lab.common.models.*;
 
 import javax.json.*;
 import java.util.List;
-import java.util.Map;
 
 /** Utility class for converting objects to JSON. */
 public class ObjectToJsonUtils {
@@ -38,5 +37,4 @@ public class ObjectToJsonUtils {
     }
     return jsonArrayBuilder.build();
   }
-
 }

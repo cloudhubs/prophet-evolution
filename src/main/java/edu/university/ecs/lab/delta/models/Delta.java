@@ -3,15 +3,11 @@ package edu.university.ecs.lab.delta.models;
 import com.google.gson.*;
 import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.JClass;
-import edu.university.ecs.lab.common.models.JController;
-import edu.university.ecs.lab.common.models.JService;
 import edu.university.ecs.lab.common.models.JsonSerializable;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
-import edu.university.ecs.lab.common.utils.ObjectToJsonUtils;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.eclipse.jgit.diff.DiffEntry;
 
@@ -20,7 +16,6 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import java.lang.reflect.Type;
 
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -28,7 +23,10 @@ public class Delta implements JsonSerializable, JsonDeserializer<Delta> {
   /** JSON key for the changes field */
   public static final String CHANGES = "changes";
 
-  /** Relative path to the changed file. This DIFFERS from the jClass path as the jClass path starts at the repoName */
+  /**
+   * Relative path to the changed file. This DIFFERS from the jClass path as the jClass path starts
+   * at the repoName
+   */
   private String localPath;
 
   private ChangeType changeType;
@@ -38,9 +36,7 @@ public class Delta implements JsonSerializable, JsonDeserializer<Delta> {
   @SerializedName(CHANGES)
   private JClass changedClass;
 
-  public Delta() {
-
-  }
+  public Delta() {}
 
   /**
    * @return the microservice id of the changed class
@@ -57,12 +53,11 @@ public class Delta implements JsonSerializable, JsonDeserializer<Delta> {
     this.msId = msId;
   }
 
-
   /**
-   *
    * @param entry diff entry from git
    * @param jClass class extracted from the CHANGED file
-   * @param localPath relative path to the service (ex: ./clonePath/repoName/service/path/to/file.java)
+   * @param localPath relative path to the service (ex:
+   *     ./clonePath/repoName/service/path/to/file.java)
    */
   public Delta(JClass jClass, DiffEntry entry, String localPath) {
     // TODO Validate local path
@@ -91,7 +86,9 @@ public class Delta implements JsonSerializable, JsonDeserializer<Delta> {
   }
 
   @Override
-  public Delta deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+  public Delta deserialize(
+      JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext)
+      throws JsonParseException {
     com.google.gson.JsonObject deltaObj = jsonElement.getAsJsonObject();
     String deltaType = deltaObj.get("classRole").getAsString();
 
@@ -103,7 +100,6 @@ public class Delta implements JsonSerializable, JsonDeserializer<Delta> {
         ChangeType.valueOf(deltaObj.get("changeType").getAsString()),
         deltaObj.get("commitId").getAsString(),
         deltaObj.get("msId").getAsString(),
-        changedClass
-    );
+        changedClass);
   }
 }

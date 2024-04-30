@@ -31,10 +31,10 @@ public class RestModelService {
    * @param inputRepo repository as described in the config file
    * @param localMicroservicePath the local path to the microservice directory
    * @throws NotFoundException if the service name is not found in the repository paths
-   *
    * @return model of a single service containing the extracted endpoints and dependencies
    */
-  public Microservice recursivelyScanFiles(InputRepository inputRepo, String localMicroservicePath) throws NotFoundException {
+  public Microservice recursivelyScanFiles(InputRepository inputRepo, String localMicroservicePath)
+      throws NotFoundException {
     System.out.println("Scanning repository '" + localMicroservicePath + "'...");
 
     List<JController> controllers = new ArrayList<>();
@@ -53,8 +53,8 @@ public class RestModelService {
     String id = inputRepo.getServiceNameFromPath(localMicroservicePath);
     String commitId = inputRepo.getBaseCommit();
 
-    Microservice model = new Microservice(id, commitId,
-            controllers, services, dtos, repositories, entities);
+    Microservice model =
+        new Microservice(id, commitId, controllers, services, dtos, repositories, entities);
 
     System.out.println("Done!");
     return model;
@@ -89,8 +89,9 @@ public class RestModelService {
    * Scan the given file for endpoints and calls to other services.
    *
    * @param file the file to scan
-   * @apiNote CURRENT LIMITATION: We detect controllers/services/dtos/repositories/entities based on literally
-   * having that string within the file name. This is a naive approach and should be improved.
+   * @apiNote CURRENT LIMITATION: We detect controllers/services/dtos/repositories/entities based on
+   *     literally having that string within the file name. This is a naive approach and should be
+   *     improved.
    */
   public void scanFile(
       File file,
@@ -108,27 +109,26 @@ public class RestModelService {
 
       // Switch through class roles and handle additional logic if needed
       switch (jClass.getClassRole()) {
-          case CONTROLLER:
-            controllers.add((JController) jClass);
-            break;
-          case SERVICE:
-            services.add((JService) jClass);
-            break;
-          case DTO:
-            dtos.add(jClass);
-            break;
-          case REPOSITORY:
-            repositories.add(jClass);
-            break;
-          case ENTITY:
-            entities.add(jClass);
-            break;
-          default:
-            break;
+        case CONTROLLER:
+          controllers.add((JController) jClass);
+          break;
+        case SERVICE:
+          services.add((JService) jClass);
+          break;
+        case DTO:
+          dtos.add(jClass);
+          break;
+        case REPOSITORY:
+          repositories.add(jClass);
+          break;
+        case ENTITY:
+          entities.add(jClass);
+          break;
+        default:
+          break;
       }
     } catch (IOException e) {
       System.err.println("Could not parse file due to unrecognized type: " + e.getMessage());
     }
   }
-
 }

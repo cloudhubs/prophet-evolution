@@ -21,8 +21,10 @@ import static edu.university.ecs.lab.common.models.enums.ErrorCodes.JSON_FILE_WR
 public class MergeService {
   /** Path from working directory to intermediate file */
   private final String intermediatePath;
+
   /** Path from working directory to delta file */
   private final String deltaPath;
+
   private final InputConfig config;
 
   private final MsSystem msSystem;
@@ -30,14 +32,17 @@ public class MergeService {
   private final Map<String, Microservice> msModelMap;
 
   // TODO handle exceptions here
-  public MergeService(String intermediatePath, String deltaPath, InputConfig config) throws IOException {
+  public MergeService(String intermediatePath, String deltaPath, InputConfig config)
+      throws IOException {
     this.intermediatePath = intermediatePath;
     this.deltaPath = deltaPath;
     this.config = config;
-    this.msSystem = IRParserUtils.parseIRSystem(Path.of(intermediatePath).toAbsolutePath().toString());
+    this.msSystem =
+        IRParserUtils.parseIRSystem(Path.of(intermediatePath).toAbsolutePath().toString());
     this.msModelMap = msSystem.getServiceMap();
 
-    this.systemChange = IRParserUtils.parseSystemChange(Path.of(deltaPath).toAbsolutePath().toString());
+    this.systemChange =
+        IRParserUtils.parseSystemChange(Path.of(deltaPath).toAbsolutePath().toString());
   }
 
   public void mergeAndWriteToFile() {
@@ -52,12 +57,12 @@ public class MergeService {
     msSystem.incrementVersion();
 
     // save new system representation
-      try {
-          writeNewIntermediate();
-      } catch (IOException e) {
-        System.err.println("Failed to write new IR from merge service: " + e.getMessage());
-        System.exit(JSON_FILE_WRITE_ERROR.ordinal());
-      }
+    try {
+      writeNewIntermediate();
+    } catch (IOException e) {
+      System.err.println("Failed to write new IR from merge service: " + e.getMessage());
+      System.exit(JSON_FILE_WRITE_ERROR.ordinal());
+    }
   }
 
   private void writeNewIntermediate() throws IOException {
@@ -91,7 +96,9 @@ public class MergeService {
           modifyExisting(classRole, msId, delta);
           break;
         default:
-          System.err.println("Warning in merge service: Not yet implemented change type, skipping: " + delta.getChangeType());
+          System.err.println(
+              "Warning in merge service: Not yet implemented change type, skipping: "
+                  + delta.getChangeType());
           break;
       }
     }
@@ -111,15 +118,16 @@ public class MergeService {
       updateApiDestinationsAdd((JService) delta.getChangedClass(), msId);
     }
 
-
     msModel.addChange(delta);
     msModelMap.put(msId, msModel);
   }
 
   public void modifyExisting(ClassRole classRole, String msId, Delta delta) {
     if (!msModelMap.containsKey(msId)) {
-      System.err.println("Warning in merge service: Could not find service for MODIFY " +
-              "(service should ideally exist for this type), skipping: " + msId);
+      System.err.println(
+          "Warning in merge service: Could not find service for MODIFY "
+              + "(service should ideally exist for this type), skipping: "
+              + msId);
       return;
     }
 
@@ -139,11 +147,10 @@ public class MergeService {
 
     if (ClassRole.CONTROLLER == classRole) {
       JController controller =
-              msModel.getControllers().stream()
-                      .filter(
-                              jController -> jController.matchClassPath(delta.getChangedClass()))
-                      .findFirst()
-                      .orElse(null);
+          msModel.getControllers().stream()
+              .filter(jController -> jController.matchClassPath(delta.getChangedClass()))
+              .findFirst()
+              .orElse(null);
       if (Objects.nonNull(controller)) {
         updateApiDestinationsDelete(controller, msId);
       }
@@ -179,7 +186,9 @@ public class MergeService {
         if (!ms.getId().equals(servicePath)) {
           for (JService service : ms.getServices()) {
             for (RestCall restCall : service.getRestCalls()) {
-              if (endpoint.matchCall(restCall) && !restCall.pointsToDeletedFile() && !"".equals(restCall.getDestFile())) {
+              if (endpoint.matchCall(restCall)
+                  && !restCall.pointsToDeletedFile()
+                  && !"".equals(restCall.getDestFile())) {
                 restCall.setDestinationAsDeleted();
               }
             }

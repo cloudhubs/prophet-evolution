@@ -3,8 +3,6 @@ package edu.university.ecs.lab.common.models;
 import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.delta.models.Delta;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 
 import javax.json.Json;
@@ -23,37 +21,27 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
  */
 @Getter
 public class Microservice implements JsonSerializable {
-  /**
-   * The name of the service (ex: "ts-assurance-service")
-   */
+  /** The name of the service (ex: "ts-assurance-service") */
   @SerializedName("id")
   private String id;
 
-  /**
-   * The commit id of the service as cloned
-   */
+  /** The commit id of the service as cloned */
   @SerializedName("commitId")
   private String commit;
 
-  /**
-   * Controller classes belonging to the microservice.
-   */
+  /** Controller classes belonging to the microservice. */
   private List<JController> controllers;
-  /**
-   * Service classes to the microservice.
-   */
+
+  /** Service classes to the microservice. */
   private List<JService> services;
-  /**
-   * DTO classes belonging to the microservice.
-   */
+
+  /** DTO classes belonging to the microservice. */
   private List<JClass> dtos;
-  /**
-   * Repository classes belonging to the microservice.
-   */
+
+  /** Repository classes belonging to the microservice. */
   private List<JClass> repositories;
-  /**
-   * Entity classes belonging to the microservice.
-   */
+
+  /** Entity classes belonging to the microservice. */
   private List<JClass> entities;
 
   public void setId(String id) {
@@ -112,21 +100,22 @@ public class Microservice implements JsonSerializable {
   /**
    * Constructor for the microservice object
    *
-   * @param id           the name of the service
-   * @param commit       the commit id of the service
-   * @param controllers  the controllers in the service
-   * @param services     the services in the service
-   * @param dtos         the dtos in the service
+   * @param id the name of the service
+   * @param commit the commit id of the service
+   * @param controllers the controllers in the service
+   * @param services the services in the service
+   * @param dtos the dtos in the service
    * @param repositories the repositories in the service
-   * @param entities     the entities in the service
+   * @param entities the entities in the service
    */
-  public Microservice(String id,
-                      String commit,
-                      List<JController> controllers,
-                      List<JService> services,
-                      List<JClass> dtos,
-                      List<JClass> repositories,
-                      List<JClass> entities) {
+  public Microservice(
+      String id,
+      String commit,
+      List<JController> controllers,
+      List<JService> services,
+      List<JClass> dtos,
+      List<JClass> repositories,
+      List<JClass> entities) {
     this.setCommit(commit);
     this.setId(id);
     this.setControllers(controllers);
@@ -139,7 +128,7 @@ public class Microservice implements JsonSerializable {
   /**
    * Constructor for the microservice object with all lists as empty
    *
-   * @param id     the name of the service
+   * @param id the name of the service
    * @param commit the commit # of the service
    */
   public Microservice(String id, String commit) {
@@ -166,7 +155,6 @@ public class Microservice implements JsonSerializable {
 
     return builder.build();
   }
-
 
   public List<? extends JClass> getListForRole(ClassRole classRole) {
     switch (classRole) {

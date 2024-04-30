@@ -25,8 +25,8 @@ public class InputConfig {
   private List<InputRepository> repositories;
 
   /**
-   * This method returns a set of all of relative paths to where the repositories
-   * will be cloned to on the local file system.
+   * This method returns a set of all of relative paths to where the repositories will be cloned to
+   * on the local file system.
    *
    * @return list of relative paths to the local cloned repos
    */
@@ -35,27 +35,26 @@ public class InputConfig {
   }
 
   /**
-   * This method returns the relative local path of a cloned repository as ./clonePath/repoName. This will
-   * be a working relative path to the repository on the local file system.
+   * This method returns the relative local path of a cloned repository as ./clonePath/repoName.
+   * This will be a working relative path to the repository on the local file system.
    *
    * @param inputRepository one of the input repositories from the config
    * @return the relative path string where that repository is cloned to
    */
   public String getLocalPath(InputRepository inputRepository) {
-    return this.getClonePath()
-            + "/"
-            + inputRepository.getName();
+    return this.getClonePath() + "/" + inputRepository.getName();
   }
 
   /**
-   * This method gets local paths to each microservice in the repository based on the config file structure.
-   * <p>Should only be called AFTER cloning the repository, as it validates the ms directories. These will be working
-   * relative paths to each microservice in the repository.</p>
+   * This method gets local paths to each microservice in the repository based on the config file
+   * structure.
    *
-   *
+   * <p>Should only be called AFTER cloning the repository, as it validates the ms directories.
+   * These will be working relative paths to each microservice in the repository.
    *
    * @param inputRepository repository representation from the config file
-   * @return list of paths to the microservices in the repository .<br/><strong>Paths will be like: "./clonePath/repoName/.../serviceName"</strong>
+   * @return list of paths to the microservices in the repository .<br>
+   *     <strong>Paths will be like: "./clonePath/repoName/.../serviceName"</strong>
    */
   public List<String> getMicroservicePaths(InputRepository inputRepository) {
     List<String> microservicePaths = new ArrayList<>();
@@ -86,17 +85,22 @@ public class InputConfig {
       if (f.isDirectory()) {
         microservicePaths.add(path);
       } else {
-        System.err.println("Invalid path given in config file, given path \"" + subPath + "\"  is not a directory, skipping service: " + path);
+        System.err.println(
+            "Invalid path given in config file, given path \""
+                + subPath
+                + "\"  is not a directory, skipping service: "
+                + path);
       }
-
     }
 
     return microservicePaths;
   }
 
   /**
-   * This method will take any file path and return a shortened version as just <strong>"repoName/.../serviceName/.../file.java"</strong>
-   * removing the clonePath from the beginning of the path. Will not start with a "./" or a "/".
+   * This method will take any file path and return a shortened version as just
+   * <strong>"repoName/.../serviceName/.../file.java"</strong> removing the clonePath from the
+   * beginning of the path. Will not start with a "./" or a "/".
+   *
    * @return the shortened path
    */
   public String getShortPath(String fullPath) {

@@ -1,6 +1,5 @@
 package edu.university.ecs.lab.common.models;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -26,8 +25,7 @@ public class JService extends JClass implements JsonSerializable {
         jClass.getMethods(),
         jClass.getFields(),
         jClass.getMethodCalls(),
-        jClass.getMsId()
-    );
+        jClass.getMsId());
     this.restCalls = new ArrayList<>();
   }
 

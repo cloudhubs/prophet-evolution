@@ -43,7 +43,8 @@ public class GitFetchUtils {
    * @return the list of differences
    * @throws Exception as generated from {@link FetchCommand#call()} or {@link DiffCommand#call()}
    */
-  public static List<DiffEntry> fetchRemoteDifferences(Repository repo, String branch) throws Exception {
+  public static List<DiffEntry> fetchRemoteDifferences(Repository repo, String branch)
+      throws Exception {
     try (Git git = new Git(repo)) {
       // fetch latest changes from remote
       git.fetch().call();

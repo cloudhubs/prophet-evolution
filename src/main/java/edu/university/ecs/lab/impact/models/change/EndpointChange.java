@@ -23,7 +23,6 @@ public class EndpointChange {
   EndpointImpact impact;
   List<RestCall> brokenRestCalls;
 
-
   private EndpointChange(
       Endpoint oldEndpoint,
       Endpoint newEndpoint,
@@ -42,34 +41,38 @@ public class EndpointChange {
   }
 
   /**
-   * Build the changes between two endpoints. This represents all cases (ADD|DELETE|MODIFY) of the endpoint.
+   * Build the changes between two endpoints. This represents all cases (ADD|DELETE|MODIFY) of the
+   * endpoint.
    *
    * @param oldEnd original endpoint
    * @param newEnd new endpoint
    * @return object representing change between the two endpoints
    */
   public static EndpointChange buildChange(Endpoint oldEnd, Endpoint newEnd) {
-    if (oldEnd == null && newEnd == null) {throw new IllegalArgumentException("Both endpoints cannot be null");}
+    if (oldEnd == null && newEnd == null) {
+      throw new IllegalArgumentException("Both endpoints cannot be null");
+    }
 
     ChangeType changeType =
-            oldEnd == null ? ChangeType.ADD :
-            newEnd == null ? ChangeType.DELETE : ChangeType.MODIFY;
+        oldEnd == null ? ChangeType.ADD : newEnd == null ? ChangeType.DELETE : ChangeType.MODIFY;
 
-    return new EndpointChange(oldEnd, newEnd, Link.fromEndpoint(oldEnd), Link.fromEndpoint(newEnd), changeType);
-
+    return new EndpointChange(
+        oldEnd, newEnd, Link.fromEndpoint(oldEnd), Link.fromEndpoint(newEnd), changeType);
   }
 
   public boolean isChanged() {
-    if (this.changeType == ChangeType.ADD || this.changeType == ChangeType.DELETE) {return true;}
+    if (this.changeType == ChangeType.ADD || this.changeType == ChangeType.DELETE) {
+      return true;
+    }
 
-    return !(
-        this.oldEndpoint.getParameterList().equals(this.newEndpoint.getParameterList()) &&
-        this.oldEndpoint.getReturnType().equals(this.newEndpoint.getReturnType())
-    );
+    return !(this.oldEndpoint.getParameterList().equals(this.newEndpoint.getParameterList())
+        && this.oldEndpoint.getReturnType().equals(this.newEndpoint.getReturnType()));
   }
 
   private EndpointImpact determineImpact() {
-    if (!isChanged) {return EndpointImpact.NONE;}
+    if (!isChanged) {
+      return EndpointImpact.NONE;
+    }
 
     EndpointImpact im = EndpointImpact.fromChangeType(changeType);
 

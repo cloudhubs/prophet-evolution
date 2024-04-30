@@ -1,20 +1,21 @@
-//package edu.university.ecs.lab;
+// package edu.university.ecs.lab;
 //
-//import edu.university.ecs.lab.common.utils.FullCimetUtils;
-//import edu.university.ecs.lab.delta.DeltaExtraction;
-//import edu.university.ecs.lab.intermediate.create.IRExtraction;
-//import edu.university.ecs.lab.intermediate.merge.IRMergeRunner;
-//import edu.university.ecs.lab.report.ReportRunner;
-//import org.apache.commons.lang3.ArrayUtils;
+// import edu.university.ecs.lab.common.utils.FullCimetUtils;
+// import edu.university.ecs.lab.delta.DeltaExtraction;
+// import edu.university.ecs.lab.intermediate.create.IRExtraction;
+// import edu.university.ecs.lab.intermediate.merge.IRMergeRunner;
+// import edu.university.ecs.lab.report.ReportRunner;
+// import org.apache.commons.lang3.ArrayUtils;
 //
-//import java.util.Arrays;
+// import java.util.Arrays;
 //
-//public class CimetRunner {
+// public class CimetRunner {
 //
 //  /**
 //   * Main method for full report
 //   *
-//   * @param args /path/to/config/file <base branch> <base commit> <compare branch> <compare commit>
+//   * @param args /path/to/config/file <base branch> <base commit> <compare branch> <compare
+// commit>
 //   */
 //  public static void main(String[] args) throws Exception {
 //
@@ -48,4 +49,4 @@
 //    String[] reportArgs = ArrayUtils.addAll(Arrays.copyOfRange(args, 1, 5), IRMergeArgs);
 //    ReportRunner.main(reportArgs);
 //  }
-//}
+// }

@@ -33,11 +33,12 @@ public class ReportService {
 
   /** Destination branch (branch where we are merging INTO, usually main/master) */
   private final String baseBranch;
-  private final String baseCommit;
 
+  private final String baseCommit;
 
   /** Source branch (branch where pull request is being made FROM)_ */
   private final String compareBranch;
+
   private final String compareCommit;
 
   /** The path to the original system IR */

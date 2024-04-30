@@ -8,21 +8,21 @@ import edu.university.ecs.lab.impact.models.SystemMetrics;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * Service to generate metrics from the IR and delta files
- */
+/** Service to generate metrics from the IR and delta files */
 public class MetricsService {
 
   /** Map of microservices name to data in the old system */
   private final Map<String, Microservice> oldMicroserviceMap;
+
   /** Map of microservices name to data in the new (merged) system */
   private final Map<String, Microservice> newMicroserviceMap;
 
-
-    /** Service to generate overall class metrics */
+  /** Service to generate overall class metrics */
   private final ClassMetricsService classMetricsService;
+
   /** Service to generate metrics on a per-service basis */
   private final MicroserviceMetricsService microserviceMetricsService;
+
   /** Service to generate overall system metrics */
   private final SystemMetricsService systemMetricsService;
 
@@ -39,8 +39,10 @@ public class MetricsService {
 
     SystemChange systemChange = IRParserUtils.parseSystemChange(deltaPath);
     classMetricsService = new ClassMetricsService(systemChange);
-    microserviceMetricsService = new MicroserviceMetricsService(oldMicroserviceMap, newMicroserviceMap);
-    systemMetricsService = new SystemMetricsService(oldMicroserviceMap, newMicroserviceMap, systemChange);
+    microserviceMetricsService =
+        new MicroserviceMetricsService(oldMicroserviceMap, newMicroserviceMap);
+    systemMetricsService =
+        new SystemMetricsService(oldMicroserviceMap, newMicroserviceMap, systemChange);
   }
 
   /**
@@ -62,7 +64,6 @@ public class MetricsService {
 
     // Now Microservice specific metrics
     systemMetrics.setMicroserviceMetrics(microserviceMetricsService.getMicroserviceMetrics());
-
 
     return systemMetrics;
   }
