@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static edu.university.ecs.lab.common.models.enums.ClassRole.CONTROLLER;
 import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonArray;
 
 /**
@@ -156,6 +155,11 @@ public class Microservice implements JsonSerializable {
     return builder.build();
   }
 
+  /**
+   * Get the list of classes for a given role associated with this service
+   * @param classRole the role of the classes to get
+   * @return the list of classes for the given role
+   */
   public List<? extends JClass> getListForRole(ClassRole classRole) {
     switch (classRole) {
       case CONTROLLER:
@@ -174,6 +178,10 @@ public class Microservice implements JsonSerializable {
     }
   }
 
+  /**
+   * Add the given change to the microservice
+   * @param delta the change to add
+   */
   public void addChange(Delta delta) {
     switch (delta.getChangedClass().getClassRole()) {
       case CONTROLLER:
@@ -185,6 +193,7 @@ public class Microservice implements JsonSerializable {
       case REPOSITORY:
       case DTO:
       case ENTITY:
+        // This cast is safe because these lists are of type JClass
         List<JClass> list = (List<JClass>) getListForRole(delta.getChangedClass().getClassRole());
         list.add(delta.getChangedClass());
         break;

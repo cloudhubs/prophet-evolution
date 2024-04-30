@@ -13,8 +13,10 @@ import java.util.stream.Collectors;
 
 import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonArray;
 
+/** DTO for {@link SystemChange}, as we write the maps as lists instead. */
 @AllArgsConstructor
 public class SystemChangeDTO implements JsonSerializable {
+
   @SerializedName("controllers")
   private List<Delta> controllers;
 
@@ -30,6 +32,10 @@ public class SystemChangeDTO implements JsonSerializable {
   @SerializedName("entities")
   private List<Delta> entities;
 
+  /**
+   * Convert a {@link SystemChange} to a {@link SystemChangeDTO}.
+   * @param systemChange the system change to convert
+   */
   public SystemChangeDTO(SystemChange systemChange) {
     this.controllers = new ArrayList<>(systemChange.getControllers().values());
     this.services = new ArrayList<>(systemChange.getServices().values());
@@ -38,6 +44,10 @@ public class SystemChangeDTO implements JsonSerializable {
     this.entities = new ArrayList<>(systemChange.getEntities().values());
   }
 
+  /**
+   * Convert this DTO to a {@link SystemChange}.
+   * @return the system change
+   */
   public SystemChange toSystemChange() {
     return new SystemChange(
         controllers.stream().collect(Collectors.toMap(Delta::getLocalPath, delta -> delta)),

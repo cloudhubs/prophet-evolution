@@ -11,11 +11,9 @@ import javax.json.JsonObjectBuilder;
  * Represents a method call in Java. Method call looks like: objectName.methodName() inside of
  * calledFrom
  */
-@ToString
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 public class MethodCall implements JsonSerializable {
   /** Name of the called method */
   protected String methodName;

@@ -23,18 +23,4 @@ public class ObjectToJsonUtils {
     }
     return jsonArrayBuilder.build();
   }
-
-  /**
-   * Convert a list of JsonSerializable objects to a JsonArray.
-   *
-   * @param list the list of JsonSerializable objects to convert
-   * @return the JsonArray representation of the list
-   */
-  public static JsonArray stringListToJsonArray(List<String> list) {
-    JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-    for (String item : list) {
-      jsonArrayBuilder.add(item);
-    }
-    return jsonArrayBuilder.build();
-  }
 }

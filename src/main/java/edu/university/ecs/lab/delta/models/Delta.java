@@ -14,6 +14,7 @@ import org.eclipse.jgit.diff.DiffEntry;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.io.Reader;
 import java.lang.reflect.Type;
 
 @Getter
@@ -24,19 +25,20 @@ public class Delta implements JsonSerializable, JsonDeserializer<Delta> {
   public static final String CHANGES = "changes";
 
   /**
-   * Relative path to the changed file. This DIFFERS from the jClass path as the jClass path starts
-   * at the repoName
+   * Relative path to the changed file. This DIFFERS from {@link JClass#getClassPath()} as the jClass path starts
+   * at the repoName and this is a working relative path to the file.
    */
   private String localPath;
-
+  /** The type of change that occurred */
   private ChangeType changeType;
+  /** The commit id that the delta was generated from */
   private String commitId;
+  /** The microservice id of the changed class */
   private String msId;
 
+  /** The class that was changed */
   @SerializedName(CHANGES)
   private JClass changedClass;
-
-  public Delta() {}
 
   /**
    * @return the microservice id of the changed class
@@ -85,6 +87,26 @@ public class Delta implements JsonSerializable, JsonDeserializer<Delta> {
     return jout.build();
   }
 
+  /** Private constructor only for {@link #getAdapter()}. */
+  private Delta() {}
+
+  /**
+   * Get the adapter for the {@link GsonBuilder#registerTypeAdapter(Type, Object)} interface.
+   *
+   * @return a blank delta object
+   */
+  public static Object getAdapter() {
+    return new Delta();
+  }
+
+  /**
+   * Deserialize a JSON object from {@link Gson#fromJson(Reader, Type)} into a Delta object
+   * @param jsonElement the JSON element to deserialize
+   * @param type the type of the object to deserialize
+   * @param jsonDeserializationContext the context of the deserialization
+   * @return the deserialized Delta object
+   * @throws JsonParseException if the JSON element cannot be deserialized
+   */
   @Override
   public Delta deserialize(
       JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext)

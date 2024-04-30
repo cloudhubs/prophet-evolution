@@ -86,8 +86,6 @@ public class EndpointChange {
       }
     }
 
-    // TODO check broken dependent calls
-
     return im;
   }
 }

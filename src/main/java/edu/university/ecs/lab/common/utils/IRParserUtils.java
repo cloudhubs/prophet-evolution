@@ -15,7 +15,7 @@ import java.io.Reader;
 public class IRParserUtils {
   /** Gson parser */
   private static final Gson gson =
-      new GsonBuilder().registerTypeAdapter(Delta.class, new Delta()).create();
+      new GsonBuilder().registerTypeAdapter(Delta.class, Delta.getAdapter()).create();
 
   /**
    * Read in an IR (original or merged/new) file and parse it into a MsSystem object.

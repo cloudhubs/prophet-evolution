@@ -2,9 +2,7 @@ package edu.university.ecs.lab.common.models;
 
 import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.enums.HttpMethod;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -15,10 +13,9 @@ import javax.json.JsonObjectBuilder;
  * a call to an endpoint mapping.
  */
 @Getter
-@ToString
-@EqualsAndHashCode(callSuper = true)
 public class RestCall extends MethodCall {
-  public static final String DEST_DELETED = "FILE_DELETED";
+  /** String constant for a deleted file TODO not yet implemented */
+  public static final String DEST_DELETED = "DELETED";
 
   /** The api url that is targeted in rest call */
   @SerializedName("dest-endpoint")
@@ -35,18 +32,20 @@ public class RestCall extends MethodCall {
    */
   private String httpMethod;
 
-  public void setDestFile(String destFile) {
-    this.destFile = destFile.replaceAll("\\\\", "/");
-    if (!destFile.equals("FILE_DELETED")) {
-      this.destMsId =
-          this.getDestFile()
-              .substring(this.getDestFile().indexOf("/") + 1)
-              .substring(
-                  0,
-                  this.getDestFile().substring(this.getDestFile().indexOf("/") + 1).indexOf("/"));
-    }
-  }
 
+
+  /**
+   * Constructor for RestCall
+   *
+   * @param methodName Name of the method
+   * @param objectName Name of the object
+   * @param calledFrom Name of the method that contains this call
+   * @param msId Name of the service that contains this method
+   * @param httpMethod The http method of the call
+   * @param destEndpoint The endpoint of the call
+   * @param destMsId The destination service of the call
+   * @param destFile The destination file of the call
+   */
   public RestCall(
       String methodName,
       String objectName,
@@ -64,6 +63,47 @@ public class RestCall extends MethodCall {
   }
 
   /**
+   * Set the destination of this call to the given controller. Does not change the destEndpoint as this is used
+   * to determine if this is called, and the controller endpoints may have parameters.
+   *
+   * @param destController The controller to set as the destination
+   */
+  public void setDestination(JController destController) {
+    this.destMsId = destController.getMsId();
+    setDestFile(destController.getClassPath());
+  }
+
+  /** Set and sanitize the destination file. Private because {@link #setDestination(JController)} should be used instead */
+  private void setDestFile(String destFile) {
+    this.destFile = destFile.replaceAll("\\\\", "/");
+  }
+
+  /**
+   * Set the destination of this call to a deleted file
+   */
+  public void setDestinationAsDeleted() {
+    setDestFile(DEST_DELETED);
+    this.destMsId = DEST_DELETED;
+  }
+
+  /**
+   * Check if the destination of this call is a deleted file
+   * @return True if the destination is a deleted file, false otherwise
+   */
+  public boolean pointsToDeletedFile() {
+    return DEST_DELETED.equals(destFile);
+  }
+
+  /**
+   * Get a string representation of this call
+   *
+   * @return The string representation
+   */
+  public String getId() {
+    return msId + "#" + calledFrom + "[" + httpMethod + "]" + "->" + destMsId + ":" + destEndpoint;
+  }
+
+  /**
    * @return Converted JsonObject of RestCall object
    */
   public JsonObject toJsonObject() {
@@ -78,26 +118,8 @@ public class RestCall extends MethodCall {
     return restCallBuilder.build();
   }
 
-  public void setDestination(JController destController) {
-    this.destMsId = destController.getMsId();
-    setDestFile(destController.getClassPath());
-  }
-
-  public void setDestinationAsDeleted() {
-    setDestFile(DEST_DELETED);
-  }
-
-  public boolean pointsToDeletedFile() {
-    return DEST_DELETED.equals(destFile);
-  }
-
-  public String getId() {
-    return msId + "#" + calledFrom + "[" + httpMethod + "]" + "->" + destMsId + ":" + destEndpoint;
-  }
-
   /** Represents a call as an endpoint source. */
   @Getter
-  @EqualsAndHashCode
   public static class EndpointCall implements JsonSerializable {
     @SerializedName("src-msId")
     private String msId;

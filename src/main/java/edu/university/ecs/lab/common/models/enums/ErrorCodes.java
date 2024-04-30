@@ -1,7 +1,10 @@
 package edu.university.ecs.lab.common.models.enums;
 
+/** Enum to represent error codes */
 public enum ErrorCodes {
+  /** Success (exit code 0) */
   SUCCESS("Success!"),
+  /** General error (exit code 1) */
   GENERAL_ERROR,
   /** Error in which a directory could not be created */
   COULD_NOT_CREATE_DIRECTORY("Could not create directory"),
@@ -10,7 +13,6 @@ public enum ErrorCodes {
    * edu.university.ecs.lab.intermediate.create.services.GitCloneService}
    */
   GIT_CLONE_FAILED("Failed to clone git repository"),
-
   /** Incorrect command line arguments */
   BAD_ARGS,
   /**
@@ -22,12 +24,6 @@ public enum ErrorCodes {
   IR_EXTRACTION_FAIL,
   /** Failure to extract IR during delta */
   DELTA_EXTRACTION_FAIL,
-  /** Failure to perform merge service */
-  MERGE_FAIL,
-  /** Failure to perform metric service */
-  METRIC_FAIL,
-  /** Failure to perform report service */
-  REPORT_FAIL,
   /**
    * Issue generating freemarker report from template in {@link
    * edu.university.ecs.lab.report.ReportService}
@@ -47,11 +43,18 @@ public enum ErrorCodes {
           + "contain the correct structure for the microservices to be detected."),
   ;
 
+  /** The message associated with the error code (may be empty, never null) */
   private final String message;
 
+  /**
+   * Get the message associated with the error code
+   *
+   * @return the message
+   */
   public String getMessage() {
     return message;
   }
+
 
   ErrorCodes() {
     this.message = "";

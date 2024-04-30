@@ -14,16 +14,26 @@ import java.util.Map;
 
 import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonArray;
 
+/**
+ * Represents the intermediate structure of a microservice system.
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 public class MsSystem implements JsonSerializable {
+  /** The name of the system */
   private String systemName;
+  /** The version of the system like v0.0.1 */
   private String version;
 
+  /** List of microservices in the system */
   @SerializedName("microservices")
   private List<Microservice> msList;
 
+  /**
+   * Get a map of microservices in the system as {@literal <msId (service name), Microservice>}
+   * @return the map of microservices
+   */
   public Map<String, Microservice> getServiceMap() {
     Map<String, Microservice> msMap = new LinkedHashMap<>();
 
@@ -51,6 +61,9 @@ public class MsSystem implements JsonSerializable {
     return builder.build();
   }
 
+  /**
+   * Increment the version of the system by +0.0.1
+   */
   public void incrementVersion() {
     // split version by '.'
     String[] parts = version.split("\\.");

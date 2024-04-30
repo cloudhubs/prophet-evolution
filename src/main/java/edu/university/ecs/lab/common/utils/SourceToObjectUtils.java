@@ -202,9 +202,6 @@ public class SourceToObjectUtils {
   }
 
   public static Method parseMethod(MethodDeclaration md) {
-    Method method = new Method();
-    method.setMethodName(md.getNameAsString());
-
     // Get params and returnType
     NodeList<Parameter> parameterList = md.getParameters();
     StringBuilder parameter = new StringBuilder();
@@ -221,10 +218,7 @@ public class SourceToObjectUtils {
       }
     }
 
-    method.setParameterList(parameter.toString());
-    method.setReturnType(md.getTypeAsString());
-
-    return method;
+    return new Method(md.getNameAsString(), parameter.toString(), md.getTypeAsString());
   }
 
   public static List<RestCall> parseRestCalls(File sourceFile, String msId) throws IOException {

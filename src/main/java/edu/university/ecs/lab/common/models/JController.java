@@ -14,10 +14,14 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
 @Getter
 @Setter
 public class JController extends JClass implements JsonSerializable {
-
+  /** List of endpoints in the controller */
   @SerializedName("restEndpoints")
   private List<Endpoint> endpoints;
 
+  /**
+   * Convert constructor for a JController object. Initializes endpoints to an empty list
+   * @param jClass the JClass object to convert
+   */
   public JController(JClass jClass) {
     super(
         jClass.getClassName(),

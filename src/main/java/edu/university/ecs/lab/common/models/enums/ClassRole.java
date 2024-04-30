@@ -7,6 +7,7 @@ import lombok.Getter;
 
 import java.io.File;
 
+/** Enum to represent the role of a class in a system */
 public enum ClassRole {
   CONTROLLER(JController.class),
   SERVICE(JService.class),
