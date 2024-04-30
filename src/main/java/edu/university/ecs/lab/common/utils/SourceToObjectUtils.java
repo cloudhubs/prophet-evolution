@@ -13,12 +13,14 @@ import edu.university.ecs.lab.common.models.enums.RestTemplate;
 import edu.university.ecs.lab.intermediate.utils.StringParserUtils;
 import edu.university.ecs.lab.common.models.*;
 import javassist.NotFoundException;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /** Static utility class for parsing a file and returning associated models from code structure. */
 public class SourceToObjectUtils {
@@ -47,10 +49,11 @@ public class SourceToObjectUtils {
             .className(sourceFile.getName().replace(".java", ""))
             .packageName(packageName)
             .methods(parseMethods(cu))
-            .fields(parseFields(sourceFile))
-            .methodCalls(parseMethodCalls(sourceFile, msId))
+            .fields(parseFields(cu))
+            .methodCalls(parseMethodCalls(cu, msId))
             .msId(msId)
             .classRole(ClassRole.fromSourceFile(sourceFile))
+            .annotations(parseAnnotations(cu.getClassByName(sourceFile.getName().replace(".java", ""))))
             .build();
 
     // Handle special class roles
@@ -60,7 +63,7 @@ public class SourceToObjectUtils {
       return controller;
     } else if (jClass.getClassRole() == ClassRole.SERVICE) {
       JService service = new JService(jClass);
-      service.setRestCalls(parseRestCalls(sourceFile, msId));
+      service.setRestCalls(parseRestCalls(cu, msId));
       return service;
     }
 
@@ -216,13 +219,13 @@ public class SourceToObjectUtils {
 
     method.setParameterList(parameter.toString());
     method.setReturnType(md.getTypeAsString());
+    method.setAnnotations(parseAnnotations(md.getAnnotations()));
 
     return method;
   }
 
-  public static List<RestCall> parseRestCalls(File sourceFile, String msId) throws IOException {
+  public static List<RestCall> parseRestCalls(CompilationUnit cu, String msId) throws IOException {
     List<RestCall> restCalls = new ArrayList<>();
-    CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
     // loop through class declarations
     for (ClassOrInterfaceDeclaration cid : cu.findAll(ClassOrInterfaceDeclaration.class)) {
@@ -272,8 +275,7 @@ public class SourceToObjectUtils {
     return restCalls;
   }
 
-  public static List<MethodCall> parseMethodCalls(File sourceFile, String msId) throws IOException {
-    CompilationUnit cu = StaticJavaParser.parse(sourceFile);
+  public static List<MethodCall> parseMethodCalls(CompilationUnit cu, String msId) throws IOException {
     List<MethodCall> methodCalls = new ArrayList<>();
 
     // loop through class declarations
@@ -306,10 +308,8 @@ public class SourceToObjectUtils {
     return methodCalls;
   }
 
-  private static List<Field> parseFields(File sourceFile) throws IOException {
+  private static List<Field> parseFields(CompilationUnit cu) throws IOException {
     List<Field> javaFields = new ArrayList<>();
-
-    CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
     // loop through class declarations
     for (ClassOrInterfaceDeclaration cid : cu.findAll(ClassOrInterfaceDeclaration.class)) {
@@ -343,6 +343,7 @@ public class SourceToObjectUtils {
 
     return "";
   }
+
 
   /**
    * Get the name of the object a method is being called from (callingObj.methodName())
@@ -446,5 +447,35 @@ public class SourceToObjectUtils {
     }
 
     return str;
+  }
+
+  private static List<Annotation> parseAnnotations(Optional<ClassOrInterfaceDeclaration> cid) {
+    if(cid.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    return parseAnnotations(cid.get().getAnnotations());
+  }
+
+  private static List<Annotation> parseAnnotations(NodeList<AnnotationExpr> annotationExprs) {
+    List<Annotation> annotations = new ArrayList<>();
+
+    for(AnnotationExpr ae : annotationExprs) {
+      Annotation annotation;
+      if (ae.isNormalAnnotationExpr()) {
+        NormalAnnotationExpr normal = ae.asNormalAnnotationExpr();
+        annotation = new Annotation(ae.getNameAsString(), normal.getPairs().toString());
+
+      } else if (ae.isSingleMemberAnnotationExpr()) {
+        annotation = new Annotation(ae.getNameAsString(), ae.asSingleMemberAnnotationExpr().getMemberValue().toString());
+      } else {
+        annotation = new Annotation(ae.getNameAsString(), "");
+
+      }
+
+      annotations.add(annotation);
+    }
+
+    return annotations;
   }
 }
