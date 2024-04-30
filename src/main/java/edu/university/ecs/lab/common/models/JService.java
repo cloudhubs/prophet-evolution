@@ -1,5 +1,6 @@
 package edu.university.ecs.lab.common.models;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class JService extends JClass implements JsonSerializable {
   /** List of rest calls in the service */
   private List<RestCall> restCalls;

@@ -14,6 +14,7 @@ import javax.json.JsonObjectBuilder;
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class Field implements JsonSerializable {
   /** Java class type of the class variable e.g. String */
   @SerializedName("variableType")

@@ -13,6 +13,7 @@ import javax.json.JsonObjectBuilder;
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class MethodCall implements JsonSerializable {
   /** Name of the called method */
   protected String methodName;

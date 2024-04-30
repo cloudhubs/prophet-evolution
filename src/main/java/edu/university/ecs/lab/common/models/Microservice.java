@@ -3,6 +3,7 @@ package edu.university.ecs.lab.common.models;
 import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.delta.models.Delta;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import javax.json.Json;
@@ -19,6 +20,7 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
  * hold all information in that class.
  */
 @Getter
+@EqualsAndHashCode
 public class Microservice implements JsonSerializable {
   /** The name of the service (ex: "ts-assurance-service") */
   @SerializedName("id")

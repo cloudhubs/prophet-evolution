@@ -11,6 +11,7 @@ import javax.json.JsonObjectBuilder;
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class Method implements JsonSerializable {
   /** Name of the method */
   protected String methodName;
