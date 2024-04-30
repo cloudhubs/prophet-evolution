@@ -29,6 +29,10 @@ public class IRExtractionService {
    */
   private final String basePath;
 
+  private final String baseBranch;
+
+  private final String baseCommit;
+
   /** Service to handle cloning from git */
   private final GitCloneService gitCloneService;
 
@@ -38,11 +42,13 @@ public class IRExtractionService {
   /**
    * @param config
    */
-  public IRExtractionService(InputConfig config) {
+  public IRExtractionService(InputConfig config, String baseBranch, String baseCommit) {
     this.config = config;
     basePath = config.getClonePath();
     gitCloneService = new GitCloneService(config);
-    restModelService = new RestModelService(config);
+    restModelService = new RestModelService(config, baseBranch, baseCommit);
+    this.baseBranch = baseBranch;
+    this.baseCommit = baseCommit;
   }
 
   /**
@@ -88,7 +94,7 @@ public class IRExtractionService {
     for (InputRepository inputRepository : config.getRepositories()) {
       // Clone the remote repository
       try {
-        gitCloneService.cloneRemote(inputRepository);
+        gitCloneService.cloneRemote(inputRepository, baseCommit);
       } catch (Exception e) {
         System.err.println(GIT_CLONE_FAILED.getMessage() + ": " + e.getMessage());
         System.exit(GIT_CLONE_FAILED.ordinal());
@@ -167,6 +173,6 @@ public class IRExtractionService {
    * @return the output file name
    */
   private String getOutputFileName() {
-    return config.getOutputPath() + "/rest-extraction-output-[" + (new Date()).getTime() + "].json";
+    return config.getOutputPath() + "/rest-extraction-output-[" + baseBranch + "-" + baseCommit.substring(0, 7) + "].json";
   }
 }

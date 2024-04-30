@@ -4,6 +4,7 @@ import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.intermediate.create.services.IRExtractionService;
+import org.apache.commons.lang3.ObjectUtils;
 
 import static edu.university.ecs.lab.common.models.enums.ErrorCodes.BAD_ARGS;
 
@@ -22,20 +23,25 @@ public class IRExtraction {
   /**
    * Intermediate extraction runner, generates IR from remote repository and writes to file.
    *
-   * @param args [/path/to/config/file]
+   * @param args [/path/to/config/file] <branch> <commit>
    * @apiNote defaults to config.json in the project directory.
    */
   public static void main(String[] args) throws Exception {
-    if (args.length > 1) {
-      System.err.println("Usage: java -jar IRExtraction.jar [/path/to/config/file]");
+    if (args.length != 3 && args.length != 2) {
+      System.err.println("Usage: java -jar IRExtraction.jar [/path/to/config/file] <branch> <commit>");
       System.exit(BAD_ARGS.ordinal());
     }
 
     // Get input config
-    InputConfig inputConfig =
-        ConfigUtil.validateConfig((args.length == 1) ? args[0] : "config.json");
+    InputConfig inputConfig = ConfigUtil.validateConfig(args[0]);
+    String baseBranch = args[1];
+    String commit = null;
 
-    IRExtractionService irExtractionService = new IRExtractionService(inputConfig);
+    if (args.length == 3) {
+      commit = args[2];
+    }
+
+    IRExtractionService irExtractionService = new IRExtractionService(inputConfig, baseBranch, commit);
     String outputFileName = irExtractionService.generateSystemIntermediate();
 
     // Save the file name for the full system runner

@@ -20,8 +20,14 @@ public class RestModelService {
   /** The input configuration file */
   private final InputConfig inputConfig;
 
-  public RestModelService(InputConfig config) {
+  private final String baseBranch;
+  private final String baseCommit;
+
+
+  public RestModelService(InputConfig config, String baseBranch, String baseCommit) {
     this.inputConfig = config;
+    this.baseBranch = baseBranch;
+    this.baseCommit = baseCommit;
   }
 
   /**
@@ -51,10 +57,9 @@ public class RestModelService {
     scanDirectory(localDir, controllers, services, dtos, repositories, entities);
 
     String id = inputRepo.getServiceNameFromPath(localMicroservicePath);
-    String commitId = inputRepo.getBaseCommit();
 
     Microservice model =
-        new Microservice(id, commitId, controllers, services, dtos, repositories, entities);
+        new Microservice(id, baseBranch, baseCommit,controllers, services, dtos, repositories, entities);
 
     System.out.println("Done!");
     return model;

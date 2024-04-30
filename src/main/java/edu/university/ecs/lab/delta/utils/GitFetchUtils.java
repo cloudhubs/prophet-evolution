@@ -61,6 +61,7 @@ public class GitFetchUtils {
     }
   }
 
+
   /**
    * Prepare the tree parser for the given repository and git branch reference.
    *

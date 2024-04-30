@@ -23,7 +23,7 @@ public class GitCloneService {
    * @param inputRepository repository representation from the config file
    * @throws Exception if Git clone failed
    */
-  public void cloneRemote(InputRepository inputRepository) throws Exception {
+  public void cloneRemote(InputRepository inputRepository, String baseCommit) throws Exception {
 
     String relativeClonePath = inputConfig.getLocalPath(inputRepository);
     FullCimetUtils.microservicePaths.add(relativeClonePath);
@@ -38,12 +38,13 @@ public class GitCloneService {
     if (exitCode < 400) {
       System.out.println("Git clone of " + inputRepository.getRepoUrl() + " successful ");
 
-      if (Objects.isNull(inputRepository.getBaseCommit())) {
-        inputRepository.setBaseCommit("HEAD");
-      }
 
+      if (Objects.isNull(baseCommit)) {
+        baseCommit = "HEAD";
+      }
+      //TODO if commit is null then don't do reset?
       processBuilder =
-          new ProcessBuilder("git", "reset", "--hard", inputRepository.getBaseCommit());
+          new ProcessBuilder("git", "reset", "--hard", baseCommit);
       processBuilder.directory(new File(relativeClonePath));
       processBuilder.redirectErrorStream(true);
       process = processBuilder.start();

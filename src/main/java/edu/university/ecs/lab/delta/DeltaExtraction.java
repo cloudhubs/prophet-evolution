@@ -17,20 +17,21 @@ public class DeltaExtraction {
    * Compares the branch specified in the configuration file to the most recent commit on the remote
    * repository branch name specified in the arguments and generates the delta file.
    *
-   * @param args {@literal <branch name> [/path/to/config]} TODO branch WILL NOT WORK unless it is
+   * @param args {@literal <branch name> <commit> [/path/to/config]} TODO branch WILL NOT WORK unless it is
    *     main, see DeltaExtractionService#advanceLocalRepo(InputRepository) for why
    */
   public static void main(String[] args) throws Exception {
     //    args = new String[] {"main"};
-    if (args.length < 1 || args.length > 2) {
-      System.err.println("Required arguments <branch> [(optional) /path/to/config]");
+    if (args.length < 2 || args.length > 3) {
+      System.err.println("Required arguments <branch> <commit> [(optional) /path/to/config]");
     }
 
     String branch = args[0];
+    String commit = args[1];
     InputConfig inputConfig =
-        ConfigUtil.validateConfig((args.length == 2) ? args[1] : "config.json");
+        ConfigUtil.validateConfig((args.length == 3) ? args[2] : "config.json");
 
-    DeltaExtractionService deltaService = new DeltaExtractionService(branch, inputConfig);
+    DeltaExtractionService deltaService = new DeltaExtractionService(branch, commit, inputConfig);
     List<String> outputNames = deltaService.generateDelta();
 
     // TODO make work for multi-repo case

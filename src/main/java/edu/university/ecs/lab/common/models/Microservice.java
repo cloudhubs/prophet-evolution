@@ -26,9 +26,14 @@ public class Microservice implements JsonSerializable {
   @SerializedName("id")
   private String id;
 
+  @SerializedName("branch")
+  private String branch;
+
   /** The commit id of the service as cloned */
   @SerializedName("commitId")
   private String commit;
+
+
 
   /** Controller classes belonging to the microservice. */
   private List<JController> controllers;
@@ -90,6 +95,13 @@ public class Microservice implements JsonSerializable {
     propagateId(this.entities);
   }
 
+  public void setBranch(String branch) {
+    if (Objects.isNull(branch)) {
+      this.branch = "HEAD";
+    }
+    this.branch = branch;
+  }
+
   private <T extends JClass> void propagateId(List<T> classes) {
     Objects.requireNonNull(this.id);
     if (classes == null) {
@@ -111,6 +123,7 @@ public class Microservice implements JsonSerializable {
    */
   public Microservice(
       String id,
+      String branch,
       String commit,
       List<JController> controllers,
       List<JService> services,
@@ -118,6 +131,7 @@ public class Microservice implements JsonSerializable {
       List<JClass> repositories,
       List<JClass> entities) {
     this.setCommit(commit);
+    this.setBranch(branch);
     this.setId(id);
     this.setControllers(controllers);
     this.setServices(services);

@@ -25,6 +25,9 @@ public class DeltaExtractionService {
   /** The branch to compare to */
   private final String branch;
 
+  /** The Commit to compare to */
+  private final String commit;
+
   /** Config file, defaults to config.json */
   private final InputConfig config;
 
@@ -34,8 +37,9 @@ public class DeltaExtractionService {
    * @param branch the branch to compare to
    * @param config input configuration file
    */
-  public DeltaExtractionService(String branch, InputConfig config) {
+  public DeltaExtractionService(String branch, String commit, InputConfig config) {
     this.branch = branch;
+    this.commit = commit;
     this.config = config;
   }
 
