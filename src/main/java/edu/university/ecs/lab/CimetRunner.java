@@ -1,18 +1,18 @@
- package edu.university.ecs.lab;
+package edu.university.ecs.lab;
 
- import edu.university.ecs.lab.common.utils.FullCimetUtils;
- import edu.university.ecs.lab.delta.DeltaExtraction;
- import edu.university.ecs.lab.intermediate.create.IRExtraction;
- import edu.university.ecs.lab.intermediate.merge.IRMergeRunner;
- import edu.university.ecs.lab.report.ReportRunner;
+import edu.university.ecs.lab.common.utils.FullCimetUtils;
+import edu.university.ecs.lab.delta.DeltaExtraction;
+import edu.university.ecs.lab.intermediate.create.IRExtraction;
+import edu.university.ecs.lab.intermediate.merge.IRMergeRunner;
+import edu.university.ecs.lab.report.ReportRunner;
 
- public class CimetRunner {
+public class CimetRunner {
 
   /**
-   * Main method for full report
-   * TODO adapt for case of already having the initial IR (the previous merged/newIR) aka not running IRExtraction
-   * @param args /path/to/config/file <base branch> <base commit> <compare branch> <compare
- commit>
+   * Main method for full report TODO adapt for case of already having the initial IR (the previous
+   * merged/newIR) aka not running IRExtraction
+   *
+   * @param args /path/to/config/file <base branch> <base commit> <compare branch> <compare commit>
    */
   public static void main(String[] args) throws Exception {
 
@@ -46,8 +46,15 @@
 
     // RUN REPORT
     System.out.println("Starting Report Creation...");
-    String[] reportArgs = {baseBranch, baseCommit, compareBranch, compareCommit, FullCimetUtils.pathToIR,
-            FullCimetUtils.pathToNewIR, FullCimetUtils.pathToDelta};
+    String[] reportArgs = {
+      baseBranch,
+      baseCommit,
+      compareBranch,
+      compareCommit,
+      FullCimetUtils.pathToIR,
+      FullCimetUtils.pathToNewIR,
+      FullCimetUtils.pathToDelta
+    };
     ReportRunner.main(reportArgs);
   }
- }
+}

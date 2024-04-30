@@ -6,7 +6,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
-
 /**
  * Represents a method call in Java. Method call looks like: objectName.methodName() inside of
  * calledFrom

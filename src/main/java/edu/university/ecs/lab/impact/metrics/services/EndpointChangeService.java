@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
 /** Service to handle endpoint changes between two microservices */
 public class EndpointChangeService {
   /** Map of microservices name to data in the original system */
