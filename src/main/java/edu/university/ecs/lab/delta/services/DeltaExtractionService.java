@@ -44,8 +44,8 @@ public class DeltaExtractionService {
    *
    * @return set of output file names generated
    */
-  public Set<String> generateDelta() {
-    Set<String> outputNames = new HashSet<>();
+  public List<String> generateDelta() {
+    List<String> outputNames = new ArrayList<>();
 
     // iterate through each repository path
     for (InputRepository inputRepository : config.getRepositories()) {
@@ -64,6 +64,7 @@ public class DeltaExtractionService {
         System.exit(DELTA_EXTRACTION_FAIL.ordinal());
       }
     }
+
     return outputNames;
   }
 

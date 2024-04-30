@@ -6,18 +6,24 @@ import java.util.*;
 /** Testing for report execution, {@link ReportService} contains all logic */
 public class ReportRunner {
 
+  /**
+   * Main method for generating a report by running metrics and report generation.
+   *
+   * @param args <base branch> <base commit> <compare branch> <compare commit>
+   *     <path/to/intermediate-json> <path/to/new-intermediate-json> <path/to/delta-json>
+   */
   public static void main(String[] args) throws IOException {
-    // Testing TODO remove
-    args =
-        new String[] {
-          "main",
-          "123",
-          "compare",
-          "456",
-          "./out/rest-extraction-output-[1714448356019].json",
-          "./out/rest-extraction-new-[1714450087175].json",
-          "./out/delta-changes-[1714448475461].json"
-        };
+//    // Testing TODO remove
+//    args =
+//        new String[] {
+//          "main",
+//          "123",
+//          "compare",
+//          "456",
+//          "./out/rest-extraction-output-[1714448356019].json",
+//          "./out/rest-extraction-new-[1714450087175].json",
+//          "./out/delta-changes-[1714448475461].json"
+//        };
 
     if (args.length != 7) {
       System.err.println(

@@ -45,7 +45,7 @@ public class MergeService {
         IRParserUtils.parseSystemChange(Path.of(deltaPath).toAbsolutePath().toString());
   }
 
-  public void mergeAndWriteToFile() {
+  public String mergeAndWriteToFile() {
 
     updateModelMap(ClassRole.CONTROLLER, systemChange.getControllers());
     updateModelMap(ClassRole.SERVICE, systemChange.getServices());
@@ -57,15 +57,17 @@ public class MergeService {
     msSystem.incrementVersion();
 
     // save new system representation
+    String outputFile = null;
     try {
-      writeNewIntermediate();
+      outputFile = writeNewIntermediate();
     } catch (IOException e) {
       System.err.println("Failed to write new IR from merge service: " + e.getMessage());
       System.exit(JSON_FILE_WRITE_ERROR.ordinal());
     }
+    return outputFile;
   }
 
-  private void writeNewIntermediate() throws IOException {
+  private String writeNewIntermediate() throws IOException {
 
     JsonObject jout = msSystem.toJsonObject();
 
@@ -75,6 +77,7 @@ public class MergeService {
 
     MsJsonWriter.writeJsonToFile(jout, outputName);
     System.out.println("Successfully wrote updated extraction to: \"" + outputName + "\"");
+    return outputName;
   }
 
   // TODO this cannot handle file moves, only add/modify/delete

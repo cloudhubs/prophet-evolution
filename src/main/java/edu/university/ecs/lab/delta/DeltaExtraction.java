@@ -2,6 +2,7 @@ package edu.university.ecs.lab.delta;
 
 import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.models.InputConfig;
+import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.delta.services.DeltaExtractionService;
 
@@ -18,9 +19,11 @@ public class DeltaExtraction {
    * repository branch name specified in the arguments and generates the delta file.
    *
    * @param args {@literal <branch name> [/path/to/config]}
+   * TODO branch WILL NOT WORK unless it is main, see DeltaExtractionService#advanceLocalRepo(InputRepository) for why
    */
+
   public static void main(String[] args) throws Exception {
-    args = new String[] {"main"};
+//    args = new String[] {"main"};
     if (args.length < 1 || args.length > 2) {
       System.err.println("Required arguments <branch> [(optional) /path/to/config]");
     }
@@ -30,8 +33,9 @@ public class DeltaExtraction {
         ConfigUtil.validateConfig((args.length == 2) ? args[1] : "config.json");
 
     DeltaExtractionService deltaService = new DeltaExtractionService(branch, inputConfig);
-    Set<String> outputNames = deltaService.generateDelta();
+    List<String> outputNames = deltaService.generateDelta();
 
-    FullCimetUtils.pathsToDeltas = outputNames;
+    // TODO make work for multi-repo case
+    FullCimetUtils.pathToDelta = outputNames.get(0);
   }
 }

@@ -22,7 +22,7 @@ import static edu.university.ecs.lab.common.models.enums.ErrorCodes.TEMPLATE_PRO
 
 /** To use this class, simply call the constructor and then run generateReport() */
 public class ReportService {
-  // TODO get this from the config.json file
+  // TODO get this from the config.json file as yet another constructor parameter
   private static final String OUTPUT_PATH = "./out/";
   private static final String TEMPLATE_NAME = "report.ftl";
   private static Configuration config;
@@ -34,16 +34,19 @@ public class ReportService {
   /** Destination branch (branch where we are merging INTO, usually main/master) */
   private final String baseBranch;
 
+  /** Destination commit (commit where we are merging INTO, on baseBranch) */
   private final String baseCommit;
 
   /** Source branch (branch where pull request is being made FROM)_ */
   private final String compareBranch;
 
+  /** Source commit (commit where pull request is being made FROM, on compareBranch) */
   private final String compareCommit;
 
   /** The path to the original system IR */
   private final String intermediatePath;
 
+  /** The service for generating metrics */
   private final MetricsService metricsService;
 
   /**
