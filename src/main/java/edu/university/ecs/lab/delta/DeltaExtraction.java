@@ -2,7 +2,6 @@ package edu.university.ecs.lab.delta;
 
 import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.models.InputConfig;
-import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.delta.services.DeltaExtractionService;
 
@@ -18,12 +17,11 @@ public class DeltaExtraction {
    * Compares the branch specified in the configuration file to the most recent commit on the remote
    * repository branch name specified in the arguments and generates the delta file.
    *
-   * @param args {@literal <branch name> [/path/to/config]}
-   * TODO branch WILL NOT WORK unless it is main, see DeltaExtractionService#advanceLocalRepo(InputRepository) for why
+   * @param args {@literal <branch name> [/path/to/config]} TODO branch WILL NOT WORK unless it is
+   *     main, see DeltaExtractionService#advanceLocalRepo(InputRepository) for why
    */
-
   public static void main(String[] args) throws Exception {
-//    args = new String[] {"main"};
+    //    args = new String[] {"main"};
     if (args.length < 1 || args.length > 2) {
       System.err.println("Required arguments <branch> [(optional) /path/to/config]");
     }
