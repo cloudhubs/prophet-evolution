@@ -145,8 +145,6 @@ public class DeltaExtractionService {
     return outputName;
   }
 
-
-
   /**
    * Advance the local repository to the latest commit on the remote branch.
    *

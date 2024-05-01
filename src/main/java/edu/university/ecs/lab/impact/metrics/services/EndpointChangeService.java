@@ -177,8 +177,6 @@ public class EndpointChangeService {
    * @return list of endpoint changes that have changed
    */
   private List<EndpointChange> filterNoChange(List<EndpointChange> endpointChanges) {
-    return endpointChanges.stream()
-        .filter(EndpointChange::isChanged)
-        .collect(Collectors.toList());
+    return endpointChanges.stream().filter(EndpointChange::isChanged).collect(Collectors.toList());
   }
 }
