@@ -17,13 +17,13 @@ public class DeltaExtraction {
    * Compares the branch specified in the Rest Extraction file to a commit on the remote
    * repository branch name specified in the arguments and generates the delta file.
    *
-   * @param args {@literal <branch name> <commit> [/path/to/config]} TODO branch WILL NOT WORK unless it is
+   * @param args {@literal <compareBranch> <compareCommit> [/path/to/config]} TODO branch WILL NOT WORK unless it is
    *     main, see DeltaExtractionService#advanceLocalRepo(InputRepository) for why
    */
   public static void main(String[] args) throws Exception {
     //    args = new String[] {"main"};
     if (args.length < 2 || args.length > 3) {
-      System.err.println("Required arguments <branch> <commit> [(optional) /path/to/config]");
+      System.err.println("Required arguments <compareBranch> <compareCommit> [(optional) /path/to/config]");
     }
 
     String branch = args[0];
