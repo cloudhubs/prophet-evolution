@@ -14,16 +14,18 @@ import java.util.*;
  */
 public class DeltaExtraction {
   /**
-   * Compares the branch specified in the Rest Extraction file to a commit on the remote
-   * repository branch name specified in the arguments and generates the delta file.
+   * Compares the branch specified in the Rest Extraction file to a commit on the remote repository
+   * branch name specified in the arguments and generates the delta file.
    *
-   * @param args {@literal <compareBranch> <compareCommit> [/path/to/config]} TODO branch WILL NOT WORK unless it is
-   *     main, see DeltaExtractionService#advanceLocalRepo(InputRepository) for why
+   * @param args {@literal <compareBranch> <compareCommit> [/path/to/config]} TODO branch WILL NOT
+   *     WORK unless it is main, see DeltaExtractionService#advanceLocalRepo(InputRepository) for
+   *     why
    */
   public static void main(String[] args) throws Exception {
     //    args = new String[] {"main"};
     if (args.length < 2 || args.length > 3) {
-      System.err.println("Required arguments <compareBranch> <compareCommit> [(optional) /path/to/config]");
+      System.err.println(
+          "Required arguments <compareBranch> <compareCommit> [(optional) /path/to/config]");
     }
 
     String branch = args[0];
@@ -31,7 +33,8 @@ public class DeltaExtraction {
     InputConfig inputConfig =
         ConfigUtil.validateConfig((args.length == 3) ? args[2] : "config.json");
 
-    DeltaExtractionService deltaService = new DeltaExtractionService(branch, compareCommit, inputConfig);
+    DeltaExtractionService deltaService =
+        new DeltaExtractionService(branch, compareCommit, inputConfig);
     List<String> outputNames = deltaService.generateDelta();
 
     // TODO make work for multi-repo case
