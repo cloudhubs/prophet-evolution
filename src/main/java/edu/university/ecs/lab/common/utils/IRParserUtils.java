@@ -28,18 +28,18 @@ public class IRParserUtils {
    * @throws IOException if an I/O error occurs
    */
   public static MsSystem parseIRSystem(String irFileName) {
-      MsSystem msSystem = null;
-      try {
-        Reader irReader = new FileReader(irFileName);
-        msSystem = gson.fromJson(irReader, MsSystem.class);
-        irReader.close();
-      } catch (FileNotFoundException e) {
-        System.err.println("IR File not Found: " + irFileName);
-        System.exit(FILE_NOT_FOUND.ordinal());
-      } catch (IOException e) {
-        System.err.println("Error reading IR file: " + irFileName);
-        System.exit(IR_EXTRACTION_FAIL.ordinal());
-      }
+    MsSystem msSystem = null;
+    try {
+      Reader irReader = new FileReader(irFileName);
+      msSystem = gson.fromJson(irReader, MsSystem.class);
+      irReader.close();
+    } catch (FileNotFoundException e) {
+      System.err.println("IR File not Found: " + irFileName);
+      System.exit(FILE_NOT_FOUND.ordinal());
+    } catch (IOException e) {
+      System.err.println("Error reading IR file: " + irFileName);
+      System.exit(IR_EXTRACTION_FAIL.ordinal());
+    }
 
     return msSystem;
   }
@@ -64,7 +64,6 @@ public class IRParserUtils {
       System.err.println("Error reading delta file: " + deltaFileName);
       System.exit(DELTA_EXTRACTION_FAIL.ordinal());
     }
-
 
     return systemChangeDto.toSystemChange();
   }

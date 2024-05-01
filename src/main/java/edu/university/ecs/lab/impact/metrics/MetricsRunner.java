@@ -20,8 +20,7 @@ public class MetricsRunner {
       return;
     }
 
-    MetricsService metricsService =
-        new MetricsService(args[0], args[1], args[2]);
+    MetricsService metricsService = new MetricsService(args[0], args[1], args[2]);
 
     System.out.println(metricsService.generateSystemMetrics());
   }
