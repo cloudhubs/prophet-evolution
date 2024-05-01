@@ -241,7 +241,7 @@ public class SourceToObjectUtils {
 
           RestTemplate callTemplate = RestTemplate.findCallByName(methodName);
           String calledServiceName = getCallingObjectName(scope);
-
+          String payloadObject = "";
 
           HttpMethod httpMethod;
           // Are we a rest call
@@ -250,6 +250,8 @@ public class SourceToObjectUtils {
             // get http methods for exchange method
             if (callTemplate.getMethodName().equals("exchange")) {
               httpMethod = RestTemplate.getHttpMethodForExchange(mce.getArguments().toString());
+              // We are arbitrarily setting it, temporary
+              payloadObject = mce.getArguments().size() >= 2 ? mce.getArguments().get(2).toString() : "";
             } else {
               httpMethod = callTemplate.getHttpMethod();
             }
@@ -265,7 +267,7 @@ public class SourceToObjectUtils {
                     msId,
                     httpMethod,
                     parseURL(mce, cid),
-                    "", "");
+                    "", "", payloadObject);
 
             restCalls.add(call);
           }

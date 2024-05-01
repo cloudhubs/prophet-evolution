@@ -35,6 +35,9 @@ public class RestCall extends MethodCall {
    */
   private String httpMethod;
 
+  /** The object holding payload for api call */
+  private String payloadObject;
+
   public void setDestFile(String destFile) {
     this.destFile = destFile.replaceAll("\\\\", "/");
     if(!destFile.equals("FILE_DELETED")) {
@@ -43,12 +46,13 @@ public class RestCall extends MethodCall {
   }
 
   public RestCall(String methodName, String objectName, String calledFrom, String msId,
-                  HttpMethod httpMethod, String destEndpoint, String destMsId, String destFile) {
+                  HttpMethod httpMethod, String destEndpoint, String destMsId, String destFile, String payloadObject) {
     super(methodName, objectName, calledFrom, msId);
     this.httpMethod = httpMethod.name();
     this.destEndpoint = destEndpoint;
     this.destMsId = destMsId;
     this.destFile = destFile;
+    this.payloadObject = payloadObject;
   }
 
   /**
@@ -62,6 +66,7 @@ public class RestCall extends MethodCall {
     restCallBuilder.add("dest-endpoint", destEndpoint);
     restCallBuilder.add("dest-msId", destMsId);
     restCallBuilder.add("dest-file", destFile);
+    restCallBuilder.add("payloadObject", payloadObject);
 
     return restCallBuilder.build();
   }
