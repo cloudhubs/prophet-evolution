@@ -27,11 +27,11 @@ public class DeltaExtraction {
     }
 
     String branch = args[0];
-    String commit = args[1];
+    String compareCommit = args[1];
     InputConfig inputConfig =
         ConfigUtil.validateConfig((args.length == 3) ? args[2] : "config.json");
 
-    DeltaExtractionService deltaService = new DeltaExtractionService(branch, commit, inputConfig);
+    DeltaExtractionService deltaService = new DeltaExtractionService(branch, compareCommit, inputConfig);
     List<String> outputNames = deltaService.generateDelta();
 
     // TODO make work for multi-repo case

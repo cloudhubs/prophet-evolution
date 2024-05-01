@@ -25,6 +25,10 @@ public class MergeService {
   /** Path from working directory to delta file */
   private final String deltaPath;
 
+  private final String compareBranch;
+  private final String compareCommit;
+
+
   private final InputConfig config;
 
   private final MsSystem msSystem;
@@ -32,7 +36,7 @@ public class MergeService {
   private final Map<String, Microservice> msModelMap;
 
   // TODO handle exceptions here
-  public MergeService(String intermediatePath, String deltaPath, InputConfig config)
+  public MergeService(String intermediatePath, String deltaPath, InputConfig config, String compareBranch, String compareCommit)
       throws IOException {
     this.intermediatePath = intermediatePath;
     this.deltaPath = deltaPath;
@@ -43,6 +47,8 @@ public class MergeService {
 
     this.systemChange =
         IRParserUtils.parseSystemChange(Path.of(deltaPath).toAbsolutePath().toString());
+    this.compareBranch = compareBranch;
+    this.compareCommit = compareCommit;
   }
 
   public String mergeAndWriteToFile() {
@@ -73,7 +79,7 @@ public class MergeService {
 
     String outputPath = config.getOutputPath();
 
-    String outputName = outputPath + "/rest-extraction-new-[" + (new Date()).getTime() + "].json";
+    String outputName = outputPath + "/rest-extraction-new-[" + compareBranch + "-" + compareCommit.substring(0,7) + "].json";
 
     MsJsonWriter.writeJsonToFile(jout, outputName);
     System.out.println("Successfully wrote updated extraction to: \"" + outputName + "\"");

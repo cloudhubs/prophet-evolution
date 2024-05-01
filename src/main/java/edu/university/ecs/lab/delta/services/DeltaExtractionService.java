@@ -27,7 +27,7 @@ public class DeltaExtractionService {
   private final String branch;
 
   /** The Commit to compare to */
-  private final String sourceCommit;
+  private final String compareCommit;
 
   /** Config file, defaults to config.json */
   private final InputConfig config;
@@ -40,7 +40,7 @@ public class DeltaExtractionService {
    */
   public DeltaExtractionService(String branch, String commit, InputConfig config) {
     this.branch = branch;
-    this.sourceCommit = commit;
+    this.compareCommit = commit;
     this.config = config;
   }
 
@@ -59,7 +59,7 @@ public class DeltaExtractionService {
         // point to local repository
 
         // extract remote differences with local
-        List<DiffEntry> differences = GitFetchUtils.fetchRemoteDifferences(localRepo, sourceCommit);
+        List<DiffEntry> differences = GitFetchUtils.fetchRemoteDifferences(localRepo, compareCommit);
 
         // process/write differences to delta output
         String outputFile = this.processDifferences(differences, inputRepository);
@@ -135,7 +135,7 @@ public class DeltaExtractionService {
           "Change impact of type " + entry.getChangeType() + " detected in " + entry.getNewPath());
     }
 
-    String outputName = "./out/delta-changes-[" + branch + "-" + sourceCommit + "].json";
+    String outputName = "./out/delta-changes-[" + FullCimetUtils.baseBranch +"-"+ FullCimetUtils.baseCommit.substring(0,7) + " -> " + branch +"-"+ compareCommit.substring(0, 7) + "].json";
 
     MsJsonWriter.writeJsonToFile(systemChange.toJsonObject(), outputName);
 
@@ -151,7 +151,7 @@ public class DeltaExtractionService {
    */
   private void advanceLocalRepo(InputRepository inputRepository) {
     try {
-      ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", sourceCommit);
+      ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", compareCommit);
       processBuilder.directory(
           new File(Path.of(config.getLocalPath(inputRepository)).toAbsolutePath().toString()));
       processBuilder.redirectErrorStream(true);

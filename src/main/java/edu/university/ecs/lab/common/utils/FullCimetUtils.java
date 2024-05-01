@@ -14,4 +14,7 @@ public class FullCimetUtils {
   public static String pathToDelta;
   public static String pathToNewIR;
   public static Set<String> microservicePaths = new HashSet<>();
+
+  public static String baseBranch = "";
+  public static String baseCommit = "";
 }

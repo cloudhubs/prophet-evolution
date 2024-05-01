@@ -31,17 +31,17 @@ public class CimetRunner {
 
     // RUN IR EXTRACTION
     System.out.println("Starting IR Extraction...");
-    String[] IRExtractionArgs = {configPath};
+    String[] IRExtractionArgs = {configPath, baseBranch, baseCommit};
     IRExtraction.main(IRExtractionArgs);
 
     // RUN DELTA
     System.out.println("Starting Delta Extraction...");
-    String[] deltaArgs = {baseBranch, configPath};
+    String[] deltaArgs = {compareBranch, compareCommit, configPath};
     DeltaExtraction.main(deltaArgs);
 
     // RUN IR MERGE
     System.out.println("Starting IR Merge...");
-    String[] IRMergeArgs = {FullCimetUtils.pathToIR, FullCimetUtils.pathToDelta};
+    String[] IRMergeArgs = {FullCimetUtils.pathToIR, FullCimetUtils.pathToDelta, configPath, compareBranch, compareCommit};
     IRMergeRunner.main(IRMergeArgs);
 
     // RUN REPORT

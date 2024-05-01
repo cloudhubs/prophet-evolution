@@ -46,5 +46,7 @@ public class IRExtraction {
 
     // Save the file name for the full system runner
     FullCimetUtils.pathToIR = outputFileName;
+    FullCimetUtils.baseBranch = baseBranch;
+    FullCimetUtils.baseCommit = commit;
   }
 }
