@@ -19,19 +19,33 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.*;
 @ToString
 @Builder
 public class JClass implements JsonSerializable {
+  /** Name of the class e.g. Food */
   protected String className;
+
   /** Path like repoName/.../serviceName/.../file.java */
   protected String classPath;
+
+  /** Full java package name of the class e.g. com.cloudhubs.trainticket.food.entity */
   protected String packageName;
+
+  /**
+   * Role of the class in the microservice system. See {@link ClassRole} for possibilities. Will
+   * match with subtype where applicable
+   */
   protected ClassRole classRole;
+
+  /** List of methods in the class */
   protected List<Method> methods;
 
+  /** List of class variables e.g. (private String username;) */
   @SerializedName("variables")
   protected List<Field> fields;
+
 
   /** Class level annotations **/
   protected List<Annotation> annotations;
 
+  /** List of method invocations made from within this class e.g. obj.method() */
   protected List<MethodCall> methodCalls;
 
   /** The associated microservice object for this class */
@@ -43,10 +57,27 @@ public class JClass implements JsonSerializable {
     return classRole.name() + ":" + msId + "#" + className;
   }
 
+  /**
+   * Set the class path of the class. This will replace all "\\" with "/" for readability.
+   *
+   * @param classPath The class path to set
+   */
   public void setClassPath(String classPath) {
     this.classPath = classPath.replaceAll("\\\\", "/");
   }
 
+  /**
+   * Constructor for a JClass object.
+   *
+   * @param className Name of the class
+   * @param classPath Path of the class
+   * @param packageName Package name of the class
+   * @param classRole Role of the class
+   * @param methods List of methods in the class
+   * @param fields List of fields in the class
+   * @param methodCalls List of method calls in the class
+   * @param msId The associated microservice id
+   */
   public JClass(String className,
                 String classPath,
                 String packageName,
@@ -96,7 +127,8 @@ public class JClass implements JsonSerializable {
   }
 
   /**
-   * Check if the given class is the same as this class. This is true if they have the same classPath.
+   * Check if the given class is the same as this class. This is true if they have the same
+   * classPath.
    *
    * @param other The class to compare with
    * @return True if the classes are the same, false otherwise

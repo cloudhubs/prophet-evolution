@@ -4,34 +4,38 @@ import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.delta.services.DeltaExtractionService;
-import edu.university.ecs.lab.intermediate.create.services.IRExtractionService;
 
 import java.util.*;
 
-/** Service for extracting the differences between a local and remote repository.
- * TODO: notice how {@link DeltaExtractionService#generateDelta()} returns a set of file names, we should make this all 1 file for the multi-repo case.
- * */
+/**
+ * Service for extracting the differences between a local and remote repository. TODO: notice how
+ * {@link DeltaExtractionService#generateDelta()} returns a set of file names, we should make this
+ * all 1 file for the multi-repo case.
+ */
 public class DeltaExtraction {
   /**
-   * Compares the branch specified in the configuration file to the most
-   * recent commit on the remote repository branch name specified in the arguments and generates the delta
-   * file.
+   * Compares the branch specified in the Rest Extraction file to a commit on the remote repository
+   * branch name specified in the arguments and generates the delta file.
    *
-   * @param args {@literal <branch name> [/path/to/config]}
+   * @param args {@literal <branch name> <commit> [/path/to/config]} TODO branch WILL NOT WORK
+   *     unless it is main, see DeltaExtractionService#advanceLocalRepo(InputRepository) for why
    */
   public static void main(String[] args) throws Exception {
-    args = new String[]{"main"};
-    if (args.length < 1 || args.length > 2) {
-      System.err.println("Required arguments <branch> [(optional) /path/to/config]");
+    //    args = new String[] {"main"};
+    if (args.length < 2 || args.length > 3) {
+      System.err.println("Required arguments <branch> <commit> [(optional) /path/to/config]");
     }
 
     String branch = args[0];
-    InputConfig inputConfig = ConfigUtil.validateConfig((args.length == 2) ? args[1] : "config.json");
+    String compareCommit = args[1];
+    InputConfig inputConfig =
+        ConfigUtil.validateConfig((args.length == 3) ? args[2] : "config.json");
 
+    DeltaExtractionService deltaService =
+        new DeltaExtractionService(branch, compareCommit, inputConfig);
+    List<String> outputNames = deltaService.generateDelta();
 
-    DeltaExtractionService deltaService = new DeltaExtractionService(branch, inputConfig);
-    Set<String> outputNames = deltaService.generateDelta();
-
-    FullCimetUtils.pathsToDeltas = outputNames;
+    // TODO make work for multi-repo case
+    FullCimetUtils.pathToDelta = outputNames.get(0);
   }
 }

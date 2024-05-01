@@ -1,0 +1,18 @@
+name: Git Actions Test
+
+on: workflow_dispatch
+
+env:
+  branch: 'master' # same as above
+
+jobs:
+  greeting_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Test time"
+        run: echo $branch
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
+        id: extract_branch

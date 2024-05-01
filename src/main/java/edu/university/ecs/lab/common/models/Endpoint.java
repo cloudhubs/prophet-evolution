@@ -15,27 +15,37 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
  * Represents an extension of a method declaration. An endpoint exists at the controller level and
  * signifies an open mapping that can be the target of a rest call.
  */
-@Data
-@AllArgsConstructor
 @ToString
+@Setter
+@Getter
 public class Endpoint extends Method implements JsonSerializable {
+  /** The URL of the endpoint e.g. /api/v1/users/login, May have parameters like {param} */
   @SerializedName("api")
   private String url;
 
+  /** The type of endpoint, e.g. GetMapping, PostMapping, etc. */
   @SerializedName("type")
   private String decorator;
 
+  /** The HTTP method of the endpoint, e.g. GET, POST, etc. */
   private String httpMethod;
 
+  /** The microservice id that this endpoint belongs to */
   private String msId;
 
+  /** The calls that use this endpoint */
   @SerializedName("src-calls")
   private List<RestCall.EndpointCall> srcCalls;
 
-  // Not Yet Implemented
-  // private String mapping;
-  // private String mappingPath;
-
+  /**
+   * Constructor for an endpoint.
+   *
+   * @param method the method that this endpoint represents
+   * @param url the URL of the endpoint
+   * @param decorator the type of endpoint
+   * @param httpMethod the HTTP method of the endpoint
+   * @param msId the microservice id that this endpoint belongs to
+   */
   public Endpoint(Method method, String url, String decorator, String httpMethod, String msId) {
     super(method.getMethodName(), method.getParameterList(), method.getReturnType(), method.getAnnotations());
     setMsId(msId);
@@ -46,18 +56,18 @@ public class Endpoint extends Method implements JsonSerializable {
   }
 
   @Override
-    public JsonObject toJsonObject() {
-      JsonObjectBuilder endpointBuilder = super.createBuilder();
+  public JsonObject toJsonObject() {
+    JsonObjectBuilder endpointBuilder = super.createBuilder();
 
-      endpointBuilder.add("id", getId());
-      endpointBuilder.add("api", url);
-      endpointBuilder.add("type", decorator);
-      endpointBuilder.add("httpMethod", httpMethod);
-      endpointBuilder.add("msId", msId);
-      endpointBuilder.add("src-calls", listToJsonArray(srcCalls));
+    endpointBuilder.add("id", getId());
+    endpointBuilder.add("api", url);
+    endpointBuilder.add("type", decorator);
+    endpointBuilder.add("httpMethod", httpMethod);
+    endpointBuilder.add("msId", msId);
+    endpointBuilder.add("src-calls", listToJsonArray(srcCalls));
 
-      return endpointBuilder.build();
-    }
+    return endpointBuilder.build();
+  }
 
   /**
    * Constructs a String endpointId from an Endpoint object and name of microservice.
@@ -68,18 +78,18 @@ public class Endpoint extends Method implements JsonSerializable {
     return "[" + httpMethod + "]" + msId + ":" + url;
   }
 
-    /**
-     * Check if the given RestCall matches this endpoint. Does not use restCall destMsId or destFile as these may not be set yet.
-     *
-     * @param restCall the call to check
-     * @return true if the call matches this endpoint, false otherwise
-     */
+  /**
+   * Check if the given RestCall matches this endpoint. Does not use restCall destMsId or destFile
+   * as these may not be set yet.
+   *
+   * @param restCall the call to check
+   * @return true if the call matches this endpoint, false otherwise
+   */
   public boolean matchCall(RestCall restCall) {
 
     if (!this.httpMethod.equals(restCall.getHttpMethod())) {
       return false;
     }
-
 
     boolean isUrlMatch = this.url.equals(restCall.getDestEndpoint());
 
@@ -96,16 +106,19 @@ public class Endpoint extends Method implements JsonSerializable {
 
   /**
    * Compare this endpoint to another (changed) endpoint to determine if they are the same.
+   *
+   * @param other the endpoint to compare to
    * @return true if the endpoints are the same, false otherwise
    */
   public boolean isSameEndpoint(Endpoint other) {
-    return Objects.equals(httpMethod, other.getHttpMethod())
-            && Objects.equals(url, other.getUrl());
+    return Objects.equals(httpMethod, other.getHttpMethod()) && Objects.equals(url, other.getUrl());
   }
 
   /**
    * Add a call to the list of calls that use this endpoint.
+   *
    * @param restCall the call to add
+   * @param service service containing the rest call
    */
   public void addCall(RestCall restCall, JService service) {
     srcCalls.add(new RestCall.EndpointCall(restCall, service));

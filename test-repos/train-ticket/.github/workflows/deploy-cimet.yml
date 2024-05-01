@@ -1,0 +1,79 @@
+name: Build and Extract
+
+# Use for manual running
+# on: workflow_dispatch
+
+# Use this for pull request
+on:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - 'master'
+
+jobs:
+  build-and-extract:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Test
+        run: echo "$SOURCE_BRANCH"
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> "$GITHUB_EMV"
+        id: extract_branch
+
+      - name: Install Maven
+        run: sudo apt-get install -y maven
+
+      - name: Clone cimet Repository
+        run: git clone https://github.com/cloudhubs/cimet tool
+        working-directory: ./  # Clone into the root directory
+
+      - name: Build cimet with Maven
+        run: mvn clean install -DskipTests
+        working-directory: ./tool
+
+      - name: Get Cimet Config
+        env:
+          CIMET_CONFIG: ${{ vars.CIMET_CONFIG }}
+        run: echo "$CIMET_CONFIG" >> "./tool/cimet-config.json"
+
+      - name: Compile and Run RestExtraction.java
+        run: mvn exec:java -Dexec.mainClass="edu.university.ecs.lab.intermediate.create.IRExtraction" -Dexec.args="cimet-config.json"
+        working-directory: ./tool
+
+      - name: Get IR Path
+        run: echo "IR_OUTPUT_FILE=$(ls ./out/rest-extraction-output*.json)" >> "$GITHUB_ENV"
+        working-directory: ./tool
+        
+      - name: Compile and Run DeltaExtraction.java
+        run: mvn exec:java -Dexec.mainClass="edu.university.ecs.lab.delta.DeltaExtraction" -Dexec.args="$BRANCH ./repos/train-ticket-microservices"
+        working-directory: ./tool
+
+      - name: Get Delta Path
+        run: echo "DELTA_OUTPUT_FILE=$(ls ./out/delta-changes*.json)" >> "$GITHUB_ENV"
+        working-directory: ./tool
+
+      - name: Compile and Run DeltaMerge.java
+        run: mvn exec:java -Dexec.mainClass="edu.university.ecs.lab.intermediate.merge.IRMergeRunner" -Dexec.args="$IR_OUTPUT_FILE $DELTA_OUTPUT_FILE"
+        working-directory: ./tool
+
+      - name: Compile and Run ReportRunner.java
+        run: mvn exec:java -Dexec.mainClass="edu.university.ecs.lab.report.ReportRunner" -Dexec.args="$IR_OUTPUT_FILE $DELTA_OUTPUT_FILE"
+        working-directory: ./tool
+
+      - name: Save out folder
+        uses: actions/upload-artifact@v2
+        with:
+          name: changed-files-diff
+          path: ./tool/out

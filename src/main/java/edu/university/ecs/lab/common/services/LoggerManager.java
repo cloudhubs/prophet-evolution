@@ -22,11 +22,6 @@ public class LoggerManager {
     logger.error(ERR_MSG, e);
   }
 
-  public static void errorAndExit(Exception e) {
-    logger.error(ERR_MSG, e);
-    System.exit(1);
-  }
-
   public static void changeOutputFile(String fileName) {
     // Obtain the current LoggerContext
     LoggerContext context = (LoggerContext) LogManager.getContext(false);

@@ -11,7 +11,6 @@ import edu.university.ecs.lab.delta.models.SystemChange;
 import javax.json.JsonObject;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,8 +20,13 @@ import static edu.university.ecs.lab.common.models.enums.ErrorCodes.JSON_FILE_WR
 public class MergeService {
   /** Path from working directory to intermediate file */
   private final String intermediatePath;
+
   /** Path from working directory to delta file */
   private final String deltaPath;
+
+  private final String compareBranch;
+  private final String compareCommit;
+
   private final InputConfig config;
 
   private final MsSystem msSystem;
@@ -30,17 +34,27 @@ public class MergeService {
   private final Map<String, Microservice> msModelMap;
 
   // TODO handle exceptions here
-  public MergeService(String intermediatePath, String deltaPath, InputConfig config) throws IOException {
+  public MergeService(
+      String intermediatePath,
+      String deltaPath,
+      InputConfig config,
+      String compareBranch,
+      String compareCommit)
+      throws IOException {
     this.intermediatePath = intermediatePath;
     this.deltaPath = deltaPath;
     this.config = config;
-    this.msSystem = IRParserUtils.parseIRSystem(Path.of(intermediatePath).toAbsolutePath().toString());
+    this.msSystem =
+        IRParserUtils.parseIRSystem(Path.of(intermediatePath).toAbsolutePath().toString());
     this.msModelMap = msSystem.getServiceMap();
 
-    this.systemChange = IRParserUtils.parseSystemChange(Path.of(deltaPath).toAbsolutePath().toString());
+    this.systemChange =
+        IRParserUtils.parseSystemChange(Path.of(deltaPath).toAbsolutePath().toString());
+    this.compareBranch = compareBranch;
+    this.compareCommit = compareCommit;
   }
 
-  public void mergeAndWriteToFile() {
+  public String mergeAndWriteToFile() {
 
     updateModelMap(ClassRole.CONTROLLER, systemChange.getControllers());
     updateModelMap(ClassRole.SERVICE, systemChange.getServices());
@@ -52,24 +66,33 @@ public class MergeService {
     msSystem.incrementVersion();
 
     // save new system representation
-      try {
-          writeNewIntermediate();
-      } catch (IOException e) {
-        System.err.println("Failed to write new IR from merge service: " + e.getMessage());
-        System.exit(JSON_FILE_WRITE_ERROR.ordinal());
-      }
+    String outputFile = null;
+    try {
+      outputFile = writeNewIntermediate();
+    } catch (IOException e) {
+      System.err.println("Failed to write new IR from merge service: " + e.getMessage());
+      System.exit(JSON_FILE_WRITE_ERROR.ordinal());
+    }
+    return outputFile;
   }
 
-  private void writeNewIntermediate() throws IOException {
+  private String writeNewIntermediate() throws IOException {
 
     JsonObject jout = msSystem.toJsonObject();
 
     String outputPath = config.getOutputPath();
 
-    String outputName = outputPath + "/rest-extraction-new-[" + (new Date()).getTime() + "].json";
+    String outputName =
+        outputPath
+            + "/rest-extraction-new-["
+            + compareBranch
+            + "-"
+            + compareCommit.substring(0, 7)
+            + "].json";
 
     MsJsonWriter.writeJsonToFile(jout, outputName);
     System.out.println("Successfully wrote updated extraction to: \"" + outputName + "\"");
+    return outputName;
   }
 
   // TODO this cannot handle file moves, only add/modify/delete
@@ -91,7 +114,9 @@ public class MergeService {
           modifyExisting(classRole, msId, delta);
           break;
         default:
-          System.err.println("Warning in merge service: Not yet implemented change type, skipping: " + delta.getChangeType());
+          System.err.println(
+              "Warning in merge service: Not yet implemented change type, skipping: "
+                  + delta.getChangeType());
           break;
       }
     }
@@ -111,15 +136,16 @@ public class MergeService {
       updateApiDestinationsAdd((JService) delta.getChangedClass(), msId);
     }
 
-
     msModel.addChange(delta);
     msModelMap.put(msId, msModel);
   }
 
   public void modifyExisting(ClassRole classRole, String msId, Delta delta) {
     if (!msModelMap.containsKey(msId)) {
-      System.err.println("Warning in merge service: Could not find service for MODIFY " +
-              "(service should ideally exist for this type), skipping: " + msId);
+      System.err.println(
+          "Warning in merge service: Could not find service for MODIFY "
+              + "(service should ideally exist for this type), skipping: "
+              + msId);
       return;
     }
 
@@ -139,11 +165,10 @@ public class MergeService {
 
     if (ClassRole.CONTROLLER == classRole) {
       JController controller =
-              msModel.getControllers().stream()
-                      .filter(
-                              jController -> jController.matchClassPath(delta.getChangedClass()))
-                      .findFirst()
-                      .orElse(null);
+          msModel.getControllers().stream()
+              .filter(jController -> jController.matchClassPath(delta.getChangedClass()))
+              .findFirst()
+              .orElse(null);
       if (Objects.nonNull(controller)) {
         updateApiDestinationsDelete(controller, msId);
       }
@@ -179,7 +204,9 @@ public class MergeService {
         if (!ms.getId().equals(servicePath)) {
           for (JService service : ms.getServices()) {
             for (RestCall restCall : service.getRestCalls()) {
-              if (endpoint.matchCall(restCall) && !restCall.pointsToDeletedFile() && !"".equals(restCall.getDestFile())) {
+              if (endpoint.matchCall(restCall)
+                  && !restCall.pointsToDeletedFile()
+                  && !"".equals(restCall.getDestFile())) {
                 restCall.setDestinationAsDeleted();
               }
             }

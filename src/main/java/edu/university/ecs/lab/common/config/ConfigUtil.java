@@ -8,9 +8,7 @@ import java.io.FileReader;
 
 import static edu.university.ecs.lab.common.models.enums.ErrorCodes.BAD_CONFIG;
 
-/**
- * Utility class for reading and validating the input config file
- */
+/** Utility class for reading and validating the input config file */
 public class ConfigUtil {
 
   /** Prevent instantiation */
@@ -37,7 +35,8 @@ public class ConfigUtil {
     }
 
     // TODO ? Add in more necessary params of input config
-    // TODO validate that clonePath and outputPath are valid RELATIVE directories starting with "./" from the working directory
+    // TODO validate that clonePath and outputPath are valid RELATIVE directories starting with "./"
+    // from the working directory
 
     return inputConfig;
   }

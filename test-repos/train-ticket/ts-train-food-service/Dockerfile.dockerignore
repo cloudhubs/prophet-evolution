@@ -1,0 +1,6 @@
+*
+!/pom.xml
+!/ts-common/pom.xml
+!/ts-common/src
+!/ts-train-food-service/pom.xml
+!/ts-train-food-service/src

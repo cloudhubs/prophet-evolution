@@ -1,7 +1,7 @@
 package edu.university.ecs.lab.common.models;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,11 +14,17 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class JController extends JClass implements JsonSerializable {
-
+  /** List of endpoints in the controller */
   @SerializedName("restEndpoints")
   private List<Endpoint> endpoints;
 
+  /**
+   * Convert constructor for a JController object. Initializes endpoints to an empty list
+   *
+   * @param jClass the JClass object to convert
+   */
   public JController(JClass jClass) {
     super(
             jClass.getClassName(),

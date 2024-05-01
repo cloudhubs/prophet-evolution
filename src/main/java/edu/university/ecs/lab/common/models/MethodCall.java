@@ -5,13 +5,11 @@ import lombok.*;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import java.util.Arrays;
-import java.util.List;
 
-import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonArray;
-
-/** Represents a method call in Java. Method call looks like: objectName.methodName() inside of calledFrom */
-@ToString
+/**
+ * Represents a method call in Java. Method call looks like: objectName.methodName() inside of
+ * calledFrom
+ */
 @AllArgsConstructor
 @Getter
 @Setter
@@ -19,10 +17,16 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
 public class MethodCall implements JsonSerializable {
   /** Name of the called method */
   protected String methodName;
-  /** Name of object this method call is from (Maybe a static class instance, just whatever is before the ".") */
+
+  /**
+   * Name of object this method call is from (Maybe a static class instance, just whatever is before
+   * the ".")
+   */
   protected String objectName;
+
   /** Name of method that contains this call */
   protected String calledFrom;
+
   /** Name of service that contains this method */
   protected String msId;
 

@@ -1,6 +1,6 @@
 package edu.university.ecs.lab.common.models;
 
-import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -14,9 +14,16 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
 
 @Getter
 @Setter
+@EqualsAndHashCode
 public class JService extends JClass implements JsonSerializable {
+  /** List of rest calls in the service */
   private List<RestCall> restCalls;
 
+  /**
+   * Convert constructor for a JService object. Initializes restCalls to an empty list
+   *
+   * @param jClass the JClass object to convert
+   */
   public JService(@NonNull JClass jClass) {
     super(
         jClass.getClassName(),
@@ -27,8 +34,7 @@ public class JService extends JClass implements JsonSerializable {
         jClass.getFields(),
         jClass.getAnnotations(),
         jClass.getMethodCalls(),
-        jClass.getMsId()
-    );
+        jClass.getMsId());
     this.restCalls = new ArrayList<>();
   }
 

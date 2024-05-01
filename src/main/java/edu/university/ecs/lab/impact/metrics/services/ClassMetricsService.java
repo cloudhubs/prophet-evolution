@@ -9,19 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Service to generate metrics pertaining to classes in the system
- */
+/** Service to generate metrics pertaining to classes in the system */
 public class ClassMetricsService {
   /** System change object containing all changes to the system */
   private final SystemChange systemChange;
 
   /**
    * Constructor for ClassMetricsService
+   *
    * @param systemChange delta of the system
    */
   public ClassMetricsService(SystemChange systemChange) {
-      this.systemChange = systemChange;
+    this.systemChange = systemChange;
   }
 
   /**

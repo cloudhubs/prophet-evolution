@@ -26,9 +26,10 @@ import java.util.Optional;
 public class SourceToObjectUtils {
 
   /**
-   * Parse a Java class file and return a JClass object.
-   * The class role will be determined by {@link ClassRole#fromSourceFile(File)} and the returned object
-   * will be of correct {@link JClass} subclass type where applicable.
+   * Parse a Java class file and return a JClass object. The class role will be determined by {@link
+   * ClassRole#fromSourceFile(File)} and the returned object will be of correct {@link JClass}
+   * subclass type where applicable.
+   *
    * @param sourceFile the file to parse
    * @return the JClass object representing the file
    * @throws IOException on parse error
@@ -44,7 +45,8 @@ public class SourceToObjectUtils {
 
     String msId = getMicroserviceName(sourceFile, config);
 
-    JClass jClass = JClass.builder()
+    JClass jClass =
+        JClass.builder()
             .classPath(getRepositoryPath(sourceFile, config))
             .className(sourceFile.getName().replace(".java", ""))
             .packageName(packageName)
@@ -72,9 +74,10 @@ public class SourceToObjectUtils {
 
   /**
    * Get the service name from the given file. This is determined by the file path and config.
+   *
    * @param sourceFile the file to parse
-   * @return the service name of the file, null if not found
-   * TODO this logic is now in {@link InputRepository#getServiceNameFromPath(String)}, refactor and delete
+   * @return the service name of the file, null if not found TODO this logic is now in {@link
+   *     InputRepository#getServiceNameFromPath(String)}, refactor and delete
    */
   private static String getMicroserviceName(File sourceFile, InputConfig config) {
     // Get the path beginning with repoName/serviceName/...
@@ -91,7 +94,8 @@ public class SourceToObjectUtils {
             try {
               return repo.getServiceNameFromPath(servicePath);
             } catch (NotFoundException e) {
-              System.err.println("Failed to get service name from path \"" + filePath + "\": " + e.getMessage());
+              System.err.println(
+                  "Failed to get service name from path \"" + filePath + "\": " + e.getMessage());
             }
           }
         }
@@ -102,12 +106,13 @@ public class SourceToObjectUtils {
   }
 
   /**
-   * Get the path from the repository TLD of the file from the clonePath directory.
-   * This will look like repoName/serviceName/path/to/file.java
+   * Get the path from the repository TLD of the file from the clonePath directory. This will look
+   * like repoName/serviceName/path/to/file.java
+   *
    * @param sourceFile the file to get the path of
    * @param config system input config file
-   * @return the relative path of the file after ./clonePath/
-   * TODO this logic should be put in {@link InputRepository}, refactor and delete
+   * @return the relative path of the file after ./clonePath/ TODO this logic should be put in
+   *     {@link InputRepository}, refactor and delete
    */
   private static String getRepositoryPath(File sourceFile, InputConfig config) {
     // Get the file path start from the clonePath directory
@@ -120,7 +125,9 @@ public class SourceToObjectUtils {
     int clonePathIndex = filePath.indexOf(clonePath);
 
     if (clonePathIndex == -1) {
-      System.err.println("Error: File path does not contain clone path when trying to get relativePath: " + filePath);
+      System.err.println(
+          "Error: File path does not contain clone path when trying to get relativePath: "
+              + filePath);
       return filePath;
     }
 
@@ -198,9 +205,6 @@ public class SourceToObjectUtils {
   }
 
   public static Method parseMethod(MethodDeclaration md) {
-    Method method = new Method();
-    method.setMethodName(md.getNameAsString());
-
     // Get params and returnType
     NodeList<Parameter> parameterList = md.getParameters();
     StringBuilder parameter = new StringBuilder();
@@ -217,11 +221,7 @@ public class SourceToObjectUtils {
       }
     }
 
-    method.setParameterList(parameter.toString());
-    method.setReturnType(md.getTypeAsString());
-    method.setAnnotations(parseAnnotations(md.getAnnotations()));
-
-    return method;
+    return new Method(md.getNameAsString(), parameter.toString(), md.getTypeAsString(), parseAnnotations(md.getAnnotations()));
   }
 
   public static List<RestCall> parseRestCalls(CompilationUnit cu, String msId) throws IOException {
@@ -245,7 +245,8 @@ public class SourceToObjectUtils {
 
           HttpMethod httpMethod;
           // Are we a rest call
-          if (!Objects.isNull(callTemplate) && Objects.nonNull(calledServiceName)
+          if (!Objects.isNull(callTemplate)
+              && Objects.nonNull(calledServiceName)
               && calledServiceName.equals("restTemplate")) {
             // get http methods for exchange method
             if (callTemplate.getMethodName().equals("exchange")) {
@@ -261,14 +262,15 @@ public class SourceToObjectUtils {
               continue;
             }
 
-            RestCall call = new RestCall(callTemplate.getMethodName(),
+            RestCall call =
+                new RestCall(
+                    callTemplate.getMethodName(),
                     calledServiceName,
                     calledFromMethodName,
                     msId,
                     httpMethod,
                     parseURL(mce, cid),
                     "", "", payloadObject);
-
             restCalls.add(call);
           }
         }
@@ -302,7 +304,8 @@ public class SourceToObjectUtils {
             // do nothing, we only want regular methodCalls
             // System.out.println(restCall);
           } else if (Objects.nonNull(calledServiceName)) {
-            methodCalls.add(new MethodCall(methodName, getCallingObjectName(scope), parentMethodName, msId));
+            methodCalls.add(
+                new MethodCall(methodName, getCallingObjectName(scope), parentMethodName, msId));
           }
         }
       }
@@ -349,6 +352,7 @@ public class SourceToObjectUtils {
 
   /**
    * Get the name of the object a method is being called from (callingObj.methodName())
+   *
    * @param scope the scope to search
    * @return the name of the object the method is being called from
    */
@@ -369,7 +373,8 @@ public class SourceToObjectUtils {
    * @param cid the class or interface to search
    * @return the URL found
    */
-  // TODO: what is URL here? Is it the URL of the service? Or the URL of the method call? Rename to avoid confusion
+  // TODO: what is URL here? Is it the URL of the service? Or the URL of the method call? Rename to
+  // avoid confusion
   private static String parseURL(MethodCallExpr mce, ClassOrInterfaceDeclaration cid) {
     if (mce.getArguments().isEmpty()) {
       return "";

@@ -6,9 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,6 +32,8 @@ public class Link {
       return new HashSet<>();
     }
 
-    return endpoint.getSrcCalls().stream().map(call -> new Link(endpoint, call)).collect(Collectors.toSet());
+    return endpoint.getSrcCalls().stream()
+        .map(call -> new Link(endpoint, call))
+        .collect(Collectors.toSet());
   }
 }

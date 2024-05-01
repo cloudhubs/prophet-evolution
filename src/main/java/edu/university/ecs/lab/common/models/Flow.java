@@ -1,15 +1,13 @@
 package edu.university.ecs.lab.common.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 /** Represents a flow from controller level down to DAO. */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@EqualsAndHashCode
 public class Flow {
   private Microservice model;
   private JClass controller;

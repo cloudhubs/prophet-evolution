@@ -1,12 +1,10 @@
 package edu.university.ecs.lab.impact.models;
 
-import edu.university.ecs.lab.impact.metrics.services.MicroserviceMetricsService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 @NoArgsConstructor

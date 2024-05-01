@@ -5,7 +5,6 @@
   "repositories": [
     {
       "repoUrl": "https://github.com/austinth127/austin-train-ticket-microservices-test.git",
-      "baseCommit": "06f3e1efe2e2539d05d91b0699cc8d9fe7be29d7",
       "paths": [
         "ts-admin-service",
         "ts-assurance-service",

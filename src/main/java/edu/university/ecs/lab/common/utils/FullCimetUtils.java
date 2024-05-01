@@ -11,6 +11,10 @@ import java.util.Set;
 public class FullCimetUtils {
 
   public static String pathToIR;
-  public static Set<String> pathsToDeltas;
+  public static String pathToDelta;
+  public static String pathToNewIR;
   public static Set<String> microservicePaths = new HashSet<>();
+
+  public static String baseBranch = "";
+  public static String baseCommit = "";
 }

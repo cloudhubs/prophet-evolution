@@ -3,6 +3,7 @@ package edu.university.ecs.lab.delta.services;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.config.models.InputRepository;
 import edu.university.ecs.lab.common.models.JClass;
+import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.common.writers.MsJsonWriter;
 import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.delta.utils.GitFetchUtils;
@@ -25,6 +26,9 @@ public class DeltaExtractionService {
   /** The branch to compare to */
   private final String branch;
 
+  /** The Commit to compare to */
+  private final String compareCommit;
+
   /** Config file, defaults to config.json */
   private final InputConfig config;
 
@@ -34,61 +38,69 @@ public class DeltaExtractionService {
    * @param branch the branch to compare to
    * @param config input configuration file
    */
-  public DeltaExtractionService(String branch, InputConfig config) {
+  public DeltaExtractionService(String branch, String commit, InputConfig config) {
     this.branch = branch;
+    this.compareCommit = commit;
     this.config = config;
   }
 
   /**
    * Top level generate the delta between the local and remote repository.
+   *
    * @return set of output file names generated
    */
-  public Set<String> generateDelta() {
-    Set<String> outputNames = new HashSet<>();
+  public List<String> generateDelta() {
+    List<String> outputNames = new ArrayList<>();
 
     // iterate through each repository path
     for (InputRepository inputRepository : config.getRepositories()) {
-        try (Repository localRepo = GitFetchUtils.establishLocalEndpoint(config.getLocalPath(inputRepository))) {
-            // point to local repository
+      try (Repository localRepo =
+          GitFetchUtils.establishLocalEndpoint(config.getLocalPath(inputRepository))) {
+        // point to local repository
 
-            // extract remote differences with local
-            List<DiffEntry> differences = GitFetchUtils.fetchRemoteDifferences(localRepo, branch);
+        // extract remote differences with local
+        List<DiffEntry> differences =
+            GitFetchUtils.fetchRemoteDifferences(localRepo, compareCommit);
 
-            // process/write differences to delta output
-            String outputFile = this.processDifferences(differences, inputRepository);
-            outputNames.add(outputFile);
-        } catch (Exception e) {
-            System.err.println("Error extracting delta: " + e.getMessage());
-            System.exit(DELTA_EXTRACTION_FAIL.ordinal());
-        }
+        // process/write differences to delta output
+        String outputFile = this.processDifferences(differences, inputRepository);
+        outputNames.add(outputFile);
+      } catch (Exception e) {
+        System.err.println("Error extracting delta: " + e.getMessage());
+        System.exit(DELTA_EXTRACTION_FAIL.ordinal());
+      }
     }
+
     return outputNames;
   }
 
   /**
    * Process the differences between the local and remote repository and write the differences to a
-   * file. Differences can be generated from {@link GitFetchUtils#fetchRemoteDifferences(Repository, String)}
+   * file. Differences can be generated from {@link GitFetchUtils#fetchRemoteDifferences(Repository,
+   * String)}
    *
    * @param diffEntries the list of differences extracted
-   * @param inputRepo   the input repo to handle
+   * @param inputRepo the input repo to handle
    * @return the name of the output file generated
-   * @throws IOException  if a failure occurs while trying to write to the file
+   * @throws IOException if a failure occurs while trying to write to the file
    */
-  public String processDifferences(List<DiffEntry> diffEntries, InputRepository inputRepo) throws IOException {
+  public String processDifferences(List<DiffEntry> diffEntries, InputRepository inputRepo)
+      throws IOException {
 
     // Set local repo to latest commit
     advanceLocalRepo(inputRepo);
 
     // All java files
-    List<DiffEntry> filteredEntries = diffEntries.stream()
-            .filter(diffEntry ->
-                    {
-                      if (DiffEntry.ChangeType.DELETE.equals(diffEntry.getChangeType())) {
-                        return diffEntry.getOldPath().endsWith(".java");
-                      } else {
-                        return diffEntry.getNewPath().endsWith(".java");
-                      }
-                    })
+    List<DiffEntry> filteredEntries =
+        diffEntries.stream()
+            .filter(
+                diffEntry -> {
+                  if (DiffEntry.ChangeType.DELETE.equals(diffEntry.getChangeType())) {
+                    return diffEntry.getOldPath().endsWith(".java");
+                  } else {
+                    return diffEntry.getNewPath().endsWith(".java");
+                  }
+                })
             .collect(Collectors.toUnmodifiableList());
 
     SystemChange systemChange = new SystemChange();
@@ -108,7 +120,8 @@ public class DeltaExtractionService {
           jClass = parseClass(classFile, config);
         } else {
           // TODO implement delete logic (remove the continue;)
-          System.out.println("Deleted file detected, not yet implemented: " + classFile.getAbsolutePath());
+          System.out.println(
+              "Deleted file detected, not yet implemented: " + classFile.getAbsolutePath());
           continue;
         }
       } catch (IOException e) {
@@ -123,8 +136,16 @@ public class DeltaExtractionService {
           "Change impact of type " + entry.getChangeType() + " detected in " + entry.getNewPath());
     }
 
-
-    String outputName = "./out/delta-changes-[" + (new Date()).getTime() + "].json";
+    String outputName =
+        "./out/delta-changes-["
+            + FullCimetUtils.baseBranch
+            + "-"
+            + FullCimetUtils.baseCommit.substring(0, 7)
+            + " -> "
+            + branch
+            + "-"
+            + compareCommit.substring(0, 7)
+            + "].json";
 
     MsJsonWriter.writeJsonToFile(systemChange.toJsonObject(), outputName);
 
@@ -140,8 +161,9 @@ public class DeltaExtractionService {
    */
   private void advanceLocalRepo(InputRepository inputRepository) {
     try {
-      ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", "origin/main");
-      processBuilder.directory(new File(Path.of(config.getLocalPath(inputRepository)).toAbsolutePath().toString()));
+      ProcessBuilder processBuilder = new ProcessBuilder("git", "reset", "--hard", compareCommit);
+      processBuilder.directory(
+          new File(Path.of(config.getLocalPath(inputRepository)).toAbsolutePath().toString()));
       processBuilder.redirectErrorStream(true);
       Process process = processBuilder.start();
       int exitCode = process.waitFor();
