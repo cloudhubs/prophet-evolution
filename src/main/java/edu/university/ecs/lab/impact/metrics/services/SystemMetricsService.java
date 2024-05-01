@@ -7,6 +7,7 @@ import edu.university.ecs.lab.impact.models.change.Link;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SystemMetricsService {
   Map<String, Microservice> oldMicroserviceMap;
@@ -27,6 +28,8 @@ public class SystemMetricsService {
 
      Average number of directly connected services (ADCS): the average of ADS metric
      of all services.
+
+     Numbers closer to 0 indicate a graph with lower coupling
   */
   public double calculateADCS(Map<String, Microservice> microserviceMap) {
     MicroserviceMetricsService microserviceMetricsService =
@@ -48,6 +51,8 @@ public class SystemMetricsService {
      service adds one more to this value. N is the total number of services. If we represent
      dependencies as a graph, SC is the sum of all edges and N2 − N represents the
      maximum oriented edges the graph can have.
+
+     Numbers closer to 0 indicate a less dense graph and hence a loosely coupled system
   */
   public double calculateSCF(Map<String, Microservice> microserviceMap) {
     Set<Link> links = new HashSet<>();
@@ -59,9 +64,9 @@ public class SystemMetricsService {
         }
       }
     }
+    links = links.stream().filter(link -> !link.getMsDestination().equals("") && !link.getMsDestination().equals("DELETED")).collect(Collectors.toSet());
 
     return (double) links.size()
-            / (microserviceMap.values().size() * microserviceMap.values().size())
-        - microserviceMap.values().size();
+            / ((microserviceMap.values().size() * microserviceMap.values().size()) - microserviceMap.values().size());
   }
 }

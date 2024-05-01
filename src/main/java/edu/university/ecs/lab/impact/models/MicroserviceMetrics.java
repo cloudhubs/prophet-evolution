@@ -16,10 +16,10 @@ public class MicroserviceMetrics {
   private String id;
   private double oldSidc2Score;
   private double oldSiucScore;
-  private double oldAdsScore;
+  private int oldAdsScore;
   private double newSidc2Score;
   private double newSiucScore;
-  private double newAdsScore;
+  private int newAdsScore;
   private boolean highCoupling;
   private boolean inCycle;
   private DependencyMetrics dependencyMetrics;
