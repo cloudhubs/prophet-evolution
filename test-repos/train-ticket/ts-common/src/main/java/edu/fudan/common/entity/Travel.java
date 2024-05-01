@@ -2,7 +2,6 @@ package edu.fudan.common.entity;
 
 import lombok.Data;
 
-
 /**
  * @author fdse
  */

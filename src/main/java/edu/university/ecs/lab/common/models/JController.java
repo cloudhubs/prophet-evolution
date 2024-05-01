@@ -33,6 +33,7 @@ public class JController extends JClass implements JsonSerializable {
         jClass.getClassRole(),
         jClass.getMethods(),
         jClass.getFields(),
+        jClass.getAnnotations(),
         jClass.getMethodCalls(),
         jClass.getMsId());
 

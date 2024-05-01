@@ -32,6 +32,9 @@ public class RestCall extends MethodCall {
    */
   private String httpMethod;
 
+  /** The object holding payload for api call */
+  private String payloadObject;
+
   /**
    * Constructor for RestCall
    *
@@ -52,20 +55,29 @@ public class RestCall extends MethodCall {
       HttpMethod httpMethod,
       String destEndpoint,
       String destMsId,
-      String destFile) {
+      String destFile,
+      String payloadObject) {
     super(methodName, objectName, calledFrom, msId);
     this.httpMethod = httpMethod.name();
     this.destEndpoint = destEndpoint;
     this.destMsId = destMsId;
     this.destFile = destFile;
+    this.payloadObject = payloadObject;
   }
 
-  /**
-   * Set the destination of this call to the given controller. Does not change the destEndpoint as
-   * this is used to determine if this is called, and the controller endpoints may have parameters.
-   *
-   * @param destController The controller to set as the destination
-   */
+  public JsonObject toJsonObject() {
+    // Get "restCall" methodCalls in service
+    JsonObjectBuilder restCallBuilder = super.createBuilder();
+
+    restCallBuilder.add("httpMethod", httpMethod);
+    restCallBuilder.add("dest-endpoint", destEndpoint);
+    restCallBuilder.add("dest-msId", destMsId);
+    restCallBuilder.add("dest-file", destFile);
+    restCallBuilder.add("payloadObject", payloadObject);
+
+    return restCallBuilder.build();
+  }
+
   public void setDestination(JController destController) {
     this.destMsId = destController.getMsId();
     setDestFile(destController.getClassPath());
@@ -101,21 +113,6 @@ public class RestCall extends MethodCall {
    */
   public String getId() {
     return msId + "#" + calledFrom + "[" + httpMethod + "]" + "->" + destMsId + ":" + destEndpoint;
-  }
-
-  /**
-   * @return Converted JsonObject of RestCall object
-   */
-  public JsonObject toJsonObject() {
-    // Get "restCall" methodCalls in service
-    JsonObjectBuilder restCallBuilder = super.createBuilder();
-
-    restCallBuilder.add("httpMethod", httpMethod);
-    restCallBuilder.add("dest-endpoint", destEndpoint);
-    restCallBuilder.add("dest-msId", destMsId);
-    restCallBuilder.add("dest-file", destFile);
-
-    return restCallBuilder.build();
   }
 
   /** Represents a call as an endpoint source. */

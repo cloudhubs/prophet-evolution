@@ -33,8 +33,6 @@ public class Microservice implements JsonSerializable {
   @SerializedName("commitId")
   private String commit;
 
-
-
   /** Controller classes belonging to the microservice. */
   private List<JController> controllers;
 

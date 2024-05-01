@@ -4,7 +4,6 @@ import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.utils.FullCimetUtils;
 import edu.university.ecs.lab.intermediate.create.services.IRExtractionService;
-import org.apache.commons.lang3.ObjectUtils;
 
 import static edu.university.ecs.lab.common.models.enums.ErrorCodes.BAD_ARGS;
 
@@ -28,7 +27,8 @@ public class IRExtraction {
    */
   public static void main(String[] args) throws Exception {
     if (args.length != 3 && args.length != 2) {
-      System.err.println("Usage: java -jar IRExtraction.jar [/path/to/config/file] <branch> <commit>");
+      System.err.println(
+          "Usage: java -jar IRExtraction.jar [/path/to/config/file] <branch> <commit>");
       System.exit(BAD_ARGS.ordinal());
     }
 
@@ -41,7 +41,8 @@ public class IRExtraction {
       commit = args[2];
     }
 
-    IRExtractionService irExtractionService = new IRExtractionService(inputConfig, baseBranch, commit);
+    IRExtractionService irExtractionService =
+        new IRExtractionService(inputConfig, baseBranch, commit);
     String outputFileName = irExtractionService.generateSystemIntermediate();
 
     // Save the file name for the full system runner

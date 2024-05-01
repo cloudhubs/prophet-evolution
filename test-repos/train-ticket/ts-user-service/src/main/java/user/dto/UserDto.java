@@ -2,7 +2,6 @@ package user.dto;
 
 import lombok.*;
 
-
 /**
  * @author fdse
  */

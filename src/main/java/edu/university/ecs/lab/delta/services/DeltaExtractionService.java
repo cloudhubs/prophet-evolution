@@ -59,7 +59,8 @@ public class DeltaExtractionService {
         // point to local repository
 
         // extract remote differences with local
-        List<DiffEntry> differences = GitFetchUtils.fetchRemoteDifferences(localRepo, compareCommit);
+        List<DiffEntry> differences =
+            GitFetchUtils.fetchRemoteDifferences(localRepo, compareCommit);
 
         // process/write differences to delta output
         String outputFile = this.processDifferences(differences, inputRepository);
@@ -135,7 +136,16 @@ public class DeltaExtractionService {
           "Change impact of type " + entry.getChangeType() + " detected in " + entry.getNewPath());
     }
 
-    String outputName = "./out/delta-changes-[" + FullCimetUtils.baseBranch +"-"+ FullCimetUtils.baseCommit.substring(0,7) + " -> " + branch +"-"+ compareCommit.substring(0, 7) + "].json";
+    String outputName =
+        "./out/delta-changes-["
+            + FullCimetUtils.baseBranch
+            + "-"
+            + FullCimetUtils.baseCommit.substring(0, 7)
+            + " -> "
+            + branch
+            + "-"
+            + compareCommit.substring(0, 7)
+            + "].json";
 
     MsJsonWriter.writeJsonToFile(systemChange.toJsonObject(), outputName);
 

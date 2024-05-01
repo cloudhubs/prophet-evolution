@@ -56,4 +56,14 @@ public class StringParserUtils {
     }
     return null;
   }
+
+  /**
+   * Simplifies all path arguments to {?}.
+   *
+   * @param url the endpoint URL
+   * @return the simplified endpoint URL
+   */
+  public static String simplifyEndpointURL(String url) {
+    return url.replaceAll("\\{[^{}]*\\}", "{?}");
+  }
 }

@@ -11,7 +11,6 @@ import edu.university.ecs.lab.delta.models.SystemChange;
 import javax.json.JsonObject;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,7 +27,6 @@ public class MergeService {
   private final String compareBranch;
   private final String compareCommit;
 
-
   private final InputConfig config;
 
   private final MsSystem msSystem;
@@ -36,7 +34,12 @@ public class MergeService {
   private final Map<String, Microservice> msModelMap;
 
   // TODO handle exceptions here
-  public MergeService(String intermediatePath, String deltaPath, InputConfig config, String compareBranch, String compareCommit)
+  public MergeService(
+      String intermediatePath,
+      String deltaPath,
+      InputConfig config,
+      String compareBranch,
+      String compareCommit)
       throws IOException {
     this.intermediatePath = intermediatePath;
     this.deltaPath = deltaPath;
@@ -79,7 +82,13 @@ public class MergeService {
 
     String outputPath = config.getOutputPath();
 
-    String outputName = outputPath + "/rest-extraction-new-[" + compareBranch + "-" + compareCommit.substring(0,7) + "].json";
+    String outputName =
+        outputPath
+            + "/rest-extraction-new-["
+            + compareBranch
+            + "-"
+            + compareCommit.substring(0, 7)
+            + "].json";
 
     MsJsonWriter.writeJsonToFile(jout, outputName);
     System.out.println("Successfully wrote updated extraction to: \"" + outputName + "\"");

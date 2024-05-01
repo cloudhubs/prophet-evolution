@@ -23,7 +23,6 @@ public class RestModelService {
   private final String baseBranch;
   private final String baseCommit;
 
-
   public RestModelService(InputConfig config, String baseBranch, String baseCommit) {
     this.inputConfig = config;
     this.baseBranch = baseBranch;
@@ -59,7 +58,8 @@ public class RestModelService {
     String id = inputRepo.getServiceNameFromPath(localMicroservicePath);
 
     Microservice model =
-        new Microservice(id, baseBranch, baseCommit,controllers, services, dtos, repositories, entities);
+        new Microservice(
+            id, baseBranch, baseCommit, controllers, services, dtos, repositories, entities);
 
     System.out.println("Done!");
     return model;
