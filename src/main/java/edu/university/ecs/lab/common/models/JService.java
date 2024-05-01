@@ -32,6 +32,7 @@ public class JService extends JClass implements JsonSerializable {
         jClass.getClassRole(),
         jClass.getMethods(),
         jClass.getFields(),
+        jClass.getAnnotations(),
         jClass.getMethodCalls(),
         jClass.getMsId());
     this.restCalls = new ArrayList<>();

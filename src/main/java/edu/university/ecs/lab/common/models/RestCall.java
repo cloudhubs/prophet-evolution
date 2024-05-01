@@ -32,6 +32,10 @@ public class RestCall extends MethodCall {
    */
   private String httpMethod;
 
+  /** The object holding payload for api call */
+  private String payloadObject;
+
+ 
   /**
    * Constructor for RestCall
    *
@@ -44,20 +48,14 @@ public class RestCall extends MethodCall {
    * @param destMsId The destination service of the call
    * @param destFile The destination file of the call
    */
-  public RestCall(
-      String methodName,
-      String objectName,
-      String calledFrom,
-      String msId,
-      HttpMethod httpMethod,
-      String destEndpoint,
-      String destMsId,
-      String destFile) {
+   public RestCall(String methodName, String objectName, String calledFrom, String msId,
+                  HttpMethod httpMethod, String destEndpoint, String destMsId, String destFile, String payloadObject) {
     super(methodName, objectName, calledFrom, msId);
     this.httpMethod = httpMethod.name();
     this.destEndpoint = destEndpoint;
     this.destMsId = destMsId;
     this.destFile = destFile;
+    this.payloadObject = payloadObject;
   }
 
   /**
@@ -66,6 +64,19 @@ public class RestCall extends MethodCall {
    *
    * @param destController The controller to set as the destination
    */
+  public JsonObject toJsonObject() {
+    // Get "restCall" methodCalls in service
+    JsonObjectBuilder restCallBuilder = super.createBuilder();
+
+    restCallBuilder.add("httpMethod", httpMethod);
+    restCallBuilder.add("dest-endpoint", destEndpoint);
+    restCallBuilder.add("dest-msId", destMsId);
+    restCallBuilder.add("dest-file", destFile);
+    restCallBuilder.add("payloadObject", payloadObject);
+
+    return restCallBuilder.build();
+  }
+
   public void setDestination(JController destController) {
     this.destMsId = destController.getMsId();
     setDestFile(destController.getClassPath());

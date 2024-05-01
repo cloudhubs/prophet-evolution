@@ -6,6 +6,9 @@ import lombok.*;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.util.List;
+
+import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonArray;
 
 /** Represents a method declaration in Java. */
 @AllArgsConstructor
@@ -26,6 +29,9 @@ public class Method implements JsonSerializable {
   /** Java return type of the method */
   protected String returnType;
 
+  /** Method definition level annotations **/
+  protected List<Annotation> annotations;
+
   @Override
   public JsonObject toJsonObject() {
     return createBuilder().build();
@@ -37,6 +43,7 @@ public class Method implements JsonSerializable {
     methodObjectBuilder.add("methodName", methodName);
     methodObjectBuilder.add("parameter", parameterList);
     methodObjectBuilder.add("returnType", returnType);
+    methodObjectBuilder.add("annotations", listToJsonArray(annotations));
 
     return methodObjectBuilder;
   }

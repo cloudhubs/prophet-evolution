@@ -27,14 +27,16 @@ public class JController extends JClass implements JsonSerializable {
    */
   public JController(JClass jClass) {
     super(
-        jClass.getClassName(),
-        jClass.getClassPath(),
-        jClass.getPackageName(),
-        jClass.getClassRole(),
-        jClass.getMethods(),
-        jClass.getFields(),
-        jClass.getMethodCalls(),
-        jClass.getMsId());
+            jClass.getClassName(),
+            jClass.getClassPath(),
+            jClass.getPackageName(),
+            jClass.getClassRole(),
+            jClass.getMethods(),
+            jClass.getFields(),
+            jClass.getAnnotations(),
+            jClass.getMethodCalls(),
+            jClass.getMsId()
+    );
 
     this.endpoints = new ArrayList<>();
   }

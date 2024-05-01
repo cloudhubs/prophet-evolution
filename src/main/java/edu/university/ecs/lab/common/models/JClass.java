@@ -41,6 +41,10 @@ public class JClass implements JsonSerializable {
   @SerializedName("variables")
   protected List<Field> fields;
 
+
+  /** Class level annotations **/
+  protected List<Annotation> annotations;
+
   /** List of method invocations made from within this class e.g. obj.method() */
   protected List<MethodCall> methodCalls;
 
@@ -74,23 +78,26 @@ public class JClass implements JsonSerializable {
    * @param methodCalls List of method calls in the class
    * @param msId The associated microservice id
    */
-  public JClass(
-      String className,
-      String classPath,
-      String packageName,
-      ClassRole classRole,
-      List<Method> methods,
-      List<Field> fields,
-      List<MethodCall> methodCalls,
-      String msId) {
-    this.className = className;
+  public JClass(String className,
+                String classPath,
+                String packageName,
+                ClassRole classRole,
+                List<Method> methods,
+                List<Field> fields,
+                List<Annotation> annotations,
+                List<MethodCall> methodCalls,
+                String msId) {
+
+    setClassName(className);
     setClassPath(classPath);
-    this.packageName = packageName;
-    this.classRole = classRole;
-    this.methods = methods;
-    this.fields = fields;
-    this.methodCalls = methodCalls;
-    this.msId = msId;
+    setPackageName(packageName);
+    setClassRole(classRole);
+    setMethods(methods);
+    setFields(fields);
+    setAnnotations(annotations);
+    setMethodCalls(methodCalls);
+    setMsId(msId);
+
   }
 
   /**
@@ -106,14 +113,15 @@ public class JClass implements JsonSerializable {
   protected JsonObjectBuilder createBuilder() {
     JsonObjectBuilder jClassBuilder = Json.createObjectBuilder();
 
-    jClassBuilder.add("className", this.className);
-    jClassBuilder.add("classPath", this.classPath);
-    jClassBuilder.add("packageName", this.packageName);
-    jClassBuilder.add("classRole", this.classRole.name());
-    jClassBuilder.add("msId", msId);
-    jClassBuilder.add("methods", listToJsonArray(methods));
-    jClassBuilder.add("variables", listToJsonArray(fields));
-    jClassBuilder.add("methodCalls", listToJsonArray(methodCalls));
+    jClassBuilder.add("className", getClassName());
+    jClassBuilder.add("classPath", getClassPath());
+    jClassBuilder.add("packageName", getPackageName());
+    jClassBuilder.add("classRole", getClassRole().name());
+    jClassBuilder.add("msId", getMsId());
+    jClassBuilder.add("methods", listToJsonArray(getMethods()));
+    jClassBuilder.add("variables", listToJsonArray(getFields()));
+    jClassBuilder.add("methodCalls", listToJsonArray(getMethodCalls()));
+    jClassBuilder.add("annotations", listToJsonArray(getAnnotations()));
 
     return jClassBuilder;
   }

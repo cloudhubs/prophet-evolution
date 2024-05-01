@@ -13,12 +13,14 @@ import edu.university.ecs.lab.common.models.enums.RestTemplate;
 import edu.university.ecs.lab.intermediate.utils.StringParserUtils;
 import edu.university.ecs.lab.common.models.*;
 import javassist.NotFoundException;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 /** Static utility class for parsing a file and returning associated models from code structure. */
 public class SourceToObjectUtils {
@@ -49,10 +51,11 @@ public class SourceToObjectUtils {
             .className(sourceFile.getName().replace(".java", ""))
             .packageName(packageName)
             .methods(parseMethods(cu))
-            .fields(parseFields(sourceFile))
-            .methodCalls(parseMethodCalls(sourceFile, msId))
+            .fields(parseFields(cu))
+            .methodCalls(parseMethodCalls(cu, msId))
             .msId(msId)
             .classRole(ClassRole.fromSourceFile(sourceFile))
+            .annotations(parseAnnotations(cu.getClassByName(sourceFile.getName().replace(".java", ""))))
             .build();
 
     // Handle special class roles
@@ -62,7 +65,7 @@ public class SourceToObjectUtils {
       return controller;
     } else if (jClass.getClassRole() == ClassRole.SERVICE) {
       JService service = new JService(jClass);
-      service.setRestCalls(parseRestCalls(sourceFile, msId));
+      service.setRestCalls(parseRestCalls(cu, msId));
       return service;
     }
 
@@ -218,12 +221,11 @@ public class SourceToObjectUtils {
       }
     }
 
-    return new Method(md.getNameAsString(), parameter.toString(), md.getTypeAsString());
+    return new Method(md.getNameAsString(), parameter.toString(), md.getTypeAsString(), parseAnnotations(md.getAnnotations()));
   }
 
-  public static List<RestCall> parseRestCalls(File sourceFile, String msId) throws IOException {
+  public static List<RestCall> parseRestCalls(CompilationUnit cu, String msId) throws IOException {
     List<RestCall> restCalls = new ArrayList<>();
-    CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
     // loop through class declarations
     for (ClassOrInterfaceDeclaration cid : cu.findAll(ClassOrInterfaceDeclaration.class)) {
@@ -239,6 +241,7 @@ public class SourceToObjectUtils {
 
           RestTemplate callTemplate = RestTemplate.findCallByName(methodName);
           String calledServiceName = getCallingObjectName(scope);
+          String payloadObject = "";
 
           HttpMethod httpMethod;
           // Are we a rest call
@@ -248,6 +251,8 @@ public class SourceToObjectUtils {
             // get http methods for exchange method
             if (callTemplate.getMethodName().equals("exchange")) {
               httpMethod = RestTemplate.getHttpMethodForExchange(mce.getArguments().toString());
+              // We are arbitrarily setting it, temporary
+              payloadObject = mce.getArguments().size() >= 2 ? mce.getArguments().get(2).toString() : "";
             } else {
               httpMethod = callTemplate.getHttpMethod();
             }
@@ -265,9 +270,7 @@ public class SourceToObjectUtils {
                     msId,
                     httpMethod,
                     parseURL(mce, cid),
-                    "",
-                    "");
-
+                    "", "", payloadObject);
             restCalls.add(call);
           }
         }
@@ -276,8 +279,7 @@ public class SourceToObjectUtils {
     return restCalls;
   }
 
-  public static List<MethodCall> parseMethodCalls(File sourceFile, String msId) throws IOException {
-    CompilationUnit cu = StaticJavaParser.parse(sourceFile);
+  public static List<MethodCall> parseMethodCalls(CompilationUnit cu, String msId) throws IOException {
     List<MethodCall> methodCalls = new ArrayList<>();
 
     // loop through class declarations
@@ -311,10 +313,8 @@ public class SourceToObjectUtils {
     return methodCalls;
   }
 
-  private static List<Field> parseFields(File sourceFile) throws IOException {
+  private static List<Field> parseFields(CompilationUnit cu) throws IOException {
     List<Field> javaFields = new ArrayList<>();
-
-    CompilationUnit cu = StaticJavaParser.parse(sourceFile);
 
     // loop through class declarations
     for (ClassOrInterfaceDeclaration cid : cu.findAll(ClassOrInterfaceDeclaration.class)) {
@@ -334,20 +334,21 @@ public class SourceToObjectUtils {
     }
 
     if (ae.isSingleMemberAnnotationExpr()) {
-      return StringParserUtils.removeOuterQuotations(
-          ae.asSingleMemberAnnotationExpr().getMemberValue().toString());
+      return StringParserUtils.simplifyEndpointURL(StringParserUtils.removeOuterQuotations(
+          ae.asSingleMemberAnnotationExpr().getMemberValue().toString()));
     }
 
     if (ae.isNormalAnnotationExpr() && ae.asNormalAnnotationExpr().getPairs().size() > 0) {
       for (MemberValuePair mvp : ae.asNormalAnnotationExpr().getPairs()) {
         if (mvp.getName().toString().equals("path") || mvp.getName().toString().equals("value")) {
-          return StringParserUtils.removeOuterQuotations(mvp.getValue().toString());
+          return StringParserUtils.simplifyEndpointURL(StringParserUtils.removeOuterQuotations(mvp.getValue().toString()));
         }
       }
     }
 
     return "";
   }
+
 
   /**
    * Get the name of the object a method is being called from (callingObj.methodName())
@@ -379,6 +380,7 @@ public class SourceToObjectUtils {
       return "";
     }
 
+    // Arbitrary index of the url parameter
     Expression exp = mce.getArguments().get(0);
 
     if (exp.isStringLiteralExpr()) {
@@ -409,23 +411,28 @@ public class SourceToObjectUtils {
 
   // TODO: kind of resolved, probably not every case considered
   private static String parseUrlFromBinaryExp(BinaryExpr exp) {
+    StringBuilder returnString = new StringBuilder();
     Expression left = exp.getLeft();
     Expression right = exp.getRight();
 
     if (left instanceof BinaryExpr) {
-      return parseUrlFromBinaryExp((BinaryExpr) left);
+      returnString.append(parseUrlFromBinaryExp((BinaryExpr) left));
     } else if (left instanceof StringLiteralExpr) {
-      return formatURL((StringLiteralExpr) left);
+      returnString.append(formatURL((StringLiteralExpr) left));
+    } else if(left instanceof NameExpr && !left.asNameExpr().getNameAsString().contains("url") && !left.asNameExpr().getNameAsString().contains("uri")) {
+      returnString.append("/{?}");
     }
 
     // Check if right side is a binary expression
     if (right instanceof BinaryExpr) {
-      return parseUrlFromBinaryExp((BinaryExpr) right);
+      returnString.append(parseUrlFromBinaryExp((BinaryExpr) right));
     } else if (right instanceof StringLiteralExpr) {
-      return formatURL((StringLiteralExpr) right);
+      returnString.append(formatURL((StringLiteralExpr) right));
+    } else if(right instanceof NameExpr) {
+      returnString.append("/{?}");
     }
 
-    return ""; // URL not found in subtree
+    return returnString.toString(); // URL not found in subtree
   }
 
   // TODO format to what? add comments please
@@ -453,5 +460,35 @@ public class SourceToObjectUtils {
     }
 
     return str;
+  }
+
+  private static List<Annotation> parseAnnotations(Optional<ClassOrInterfaceDeclaration> cid) {
+    if(cid.isEmpty()) {
+      return new ArrayList<>();
+    }
+
+    return parseAnnotations(cid.get().getAnnotations());
+  }
+
+  private static List<Annotation> parseAnnotations(NodeList<AnnotationExpr> annotationExprs) {
+    List<Annotation> annotations = new ArrayList<>();
+
+    for(AnnotationExpr ae : annotationExprs) {
+      Annotation annotation;
+      if (ae.isNormalAnnotationExpr()) {
+        NormalAnnotationExpr normal = ae.asNormalAnnotationExpr();
+        annotation = new Annotation(ae.getNameAsString(), normal.getPairs().toString());
+
+      } else if (ae.isSingleMemberAnnotationExpr()) {
+        annotation = new Annotation(ae.getNameAsString(), ae.asSingleMemberAnnotationExpr().getMemberValue().toString());
+      } else {
+        annotation = new Annotation(ae.getNameAsString(), "");
+
+      }
+
+      annotations.add(annotation);
+    }
+
+    return annotations;
   }
 }
