@@ -64,9 +64,16 @@ public class SystemMetricsService {
         }
       }
     }
-    links = links.stream().filter(link -> !link.getMsDestination().equals("") && !link.getMsDestination().equals("DELETED")).collect(Collectors.toSet());
+    links =
+        links.stream()
+            .filter(
+                link ->
+                    !link.getMsDestination().equals("")
+                        && !link.getMsDestination().equals("DELETED"))
+            .collect(Collectors.toSet());
 
     return (double) links.size()
-            / ((microserviceMap.values().size() * microserviceMap.values().size()) - microserviceMap.values().size());
+        / ((microserviceMap.values().size() * microserviceMap.values().size())
+            - microserviceMap.values().size());
   }
 }

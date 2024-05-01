@@ -146,7 +146,14 @@ public class MicroserviceMetricsService {
     Map<String, Integer> clients = new HashMap<>();
 
     int usedOperations = 0;
-    long totalOperations = microserviceMap.values().stream().flatMap(ms -> ms.getServices().stream()).flatMap(jService -> jService.getRestCalls().stream()).filter(restCall -> !restCall.getDestMsId().equals("") && !restCall.getDestMsId().equals("DELETED")).count();
+    long totalOperations =
+        microserviceMap.values().stream()
+            .flatMap(ms -> ms.getServices().stream())
+            .flatMap(jService -> jService.getRestCalls().stream())
+            .filter(
+                restCall ->
+                    !restCall.getDestMsId().equals("") && !restCall.getDestMsId().equals("DELETED"))
+            .count();
 
     for (JController controller : microservice.getControllers()) {
 
@@ -201,7 +208,13 @@ public class MicroserviceMetricsService {
       }
     }
 
-    links = links.stream().filter(link -> !link.getMsDestination().equals("") && !link.getMsDestination().equals("DELETED")).collect(Collectors.toSet());
+    links =
+        links.stream()
+            .filter(
+                link ->
+                    !link.getMsDestination().equals("")
+                        && !link.getMsDestination().equals("DELETED"))
+            .collect(Collectors.toSet());
 
     return links.size();
   }
