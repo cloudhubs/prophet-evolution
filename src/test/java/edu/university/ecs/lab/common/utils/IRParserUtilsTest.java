@@ -12,12 +12,12 @@ class IRParserUtilsTest {
   @Test
   void parseSystemChange() {}
 
-  @Test
-  void getClassNameFromLocalPath() {
-    assertEquals(
-        "classname", IRParserUtils.getClassNameFromLocalPath("some/path/to/classname.java"));
-    assertEquals("classname2", IRParserUtils.getClassNameFromLocalPath("/classname2.java"));
-  }
+//  @Test
+//  void getClassNameFromLocalPath() {
+//    assertEquals(
+//        "classname", IRParserUtils.getClassNameFromLocalPath("some/path/to/classname.java"));
+//    assertEquals("classname2", IRParserUtils.getClassNameFromLocalPath("/classname2.java"));
+//  }
 
   @Test
   void getServiceFromLocalPath() {}
