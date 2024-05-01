@@ -1,7 +1,6 @@
 package edu.university.ecs.lab.common.models;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -17,7 +17,6 @@ public class FullCimetUtils {
 
   public static String baseBranch = "";
   public static String baseCommit = "";
-
   private static final int SHORT_COMMIT_LENGTH = 6;
 
     // TODO make output dir based on config
@@ -48,5 +47,4 @@ public class FullCimetUtils {
     return commit.length() > SHORT_COMMIT_LENGTH ?
             commit.substring(0, SHORT_COMMIT_LENGTH + 1) : commit;
   }
-
 }

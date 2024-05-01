@@ -3,7 +3,6 @@ package edu.university.ecs.lab.full;
 import edu.university.ecs.lab.common.config.ConfigUtil;
 import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.utils.FullCimetUtils;
-import edu.university.ecs.lab.delta.DeltaExtraction;
 import edu.university.ecs.lab.intermediate.create.IRExtraction;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
@@ -45,7 +44,7 @@ class FullIRConstructionTest {
           IRPath = FullCimetUtils.pathToIR;
         } else {
 
-//          String[] deltaArgs = DeltaExtraction.main();
+          //          String[] deltaArgs = DeltaExtraction.main();
 
           // Create a merge and new IR to pass to next merge
         }

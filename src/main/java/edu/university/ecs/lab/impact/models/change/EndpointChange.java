@@ -101,13 +101,12 @@ public class EndpointChange {
   }
 
   /**
-   * Create a blank endpoint with no information. This represents an endpoint
-   * before ADD or after DELETE.
+   * Create a blank endpoint with no information. This represents an endpoint before ADD or after
+   * DELETE.
    *
    * @return a blank endpoint
    */
   private static Endpoint blankEndpoint() {
-    return new
-            Endpoint(new Method("", "", "", new ArrayList<>()), "", "", "", "");
+    return new Endpoint(new Method("", "", "", new ArrayList<>()), "", "", "", "");
   }
 }
