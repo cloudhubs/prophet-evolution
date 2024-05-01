@@ -27,8 +27,8 @@ public class CallChange {
     this.oldCall = oldCall;
     this.newCall = newCall;
     this.changeType = changeType;
-    this.oldLink = Objects.isNull(oldCall) ? null : new Link(oldCall);
-    this.newLink = Objects.isNull(newCall) ? null : new Link(newCall);
+    this.oldLink = Objects.isNull(oldCall) ? Link.blankLink() : new Link(oldCall);
+    this.newLink = Objects.isNull(newCall) ? Link.blankLink() : new Link(newCall);
     this.impact = RestCallImpact.NONE;
   }
 }

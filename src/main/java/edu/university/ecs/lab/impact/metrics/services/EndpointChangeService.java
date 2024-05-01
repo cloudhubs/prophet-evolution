@@ -68,7 +68,8 @@ public class EndpointChangeService {
 
     endpointChanges.forEach(this::checkBreakingDependentCall);
 
-    return filterNoChange(endpointChanges);
+    List<EndpointChange> filteredChanges = filterNoChange(endpointChanges);
+    return filteredChanges;
   }
 
   /**
@@ -177,7 +178,7 @@ public class EndpointChangeService {
    */
   private List<EndpointChange> filterNoChange(List<EndpointChange> endpointChanges) {
     return endpointChanges.stream()
-        .filter(endpointChange -> !endpointChange.isChanged())
+        .filter(EndpointChange::isChanged)
         .collect(Collectors.toList());
   }
 }

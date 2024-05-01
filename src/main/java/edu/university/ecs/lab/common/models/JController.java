@@ -14,7 +14,6 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonAr
 
 @Getter
 @Setter
-@EqualsAndHashCode
 public class JController extends JClass implements JsonSerializable {
   /** List of endpoints in the controller */
   @SerializedName("restEndpoints")

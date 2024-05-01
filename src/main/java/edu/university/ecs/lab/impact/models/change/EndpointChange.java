@@ -1,11 +1,14 @@
 package edu.university.ecs.lab.impact.models.change;
 
 import edu.university.ecs.lab.common.models.Endpoint;
+import edu.university.ecs.lab.common.models.Method;
 import edu.university.ecs.lab.common.models.RestCall;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
 import edu.university.ecs.lab.impact.models.enums.EndpointImpact;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -56,6 +59,14 @@ public class EndpointChange {
     ChangeType changeType =
         oldEnd == null ? ChangeType.ADD : newEnd == null ? ChangeType.DELETE : ChangeType.MODIFY;
 
+    if (oldEnd == null) {
+      oldEnd = EndpointChange.blankEndpoint();
+    }
+
+    if (newEnd == null) {
+      newEnd = EndpointChange.blankEndpoint();
+    }
+
     return new EndpointChange(
         oldEnd, newEnd, Link.fromEndpoint(oldEnd), Link.fromEndpoint(newEnd), changeType);
   }
@@ -76,7 +87,7 @@ public class EndpointChange {
 
     EndpointImpact im = EndpointImpact.fromChangeType(changeType);
 
-    if (newEndpoint != null && newEndpoint.getSrcCalls().isEmpty()) {
+    if (changeType != ChangeType.DELETE && newEndpoint.getSrcCalls().isEmpty()) {
       im = EndpointImpact.NOT_USED;
     }
 
@@ -87,5 +98,16 @@ public class EndpointChange {
     }
 
     return im;
+  }
+
+  /**
+   * Create a blank endpoint with no information. This represents an endpoint
+   * before ADD or after DELETE.
+   *
+   * @return a blank endpoint
+   */
+  private static Endpoint blankEndpoint() {
+    return new
+            Endpoint(new Method("", "", "", new ArrayList<>()), "", "", "", "");
   }
 }

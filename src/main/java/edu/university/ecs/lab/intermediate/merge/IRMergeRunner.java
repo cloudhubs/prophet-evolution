@@ -12,18 +12,13 @@ public class IRMergeRunner {
   /**
    * Entry point for the intermediate representation merge process.
    *
-   * @param args {@literal </path/to/intermediate-json> </path/to/delta-json> [/path/to/config]}
-   *     <compare branch> <compare commit>
+   * @param args {@literal </path/to/intermediate-json> </path/to/delta-json> </path/to/config>}
+   *     {@literal <compare branch> <compare commit>}
    */
   public static void main(String[] args) throws IOException {
-    //    args =
-    //        new String[] {
-    //          "./out/rest-extraction-output-[1714448356019].json",
-    //          "./out/delta-changes-[1714448475461].json"
-    //        };
     if (args.length != 5) {
       System.err.println(
-          "Invalid # of args, 2-3 expected: <path/to/intermediate-json> <path/to/delta-json>"
+          "Invalid # of args, 5 expected: <path/to/intermediate-json> <path/to/delta-json>"
               + " /path/to/config] <compare branch> <compare commit>");
       return;
     }

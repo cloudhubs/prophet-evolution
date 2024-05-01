@@ -32,10 +32,4 @@ public class ClassMetrics {
     modifiedClassCount++;
   }
 
-  public Map<String, Object> getMetricsAsMap() {
-    return Map.of(
-        "Added Classes", addedClassCount,
-        "Removed Classes", removedClassCount,
-        "Modified Classes", modifiedClassCount);
-  }
 }

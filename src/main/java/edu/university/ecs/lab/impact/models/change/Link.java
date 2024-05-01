@@ -36,4 +36,13 @@ public class Link {
         .map(call -> new Link(endpoint, call))
         .collect(Collectors.toSet());
   }
+
+  /**
+   * Create a blank link. Represents a call before ADD or after DELETE.
+   *
+   * @return blank link object with empty source and destination
+   */
+  public static Link blankLink() {
+    return new Link("", "");
+  }
 }

@@ -45,7 +45,7 @@ class FullIRConstructionTest {
           IRPath = FullCimetUtils.pathToIR;
         } else {
 
-          String[] deltaArgs = DeltaExtraction.main();
+//          String[] deltaArgs = DeltaExtraction.main();
 
           // Create a merge and new IR to pass to next merge
         }

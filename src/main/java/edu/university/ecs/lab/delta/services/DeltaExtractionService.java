@@ -136,16 +136,7 @@ public class DeltaExtractionService {
           "Change impact of type " + entry.getChangeType() + " detected in " + entry.getNewPath());
     }
 
-    String outputName =
-        "./out/delta-changes-["
-            + FullCimetUtils.baseBranch
-//            + "-"
-//            + FullCimetUtils.baseCommit.substring(0, 7)
-//            + "->"
-//            + branch
-//            + "-"
-//            + compareCommit.substring(0, 7)
-            + "].json";
+    String outputName = FullCimetUtils.getDeltaOutputName(branch, compareCommit);
 
     MsJsonWriter.writeJsonToFile(systemChange.toJsonObject(), outputName);
 
@@ -153,6 +144,8 @@ public class DeltaExtractionService {
 
     return outputName;
   }
+
+
 
   /**
    * Advance the local repository to the latest commit on the remote branch.
