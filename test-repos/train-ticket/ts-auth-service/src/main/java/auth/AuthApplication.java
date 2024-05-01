@@ -14,13 +14,13 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @EnableDiscoveryClient
 public class AuthApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(AuthApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(AuthApplication.class, args);
+  }
 
-    @LoadBalanced
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
+  @LoadBalanced
+  @Bean
+  public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    return builder.build();
+  }
 }

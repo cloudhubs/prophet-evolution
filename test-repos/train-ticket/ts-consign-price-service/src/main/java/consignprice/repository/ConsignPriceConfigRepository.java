@@ -10,13 +10,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ConsignPriceConfigRepository extends CrudRepository<ConsignPrice, String> {
 
-    /**
-     * find by index
-     *
-     * @param index index
-     * @return ConsignPrice
-     */
-//    @Query("{ 'index': ?0 }")
-    ConsignPrice findByIndex(int index);
-
+  /**
+   * find by index
+   *
+   * @param index index
+   * @return ConsignPrice
+   */
+  //    @Query("{ 'index': ?0 }")
+  ConsignPrice findByIndex(int index);
 }

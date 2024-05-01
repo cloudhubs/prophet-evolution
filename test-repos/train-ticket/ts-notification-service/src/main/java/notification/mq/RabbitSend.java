@@ -11,13 +11,11 @@ import org.slf4j.LoggerFactory;
 @Component
 public class RabbitSend {
 
-    @Autowired
-    private AmqpTemplate rabbitTemplate;
-    private static final Logger logger = LoggerFactory.getLogger(RabbitSend.class);
+  @Autowired private AmqpTemplate rabbitTemplate;
+  private static final Logger logger = LoggerFactory.getLogger(RabbitSend.class);
 
-    public void send(String val) {
-        logger.info("send val:" + val);
-        this.rabbitTemplate.convertAndSend(Queues.queueName, val);
-    }
-
+  public void send(String val) {
+    logger.info("send val:" + val);
+    this.rabbitTemplate.convertAndSend(Queues.queueName, val);
+  }
 }

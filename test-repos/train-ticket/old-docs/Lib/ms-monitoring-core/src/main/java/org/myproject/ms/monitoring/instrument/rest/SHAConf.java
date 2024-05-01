@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.netflix.hystrix.HystrixCommand;
 
-
 @Configuration
 @AutoConfigureAfter(TraceAutoConfiguration.class)
 @ConditionalOnClass(HystrixCommand.class)
@@ -20,9 +19,8 @@ import com.netflix.hystrix.HystrixCommand;
 @ConditionalOnProperty(value = "spring.sleuth.hystrix.strategy.enabled", matchIfMissing = true)
 public class SHAConf {
 
-	@Bean
-	SHCStra sleuthHystrixConcurrencyStrategy(Chainer tracer, ChainKeys traceKeys) {
-		return new SHCStra(tracer, traceKeys);
-	}
-
+  @Bean
+  SHCStra sleuthHystrixConcurrencyStrategy(Chainer tracer, ChainKeys traceKeys) {
+    return new SHCStra(tracer, traceKeys);
+  }
 }

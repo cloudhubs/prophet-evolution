@@ -1,9 +1,6 @@
-
-
 package org.myproject.ms.monitoring;
 
-
 public interface ItemExtractor<T> {
-	
-	Item joinTrace(T carrier);
+
+  Item joinTrace(T carrier);
 }

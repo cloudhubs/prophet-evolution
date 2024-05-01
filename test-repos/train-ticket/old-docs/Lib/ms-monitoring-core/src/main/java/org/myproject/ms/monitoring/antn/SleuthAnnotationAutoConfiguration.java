@@ -1,4 +1,3 @@
-
 package org.myproject.ms.monitoring.antn;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -11,35 +10,33 @@ import org.myproject.ms.monitoring.atcfg.TraceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 @Configuration
 @ConditionalOnBean(Chainer.class)
 @ConditionalOnProperty(name = "spring.sleuth.annotation.enabled", matchIfMissing = true)
 @AutoConfigureAfter(TraceAutoConfiguration.class)
 @EnableConfigurationProperties(SleuthAnnotationProperties.class)
 public class SleuthAnnotationAutoConfiguration {
-	
-	@Bean
-	@ConditionalOnMissingBean
-	SpanCreator spanCreator(Chainer tracer) {
-		return new DefaultSpanCreator(tracer);
-	}
 
-	@Bean
-	@ConditionalOnMissingBean
-	TagValueExpressionResolver spelTagValueExpressionResolver() {
-		return new SpelTagValueExpressionResolver();
-	}
+  @Bean
+  @ConditionalOnMissingBean
+  SpanCreator spanCreator(Chainer tracer) {
+    return new DefaultSpanCreator(tracer);
+  }
 
-	@Bean
-	@ConditionalOnMissingBean
-	TagValueResolver noOpTagValueResolver() {
-		return new NoOpTagValueResolver();
-	}
+  @Bean
+  @ConditionalOnMissingBean
+  TagValueExpressionResolver spelTagValueExpressionResolver() {
+    return new SpelTagValueExpressionResolver();
+  }
 
-	@Bean
-	SleuthAdvisorConfig sleuthAdvisorConfig() {
-		return new SleuthAdvisorConfig();
-	}
-	
+  @Bean
+  @ConditionalOnMissingBean
+  TagValueResolver noOpTagValueResolver() {
+    return new NoOpTagValueResolver();
+  }
+
+  @Bean
+  SleuthAdvisorConfig sleuthAdvisorConfig() {
+    return new SleuthAdvisorConfig();
+  }
 }

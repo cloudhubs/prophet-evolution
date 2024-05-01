@@ -17,30 +17,30 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/api/v1/executeservice")
 public class ExecuteControlller {
 
-    @Autowired
-    private ExecuteService executeService;
+  @Autowired private ExecuteService executeService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExecuteControlller.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ExecuteControlller.class);
 
-    @GetMapping(path = "/welcome")
-    public String home(@RequestHeader HttpHeaders headers) {
-        return "Welcome to [ Execute Service ] !";
-    }
+  @GetMapping(path = "/welcome")
+  public String home(@RequestHeader HttpHeaders headers) {
+    return "Welcome to [ Execute Service ] !";
+  }
 
-    @CrossOrigin(origins = "*")
-    @GetMapping(path = "/execute/execute/{orderId}")
-    public HttpEntity executeTicket(@PathVariable String orderId, @RequestHeader HttpHeaders headers) {
-        ExecuteControlller.LOGGER.info("[executeTicket][Execute][Id: {}]", orderId);
-        // null
-        return ok(executeService.ticketExecute(orderId, headers));
-    }
+  @CrossOrigin(origins = "*")
+  @GetMapping(path = "/execute/execute/{orderId}")
+  public HttpEntity executeTicket(
+      @PathVariable String orderId, @RequestHeader HttpHeaders headers) {
+    ExecuteControlller.LOGGER.info("[executeTicket][Execute][Id: {}]", orderId);
+    // null
+    return ok(executeService.ticketExecute(orderId, headers));
+  }
 
-    @CrossOrigin(origins = "*")
-    @GetMapping(path = "/execute/collected/{orderId}")
-    public HttpEntity collectTicket(@PathVariable String orderId, @RequestHeader HttpHeaders headers) {
-        ExecuteControlller.LOGGER.info("[collectTicket][Collect][Id: {}]", orderId);
-        // null
-        return ok(executeService.ticketCollect(orderId, headers));
-    }
-
+  @CrossOrigin(origins = "*")
+  @GetMapping(path = "/execute/collected/{orderId}")
+  public HttpEntity collectTicket(
+      @PathVariable String orderId, @RequestHeader HttpHeaders headers) {
+    ExecuteControlller.LOGGER.info("[collectTicket][Collect][Id: {}]", orderId);
+    // null
+    return ok(executeService.ticketCollect(orderId, headers));
+  }
 }

@@ -13,12 +13,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TripAllDetail {
 
-    private boolean status;
+  private boolean status;
 
-    private String message;
+  private String message;
 
-    private TripResponse tripResponse;
+  private TripResponse tripResponse;
 
-    private Trip trip;
-
+  private Trip trip;
 }

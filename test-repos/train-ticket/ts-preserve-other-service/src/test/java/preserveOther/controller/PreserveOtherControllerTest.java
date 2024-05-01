@@ -22,36 +22,45 @@ import preserveOther.service.PreserveOtherService;
 @RunWith(JUnit4.class)
 public class PreserveOtherControllerTest {
 
-    @InjectMocks
-    private PreserveOtherController preserveOtherController;
+  @InjectMocks private PreserveOtherController preserveOtherController;
 
-    @Mock
-    private PreserveOtherService preserveService;
-    private MockMvc mockMvc;
-    private Response response = new Response();
+  @Mock private PreserveOtherService preserveService;
+  private MockMvc mockMvc;
+  private Response response = new Response();
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(preserveOtherController).build();
-    }
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+    mockMvc = MockMvcBuilders.standaloneSetup(preserveOtherController).build();
+  }
 
-    @Test
-    public void testHome() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/preserveotherservice/welcome"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("Welcome to [ PreserveOther Service ] !"));
-    }
+  @Test
+  public void testHome() throws Exception {
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/v1/preserveotherservice/welcome"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(
+            MockMvcResultMatchers.content().string("Welcome to [ PreserveOther Service ] !"));
+  }
 
-    @Test
-    public void testPreserve() throws Exception {
-        OrderTicketsInfo oti = new OrderTicketsInfo();
-        Mockito.when(preserveService.preserve(Mockito.any(OrderTicketsInfo.class), Mockito.any(HttpHeaders.class))).thenReturn(response);
-        String requestJson = JSONObject.toJSONString(oti);
-        String result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/preserveotherservice/preserveOther").contentType(MediaType.APPLICATION_JSON).content(requestJson))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
-    }
-
+  @Test
+  public void testPreserve() throws Exception {
+    OrderTicketsInfo oti = new OrderTicketsInfo();
+    Mockito.when(
+            preserveService.preserve(
+                Mockito.any(OrderTicketsInfo.class), Mockito.any(HttpHeaders.class)))
+        .thenReturn(response);
+    String requestJson = JSONObject.toJSONString(oti);
+    String result =
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/api/v1/preserveotherservice/preserveOther")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestJson))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
+  }
 }

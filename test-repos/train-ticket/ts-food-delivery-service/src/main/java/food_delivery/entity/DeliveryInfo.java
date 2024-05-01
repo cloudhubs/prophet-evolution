@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeliveryInfo {
-    private String orderId;
-    private String deliveryTime;
+  private String orderId;
+  private String deliveryTime;
 }

@@ -15,56 +15,65 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class TestServiceBasicInfo {
-    private WebDriver driver;
-    private String baseUrl;
-    @BeforeClass
-    public void setUp() throws Exception {
-        System.setProperty("webdriver.chrome.driver", "D:/Program/chromedriver_win32/chromedriver.exe");
-        driver = new ChromeDriver();
-        baseUrl = "http://10.141.212.24/";
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    }
-    @Test
-    public void testBasicInfo() throws Exception{
-        driver.get(baseUrl + "/");
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("document.getElementById('basic_information_tripId').value='G1234'");
-        js.executeScript("document.getElementById('basic_information_trainTypeId').value='GaoTieOne'");
-        js.executeScript("document.getElementById('basic_information_startingStation').value='shanghai'");
-        js.executeScript("document.getElementById('basic_information_stations').value='beijing'");
-        js.executeScript("document.getElementById('basic_information_terminalStation').value='taiyuan'");
+  private WebDriver driver;
+  private String baseUrl;
 
-        String jsstartingTime = "document.getElementById('basic_information_startingTime').value='09:51'";
-        js.executeScript(jsstartingTime);
-        String jssendTime = "document.getElementById('basic_information_endTime').value='15:51'";
-        js.executeScript(jssendTime);
+  @BeforeClass
+  public void setUp() throws Exception {
+    System.setProperty("webdriver.chrome.driver", "D:/Program/chromedriver_win32/chromedriver.exe");
+    driver = new ChromeDriver();
+    baseUrl = "http://10.141.212.24/";
+    driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+  }
 
-        js.executeScript("document.getElementById('basic_information_startingPlace').value='Shang Hai'");
-        js.executeScript("document.getElementById('basic_information_endPlace').value='Tai Yuan'");
+  @Test
+  public void testBasicInfo() throws Exception {
+    driver.get(baseUrl + "/");
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("document.getElementById('basic_information_tripId').value='G1234'");
+    js.executeScript("document.getElementById('basic_information_trainTypeId').value='GaoTieOne'");
+    js.executeScript(
+        "document.getElementById('basic_information_startingStation').value='shanghai'");
+    js.executeScript("document.getElementById('basic_information_stations').value='beijing'");
+    js.executeScript(
+        "document.getElementById('basic_information_terminalStation').value='taiyuan'");
 
-        String bookDate = "";
-        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
-        Calendar newDate = Calendar.getInstance();
-        Random randDate = new Random();
-        int randomDate = randDate.nextInt(25); //int范围类的随机数
-        newDate.add(Calendar.DATE, randomDate+5);//随机定5-30天后的票
-        bookDate=sdf.format(newDate.getTime());
+    String jsstartingTime =
+        "document.getElementById('basic_information_startingTime').value='09:51'";
+    js.executeScript(jsstartingTime);
+    String jssendTime = "document.getElementById('basic_information_endTime').value='15:51'";
+    js.executeScript(jssendTime);
 
-        js.executeScript("document.getElementById('basic_information_departureTime').value='"+bookDate+"'");
+    js.executeScript(
+        "document.getElementById('basic_information_startingPlace').value='Shang Hai'");
+    js.executeScript("document.getElementById('basic_information_endPlace').value='Tai Yuan'");
 
-        driver.findElement(By.id("basic_information_button")).click();
-        Thread.sleep(1000);
+    String bookDate = "";
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    Calendar newDate = Calendar.getInstance();
+    Random randDate = new Random();
+    int randomDate = randDate.nextInt(25); // int范围类的随机数
+    newDate.add(Calendar.DATE, randomDate + 5); // 随机定5-30天后的票
+    bookDate = sdf.format(newDate.getTime());
 
-        //gain BasicInfo list
-        List<WebElement> basicInfoList = driver.findElements(By.xpath("//table[@id='query_basic_information_list_table']/tbody/tr"));
-        if (basicInfoList.size() > 0)
-            System.out.printf("Success to Query BasicInfo and BasicInfo list size is %d.%n",basicInfoList.size());
-        else
-            System.out.println("Failed to Query BasicInfo or BasicInfo list size is 0");
-        Assert.assertEquals(basicInfoList.size() > 0,true);
-    }
-    @AfterClass
-    public void tearDown() throws Exception {
-        driver.quit();
-    }
+    js.executeScript(
+        "document.getElementById('basic_information_departureTime').value='" + bookDate + "'");
+
+    driver.findElement(By.id("basic_information_button")).click();
+    Thread.sleep(1000);
+
+    // gain BasicInfo list
+    List<WebElement> basicInfoList =
+        driver.findElements(By.xpath("//table[@id='query_basic_information_list_table']/tbody/tr"));
+    if (basicInfoList.size() > 0)
+      System.out.printf(
+          "Success to Query BasicInfo and BasicInfo list size is %d.%n", basicInfoList.size());
+    else System.out.println("Failed to Query BasicInfo or BasicInfo list size is 0");
+    Assert.assertEquals(basicInfoList.size() > 0, true);
+  }
+
+  @AfterClass
+  public void tearDown() throws Exception {
+    driver.quit();
+  }
 }

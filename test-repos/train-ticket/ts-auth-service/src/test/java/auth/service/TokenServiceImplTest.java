@@ -26,52 +26,52 @@ import java.util.Optional;
 @RunWith(JUnit4.class)
 public class TokenServiceImplTest {
 
-    @InjectMocks
-    private TokenServiceImpl tokenServiceImpl;
+  @InjectMocks private TokenServiceImpl tokenServiceImpl;
 
-    @Mock
-    private RestTemplate restTemplate;
+  @Mock private RestTemplate restTemplate;
 
-    @Mock
-    private UserRepository userRepository;
+  @Mock private UserRepository userRepository;
 
-    @Mock
-    private JWTProvider jwtProvider;
+  @Mock private JWTProvider jwtProvider;
 
-    @Mock
-    private AuthenticationManager authenticationManager;
+  @Mock private AuthenticationManager authenticationManager;
 
-    private HttpHeaders headers = new HttpHeaders();
-    HttpEntity requestEntity = new HttpEntity(headers);
+  private HttpHeaders headers = new HttpHeaders();
+  HttpEntity requestEntity = new HttpEntity(headers);
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+  }
 
-    @Test
-    public void testGetToken1() {
-        BasicAuthDto dto = new BasicAuthDto(null, null, "verifyCode");
-        ResponseEntity<Boolean> re = new ResponseEntity<>(false, HttpStatus.OK);
-        Mockito.when(restTemplate.exchange(
-                "http://ts-verification-code-service:15678/api/v1/verifycode/verify/" + "verifyCode",
+  @Test
+  public void testGetToken1() {
+    BasicAuthDto dto = new BasicAuthDto(null, null, "verifyCode");
+    ResponseEntity<Boolean> re = new ResponseEntity<>(false, HttpStatus.OK);
+    Mockito.when(
+            restTemplate.exchange(
+                "http://ts-verification-code-service:15678/api/v1/verifycode/verify/"
+                    + "verifyCode",
                 HttpMethod.GET,
                 requestEntity,
-                Boolean.class)).thenReturn(re);
-        Response result = tokenServiceImpl.getToken(dto, headers);
-        Assert.assertEquals(new Response<>(0, "Verification failed.", null), result);
-    }
+                Boolean.class))
+        .thenReturn(re);
+    Response result = tokenServiceImpl.getToken(dto, headers);
+    Assert.assertEquals(new Response<>(0, "Verification failed.", null), result);
+  }
 
-    @Test
-    public void testGetToken2() throws UserOperationException {
-        BasicAuthDto dto = new BasicAuthDto("username", null, "");
-        User user = new User();
-        Optional<User> optionalUser = Optional.of(user);
-        Mockito.when(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class))).thenReturn(null);
-        Mockito.when(userRepository.findByUsername("username")).thenReturn(optionalUser);
-        Mockito.when(jwtProvider.createToken(user)).thenReturn("token");
-        Response result = tokenServiceImpl.getToken(dto, headers);
-        Assert.assertEquals("login success", result.getMsg());
-    }
-
+  @Test
+  public void testGetToken2() throws UserOperationException {
+    BasicAuthDto dto = new BasicAuthDto("username", null, "");
+    User user = new User();
+    Optional<User> optionalUser = Optional.of(user);
+    Mockito.when(
+            authenticationManager.authenticate(
+                Mockito.any(UsernamePasswordAuthenticationToken.class)))
+        .thenReturn(null);
+    Mockito.when(userRepository.findByUsername("username")).thenReturn(optionalUser);
+    Mockito.when(jwtProvider.createToken(user)).thenReturn("token");
+    Response result = tokenServiceImpl.getToken(dto, headers);
+    Assert.assertEquals("login success", result.getMsg());
+  }
 }

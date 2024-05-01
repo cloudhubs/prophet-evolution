@@ -7,9 +7,8 @@ import java.util.List;
 
 public interface FoodDeliveryOrderRepository extends CrudRepository<FoodDeliveryOrder, String> {
 
-    List<FoodDeliveryOrder> findByStationFoodStoreId(String stationFoodStoreId);
+  List<FoodDeliveryOrder> findByStationFoodStoreId(String stationFoodStoreId);
 
-    @Override
-    List<FoodDeliveryOrder> findAll();
-
+  @Override
+  List<FoodDeliveryOrder> findAll();
 }

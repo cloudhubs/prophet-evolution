@@ -27,16 +27,17 @@ import java.util.Date;
 @EnableDiscoveryClient
 public class ConsignPriceApplication {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsignPriceApplication.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ConsignPriceApplication.class);
 
-    public static void main(String[] args) {
-        ConsignPriceApplication.LOGGER.info("[ConsignPriceApplication.main][launch date: {}]", new Date());
-        SpringApplication.run(ConsignPriceApplication.class, args);
-    }
+  public static void main(String[] args) {
+    ConsignPriceApplication.LOGGER.info(
+        "[ConsignPriceApplication.main][launch date: {}]", new Date());
+    SpringApplication.run(ConsignPriceApplication.class, args);
+  }
 
-    @LoadBalanced
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
+  @LoadBalanced
+  @Bean
+  public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    return builder.build();
+  }
 }

@@ -4,7 +4,6 @@ import edu.fudan.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Date;
 
 /**
  * @author fdse
@@ -13,23 +12,23 @@ import java.util.Date;
 @AllArgsConstructor
 public class RoutePlanInfo {
 
-    private String startStation;
+  private String startStation;
 
-    private String endStation;
+  private String endStation;
 
-    private String travelDate;
+  private String travelDate;
 
-    private int num;
+  private int num;
 
-    public RoutePlanInfo() {
-        //Empty Constructor
-    }
+  public RoutePlanInfo() {
+    // Empty Constructor
+  }
 
-    public String getStartStation() {
-        return StringUtils.String2Lower(this.startStation);
-    }
+  public String getStartStation() {
+    return StringUtils.String2Lower(this.startStation);
+  }
 
-    public String getEndStation() {
-        return StringUtils.String2Lower(this.endStation);
-    }
+  public String getEndStation() {
+    return StringUtils.String2Lower(this.endStation);
+  }
 }

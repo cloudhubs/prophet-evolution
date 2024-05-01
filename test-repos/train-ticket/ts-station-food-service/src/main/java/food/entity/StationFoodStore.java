@@ -15,33 +15,35 @@ import java.util.List;
 @GenericGenerator(name = "jpa-uuid", strategy = "org.hibernate.id.UUIDGenerator")
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Table(indexes = {@Index(name = "station_store_idx", columnList = "station_name, store_name", unique = true)})
+@Table(
+    indexes = {
+      @Index(name = "station_store_idx", columnList = "station_name, store_name", unique = true)
+    })
 public class StationFoodStore {
 
-    @Id
-    @Column(name = "store_id")
-    private String id;
+  @Id
+  @Column(name = "store_id")
+  private String id;
 
-    @NotNull
-    @Column(name = "station_name")
-    private String stationName;
+  @NotNull
+  @Column(name = "station_name")
+  private String stationName;
 
-    @Column(name = "store_name")
-    private String storeName;
+  @Column(name = "store_name")
+  private String storeName;
 
-    private String telephone;
+  private String telephone;
 
-    private String businessTime;
+  private String businessTime;
 
-    private double deliveryFee;
+  private double deliveryFee;
 
-    @ElementCollection(targetClass = Food.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "station_food_list", joinColumns = @JoinColumn(name = "store_id"))
-    private List<Food> foodList;
+  @ElementCollection(targetClass = Food.class, fetch = FetchType.EAGER)
+  @CollectionTable(name = "station_food_list", joinColumns = @JoinColumn(name = "store_id"))
+  private List<Food> foodList;
 
-    public StationFoodStore(){
-        //Default Constructor
-        this.stationName = "";
-    }
-
+  public StationFoodStore() {
+    // Default Constructor
+    this.stationName = "";
+  }
 }

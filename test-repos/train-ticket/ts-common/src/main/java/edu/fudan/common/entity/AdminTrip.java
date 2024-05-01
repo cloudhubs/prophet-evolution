@@ -7,12 +7,11 @@ import lombok.Data;
  */
 @Data
 public class AdminTrip {
-    private Trip trip;
-    private TrainType trainType;
-    private Route route;
+  private Trip trip;
+  private TrainType trainType;
+  private Route route;
 
-    public AdminTrip(){
-        //Default Constructor
-    }
-
+  public AdminTrip() {
+    // Default Constructor
+  }
 }

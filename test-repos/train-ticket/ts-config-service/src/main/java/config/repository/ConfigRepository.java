@@ -10,27 +10,27 @@ import java.util.List;
  */
 public interface ConfigRepository extends CrudRepository<Config, String> {
 
-    /**
-     * find by name
-     *
-     * @param name name
-     * @return Config
-     */
-    Config findByName(String name);
+  /**
+   * find by name
+   *
+   * @param name name
+   * @return Config
+   */
+  Config findByName(String name);
 
-    /**
-     * find all
-     *
-     * @return List<Config>
-     */
-    @Override
-    List<Config> findAll();
+  /**
+   * find all
+   *
+   * @return List<Config>
+   */
+  @Override
+  List<Config> findAll();
 
-    /**
-     * delete by name
-     *
-     * @param name name
-     * @return null
-     */
-    void deleteByName(String name);
+  /**
+   * delete by name
+   *
+   * @param name name
+   * @return null
+   */
+  void deleteByName(String name);
 }

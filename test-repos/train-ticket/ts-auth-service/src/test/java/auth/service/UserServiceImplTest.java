@@ -22,49 +22,50 @@ import java.util.*;
 @RunWith(JUnit4.class)
 public class UserServiceImplTest {
 
-    @InjectMocks
-    private UserServiceImpl userServiceImpl;
+  @InjectMocks private UserServiceImpl userServiceImpl;
 
-    @Mock
-    private UserRepository userRepository;
-    @Mock
-    protected PasswordEncoder passwordEncoder;
+  @Mock private UserRepository userRepository;
+  @Mock protected PasswordEncoder passwordEncoder;
 
-    private HttpHeaders headers = new HttpHeaders();
+  private HttpHeaders headers = new HttpHeaders();
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+  }
 
-    @Test
-    public void testSaveUser() {
-        User user = new User();
-        Assert.assertEquals(null, userServiceImpl.saveUser(user));
-    }
+  @Test
+  public void testSaveUser() {
+    User user = new User();
+    Assert.assertEquals(null, userServiceImpl.saveUser(user));
+  }
 
-    @Test
-    public void testGetAllUser() {
-        List<User> userList = new ArrayList<>();
-        userList.add(new User());
-        Mockito.when(userRepository.findAll()).thenReturn(userList);
-        Assert.assertEquals(userList, userServiceImpl.getAllUser(headers));
-    }
+  @Test
+  public void testGetAllUser() {
+    List<User> userList = new ArrayList<>();
+    userList.add(new User());
+    Mockito.when(userRepository.findAll()).thenReturn(userList);
+    Assert.assertEquals(userList, userServiceImpl.getAllUser(headers));
+  }
 
-    @Test
-    public void testCreateDefaultAuthUser() {
-        AuthDto dto = new AuthDto(UUID.randomUUID().toString(), "username", "password");
-        User user = new User();
-        Mockito.when(userRepository.save(user)).thenReturn(user);
-        Mockito.when(passwordEncoder.encode(dto.getPassword())).thenReturn("password");
-        Assert.assertEquals(null, userServiceImpl.createDefaultAuthUser(dto));
-    }
+  @Test
+  public void testCreateDefaultAuthUser() {
+    AuthDto dto = new AuthDto(UUID.randomUUID().toString(), "username", "password");
+    User user = new User();
+    Mockito.when(userRepository.save(user)).thenReturn(user);
+    Mockito.when(passwordEncoder.encode(dto.getPassword())).thenReturn("password");
+    Assert.assertEquals(null, userServiceImpl.createDefaultAuthUser(dto));
+  }
 
-    @Test
-    public void testDeleteByUserId() {
-        UUID userId = UUID.randomUUID();
-        Mockito.doNothing().doThrow(new RuntimeException()).when(userRepository).deleteByUserId(userId.toString());
-        Assert.assertEquals(new Response(1, "DELETE USER SUCCESS", null), userServiceImpl.deleteByUserId(userId.toString(), headers));
-    }
-
+  @Test
+  public void testDeleteByUserId() {
+    UUID userId = UUID.randomUUID();
+    Mockito.doNothing()
+        .doThrow(new RuntimeException())
+        .when(userRepository)
+        .deleteByUserId(userId.toString());
+    Assert.assertEquals(
+        new Response(1, "DELETE USER SUCCESS", null),
+        userServiceImpl.deleteByUserId(userId.toString(), headers));
+  }
 }

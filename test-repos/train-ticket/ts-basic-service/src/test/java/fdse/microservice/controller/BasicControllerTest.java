@@ -22,45 +22,58 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @RunWith(JUnit4.class)
 public class BasicControllerTest {
 
-    @InjectMocks
-    private BasicController basicController;
+  @InjectMocks private BasicController basicController;
 
-    @Mock
-    private BasicService basicService;
-    private MockMvc mockMvc;
-    private Response response = new Response();
+  @Mock private BasicService basicService;
+  private MockMvc mockMvc;
+  private Response response = new Response();
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(basicController).build();
-    }
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+    mockMvc = MockMvcBuilders.standaloneSetup(basicController).build();
+  }
 
-    @Test
-    public void testHome() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/basicservice/welcome"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("Welcome to [ Basic Service ] !"));
-    }
+  @Test
+  public void testHome() throws Exception {
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/v1/basicservice/welcome"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().string("Welcome to [ Basic Service ] !"));
+  }
 
-    @Test
-    public void testQueryForTravel() throws Exception {
-        Travel info = new Travel();
-        Mockito.when(basicService.queryForTravel(Mockito.any(Travel.class), Mockito.any(HttpHeaders.class))).thenReturn(response);
-        String requestJson = JSONObject.toJSONString(info);
-        String result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/basicservice/basic/travel").contentType(MediaType.APPLICATION_JSON).content(requestJson))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
-    }
+  @Test
+  public void testQueryForTravel() throws Exception {
+    Travel info = new Travel();
+    Mockito.when(
+            basicService.queryForTravel(Mockito.any(Travel.class), Mockito.any(HttpHeaders.class)))
+        .thenReturn(response);
+    String requestJson = JSONObject.toJSONString(info);
+    String result =
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/api/v1/basicservice/basic/travel")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestJson))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
+  }
 
-    @Test
-    public void testQueryForStationId() throws Exception {
-        Mockito.when(basicService.queryForStationId(Mockito.anyString(), Mockito.any(HttpHeaders.class))).thenReturn(response);
-        String result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/basicservice/basic/stationName"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
-    }
-
+  @Test
+  public void testQueryForStationId() throws Exception {
+    Mockito.when(
+            basicService.queryForStationId(Mockito.anyString(), Mockito.any(HttpHeaders.class)))
+        .thenReturn(response);
+    String result =
+        mockMvc
+            .perform(MockMvcRequestBuilders.get("/api/v1/basicservice/basic/stationName"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
+  }
 }

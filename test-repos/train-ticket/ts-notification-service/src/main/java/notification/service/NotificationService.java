@@ -9,39 +9,39 @@ import org.springframework.http.HttpHeaders;
  */
 public interface NotificationService {
 
-    /**
-     * preserve success with notify info
-     *
-     * @param info notify info
-     * @param headers headers
-     * @return boolean
-     */
-    boolean preserveSuccess(NotifyInfo info, HttpHeaders headers);
+  /**
+   * preserve success with notify info
+   *
+   * @param info notify info
+   * @param headers headers
+   * @return boolean
+   */
+  boolean preserveSuccess(NotifyInfo info, HttpHeaders headers);
 
-    /**S
-     * order create success with notify info
-     *
-     * @param info notify info
-     * @param headers headers
-     * @return boolean
-     */
-    boolean orderCreateSuccess(NotifyInfo info, HttpHeaders headers);
+  /**
+   * S order create success with notify info
+   *
+   * @param info notify info
+   * @param headers headers
+   * @return boolean
+   */
+  boolean orderCreateSuccess(NotifyInfo info, HttpHeaders headers);
 
-    /**
-     * order changed success with notify info
-     *
-     * @param info notify info
-     * @param headers headers
-     * @return boolean
-     */
-    boolean orderChangedSuccess(NotifyInfo info, HttpHeaders headers);
+  /**
+   * order changed success with notify info
+   *
+   * @param info notify info
+   * @param headers headers
+   * @return boolean
+   */
+  boolean orderChangedSuccess(NotifyInfo info, HttpHeaders headers);
 
-    /**
-     * order cancel success with notify info
-     *
-     * @param info notify info
-     * @param headers headers
-     * @return boolean
-     */
-    boolean orderCancelSuccess(NotifyInfo info, HttpHeaders headers);
+  /**
+   * order cancel success with notify info
+   *
+   * @param info notify info
+   * @param headers headers
+   * @return boolean
+   */
+  boolean orderCancelSuccess(NotifyInfo info, HttpHeaders headers);
 }

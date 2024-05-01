@@ -1,5 +1,3 @@
-
-
 package org.myproject.ms.monitoring.instrument.schedl;
 
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -16,7 +14,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import java.util.regex.Pattern;
 
-
 @Configuration
 @EnableAspectJAutoProxy
 @ConditionalOnProperty(value = "spring.sleuth.scheduled.enabled", matchIfMissing = true)
@@ -25,10 +22,11 @@ import java.util.regex.Pattern;
 @EnableConfigurationProperties(SSProp.class)
 public class TSAConf {
 
-	@ConditionalOnClass(name = "org.aspectj.lang.ProceedingJoinPoint")
-	@Bean
-	public TSAspect traceSchedulingAspect(Chainer tracer, ChainKeys traceKeys,
-			SSProp sleuthSchedulingProperties) {
-		return new TSAspect(tracer, traceKeys, Pattern.compile(sleuthSchedulingProperties.getSkipPattern()));
-	}
+  @ConditionalOnClass(name = "org.aspectj.lang.ProceedingJoinPoint")
+  @Bean
+  public TSAspect traceSchedulingAspect(
+      Chainer tracer, ChainKeys traceKeys, SSProp sleuthSchedulingProperties) {
+    return new TSAspect(
+        tracer, traceKeys, Pattern.compile(sleuthSchedulingProperties.getSkipPattern()));
+  }
 }

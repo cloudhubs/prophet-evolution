@@ -9,14 +9,14 @@ import java.util.Optional;
 /**
  * @author fdse
  */
-public interface PaymentRepository extends CrudRepository<Payment,String> {
+public interface PaymentRepository extends CrudRepository<Payment, String> {
 
-    Optional<Payment> findById(String id);
+  Optional<Payment> findById(String id);
 
-    Payment findByOrderId(String orderId);
+  Payment findByOrderId(String orderId);
 
-    @Override
-    List<Payment> findAll();
+  @Override
+  List<Payment> findAll();
 
-    List<Payment> findByUserId(String userId);
+  List<Payment> findByUserId(String userId);
 }

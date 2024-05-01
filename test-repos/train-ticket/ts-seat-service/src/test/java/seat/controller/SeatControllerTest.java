@@ -22,47 +22,64 @@ import seat.service.SeatService;
 @RunWith(JUnit4.class)
 public class SeatControllerTest {
 
-    @InjectMocks
-    private SeatController seatController;
+  @InjectMocks private SeatController seatController;
 
-    @Mock
-    private SeatService seatService;
-    private MockMvc mockMvc;
-    private Response response = new Response();
+  @Mock private SeatService seatService;
+  private MockMvc mockMvc;
+  private Response response = new Response();
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(seatController).build();
-    }
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+    mockMvc = MockMvcBuilders.standaloneSetup(seatController).build();
+  }
 
-    @Test
-    public void testHome() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/seatservice/welcome"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().string("Welcome to [ Seat Service ] !"));
-    }
+  @Test
+  public void testHome() throws Exception {
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/v1/seatservice/welcome"))
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().string("Welcome to [ Seat Service ] !"));
+  }
 
-    @Test
-    public void testCreate() throws Exception {
-        Seat seatRequest = new Seat();
-        Mockito.when(seatService.distributeSeat(Mockito.any(Seat.class), Mockito.any(HttpHeaders.class))).thenReturn(response);
-        String requestJson = JSONObject.toJSONString(seatRequest);
-        String result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/seatservice/seats").contentType(MediaType.APPLICATION_JSON).content(requestJson))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
-    }
+  @Test
+  public void testCreate() throws Exception {
+    Seat seatRequest = new Seat();
+    Mockito.when(
+            seatService.distributeSeat(Mockito.any(Seat.class), Mockito.any(HttpHeaders.class)))
+        .thenReturn(response);
+    String requestJson = JSONObject.toJSONString(seatRequest);
+    String result =
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/api/v1/seatservice/seats")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestJson))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
+  }
 
-    @Test
-    public void testGetLeftTicketOfInterval() throws Exception {
-        Seat seatRequest = new Seat();
-        Mockito.when(seatService.getLeftTicketOfInterval(Mockito.any(Seat.class), Mockito.any(HttpHeaders.class))).thenReturn(response);
-        String requestJson = JSONObject.toJSONString(seatRequest);
-        String result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/seatservice/seats/left_tickets").contentType(MediaType.APPLICATION_JSON).content(requestJson))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
-    }
-
+  @Test
+  public void testGetLeftTicketOfInterval() throws Exception {
+    Seat seatRequest = new Seat();
+    Mockito.when(
+            seatService.getLeftTicketOfInterval(
+                Mockito.any(Seat.class), Mockito.any(HttpHeaders.class)))
+        .thenReturn(response);
+    String requestJson = JSONObject.toJSONString(seatRequest);
+    String result =
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/api/v1/seatservice/seats/left_tickets")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestJson))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
+  }
 }

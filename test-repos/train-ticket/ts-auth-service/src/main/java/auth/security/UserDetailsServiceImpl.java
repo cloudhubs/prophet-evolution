@@ -18,17 +18,18 @@ import java.text.MessageFormat;
 @Component("userDetailServiceImpl")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-    @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        LOGGER.info("[loadUserByUsername][load UsernamePasswordAuthenticationToken][username: {}]", s);
-        return userRepository.findByUsername(s)
-                .orElseThrow(() -> new UsernameNotFoundException(
-                        MessageFormat.format(InfoConstant.USER_NAME_NOT_FOUND_1, s)
-                ));
-    }
+  @Override
+  public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    LOGGER.info("[loadUserByUsername][load UsernamePasswordAuthenticationToken][username: {}]", s);
+    return userRepository
+        .findByUsername(s)
+        .orElseThrow(
+            () ->
+                new UsernameNotFoundException(
+                    MessageFormat.format(InfoConstant.USER_NAME_NOT_FOUND_1, s)));
+  }
 }

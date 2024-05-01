@@ -11,14 +11,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RouteInfo {
-    private String Id;
+  private String Id;
 
-    private String startStation;
+  private String startStation;
 
-    private String endStation;
+  private String endStation;
 
-    private String stationList;
+  private String stationList;
 
-    private String distanceList;
-
+  private String distanceList;
 }

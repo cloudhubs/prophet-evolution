@@ -10,12 +10,11 @@ import org.springframework.http.HttpHeaders;
  */
 public interface PaymentService {
 
-    Response pay(Payment info, HttpHeaders headers);
+  Response pay(Payment info, HttpHeaders headers);
 
-    Response addMoney(Payment info, HttpHeaders headers);
+  Response addMoney(Payment info, HttpHeaders headers);
 
-    Response query(HttpHeaders headers);
+  Response query(HttpHeaders headers);
 
-    void initPayment(Payment payment,HttpHeaders headers);
-
+  void initPayment(Payment payment, HttpHeaders headers);
 }

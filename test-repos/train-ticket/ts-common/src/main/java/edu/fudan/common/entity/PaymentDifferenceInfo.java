@@ -8,16 +8,15 @@ import lombok.Data;
 @Data
 public class PaymentDifferenceInfo {
 
-    private String orderId;
+  private String orderId;
 
-    private String tripId;
+  private String tripId;
 
-    private String userId;
+  private String userId;
 
-    private String price;
+  private String price;
 
-    public PaymentDifferenceInfo(){
-        //Default Constructor
-    }
-
+  public PaymentDifferenceInfo() {
+    // Default Constructor
+  }
 }

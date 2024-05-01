@@ -6,28 +6,27 @@ import java.util.Locale;
 
 @Data
 public class Station {
-    private String id;
+  private String id;
 
-    private String name;
+  private String name;
 
-    private int stayTime;
+  private int stayTime;
 
-    public Station(){
-        this.name = "";
-    }
+  public Station() {
+    this.name = "";
+  }
 
-    public void setName(String name) {
-        this.name = name.replace(" ", "").toLowerCase(Locale.ROOT);
-    }
+  public void setName(String name) {
+    this.name = name.replace(" ", "").toLowerCase(Locale.ROOT);
+  }
 
-    public Station(String name) {
-        this.name = name.replace(" ", "").toLowerCase(Locale.ROOT);
-    }
+  public Station(String name) {
+    this.name = name.replace(" ", "").toLowerCase(Locale.ROOT);
+  }
 
-
-    public Station(String name, int stayTime) {
-        this.name = name.replace(" ", "").toLowerCase(Locale.ROOT);;
-        this.stayTime = stayTime;
-    }
+  public Station(String name, int stayTime) {
+    this.name = name.replace(" ", "").toLowerCase(Locale.ROOT);
+    ;
+    this.stayTime = stayTime;
+  }
 }
-

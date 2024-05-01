@@ -12,21 +12,14 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AssuranceTypeBean implements Serializable{
+public class AssuranceTypeBean implements Serializable {
 
-    /**
-     * index of assurance type
-     */
-    private  int index;
+  /** index of assurance type */
+  private int index;
 
-    /**
-     * the assurance type name
-     */
-    private String name;
+  /** the assurance type name */
+  private String name;
 
-    /**
-     * the price of this type of assurence
-     */
-    private double price;
-
+  /** the price of this type of assurence */
+  private double price;
 }

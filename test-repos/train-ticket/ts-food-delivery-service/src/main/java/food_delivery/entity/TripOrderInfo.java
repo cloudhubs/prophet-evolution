@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TripOrderInfo {
-    private String orderId;
-    private String tripId;
+  private String orderId;
+  private String tripId;
 }

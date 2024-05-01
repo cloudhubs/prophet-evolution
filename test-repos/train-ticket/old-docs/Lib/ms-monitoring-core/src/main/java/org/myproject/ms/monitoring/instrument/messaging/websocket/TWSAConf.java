@@ -18,39 +18,35 @@ import org.springframework.web.socket.config.annotation.AbstractWebSocketMessage
 import org.springframework.web.socket.config.annotation.DelegatingWebSocketMessageBrokerConfiguration;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
-
 @Component
 @Configuration
 @AutoConfigureAfter(TSMAConf.class)
 @ConditionalOnClass(DelegatingWebSocketMessageBrokerConfiguration.class)
 @ConditionalOnBean(Chainer.class)
-@ConditionalOnProperty(value = "spring.sleuth.integration.websockets.enabled", matchIfMissing = true)
-public class TWSAConf
-		extends AbstractWebSocketMessageBrokerConfigurer {
+@ConditionalOnProperty(
+    value = "spring.sleuth.integration.websockets.enabled",
+    matchIfMissing = true)
+public class TWSAConf extends AbstractWebSocketMessageBrokerConfigurer {
 
-	@Autowired
-	Chainer tracer;
-	@Autowired
-	ChainKeys traceKeys;
-	@Autowired
-	MSTMExtra spanExtractor;
-	@Autowired
-	MSTMInject spanInjector;
+  @Autowired Chainer tracer;
+  @Autowired ChainKeys traceKeys;
+  @Autowired MSTMExtra spanExtractor;
+  @Autowired MSTMInject spanInjector;
 
-	@Override
-	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		// The user must register their own endpoints
-	}
+  @Override
+  public void registerStompEndpoints(StompEndpointRegistry registry) {
+    // The user must register their own endpoints
+  }
 
-	@Override
-	public void configureClientOutboundChannel(ChannelRegistration registration) {
-		registration.setInterceptors(new TCInter(this.tracer,
-				this.traceKeys, this.spanExtractor, this.spanInjector));
-	}
+  @Override
+  public void configureClientOutboundChannel(ChannelRegistration registration) {
+    registration.setInterceptors(
+        new TCInter(this.tracer, this.traceKeys, this.spanExtractor, this.spanInjector));
+  }
 
-	@Override
-	public void configureClientInboundChannel(ChannelRegistration registration) {
-		registration.setInterceptors(new TCInter(this.tracer,
-				this.traceKeys, this.spanExtractor, this.spanInjector));
-	}
+  @Override
+  public void configureClientInboundChannel(ChannelRegistration registration) {
+    registration.setInterceptors(
+        new TCInter(this.tracer, this.traceKeys, this.spanExtractor, this.spanInjector));
+  }
 }

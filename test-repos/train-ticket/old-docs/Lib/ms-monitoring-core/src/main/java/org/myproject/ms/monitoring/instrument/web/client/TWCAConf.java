@@ -1,5 +1,3 @@
-
-
 package org.myproject.ms.monitoring.instrument.web.client;
 
 import javax.annotation.PostConstruct;
@@ -21,7 +19,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
 
-
 @Configuration
 @SWCEnable
 @ConditionalOnClass(RestTemplate.class)
@@ -29,33 +26,31 @@ import org.springframework.web.client.RestTemplate;
 @AutoConfigureAfter(TWAConf.class)
 public class TWCAConf {
 
-	@Bean
-	@ConditionalOnMissingBean
-	public TRTInter traceRestTemplateInterceptor(Chainer tracer,
-			HSInject spanInjector,
-			HTKInject httpTraceKeysInjector) {
-		return new TRTInter(tracer, spanInjector, httpTraceKeysInjector);
-	}
+  @Bean
+  @ConditionalOnMissingBean
+  public TRTInter traceRestTemplateInterceptor(
+      Chainer tracer, HSInject spanInjector, HTKInject httpTraceKeysInjector) {
+    return new TRTInter(tracer, spanInjector, httpTraceKeysInjector);
+  }
 
-	@Configuration
-	protected static class TraceInterceptorConfiguration {
+  @Configuration
+  protected static class TraceInterceptorConfiguration {
 
-		@Autowired(required = false)
-		private Collection<RestTemplate> restTemplates;
+    @Autowired(required = false)
+    private Collection<RestTemplate> restTemplates;
 
-		@Autowired
-		private TRTInter traceRestTemplateInterceptor;
+    @Autowired private TRTInter traceRestTemplateInterceptor;
 
-		@PostConstruct
-		public void init() {
-			if (this.restTemplates != null) {
-				for (RestTemplate restTemplate : this.restTemplates) {
-					List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>(
-							restTemplate.getInterceptors());
-					interceptors.add(this.traceRestTemplateInterceptor);
-					restTemplate.setInterceptors(interceptors);
-				}
-			}
-		}
-	}
+    @PostConstruct
+    public void init() {
+      if (this.restTemplates != null) {
+        for (RestTemplate restTemplate : this.restTemplates) {
+          List<ClientHttpRequestInterceptor> interceptors =
+              new ArrayList<ClientHttpRequestInterceptor>(restTemplate.getInterceptors());
+          interceptors.add(this.traceRestTemplateInterceptor);
+          restTemplate.setInterceptors(interceptors);
+        }
+      }
+    }
+  }
 }

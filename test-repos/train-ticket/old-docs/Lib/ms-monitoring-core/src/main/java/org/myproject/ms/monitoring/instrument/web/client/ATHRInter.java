@@ -1,5 +1,3 @@
-
-
 package org.myproject.ms.monitoring.instrument.web.client;
 
 import java.lang.invoke.MethodHandles;
@@ -16,64 +14,60 @@ import org.springframework.http.HttpRequest;
 
 abstract class ATHRInter {
 
-	protected static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
+  protected static final Log log = LogFactory.getLog(MethodHandles.lookup().lookupClass());
 
-	protected final Chainer tracer;
-	protected final HSInject spanInjector;
-	protected final HTKInject keysInjector;
+  protected final Chainer tracer;
+  protected final HSInject spanInjector;
+  protected final HTKInject keysInjector;
 
-	protected ATHRInter(Chainer tracer,
-			HSInject spanInjector, HTKInject keysInjector) {
-		this.tracer = tracer;
-		this.spanInjector = spanInjector;
-		this.keysInjector = keysInjector;
-	}
+  protected ATHRInter(Chainer tracer, HSInject spanInjector, HTKInject keysInjector) {
+    this.tracer = tracer;
+    this.spanInjector = spanInjector;
+    this.keysInjector = keysInjector;
+  }
 
-	
-	protected void publishStartEvent(HttpRequest request) {
-		URI uri = request.getURI();
-		String spanName = getName(uri);
-		Item newSpan = this.tracer.createSpan(spanName);
-		this.spanInjector.inject(newSpan, new HRTMap(request));
-		addRequestTags(request);
-		newSpan.logEvent(Item.CLIENT_SEND);
-		if (log.isDebugEnabled()) {
-			log.debug("Starting new client span [" + newSpan + "]");
-		}
-	}
+  protected void publishStartEvent(HttpRequest request) {
+    URI uri = request.getURI();
+    String spanName = getName(uri);
+    Item newSpan = this.tracer.createSpan(spanName);
+    this.spanInjector.inject(newSpan, new HRTMap(request));
+    addRequestTags(request);
+    newSpan.logEvent(Item.CLIENT_SEND);
+    if (log.isDebugEnabled()) {
+      log.debug("Starting new client span [" + newSpan + "]");
+    }
+  }
 
-	private String getName(URI uri) {
-		return ItemNameUtil.shorten(uriScheme(uri) + ":" + uri.getPath());
-	}
+  private String getName(URI uri) {
+    return ItemNameUtil.shorten(uriScheme(uri) + ":" + uri.getPath());
+  }
 
-	private String uriScheme(URI uri) {
-		return uri.getScheme() == null ? "http" : uri.getScheme();
-	}
+  private String uriScheme(URI uri) {
+    return uri.getScheme() == null ? "http" : uri.getScheme();
+  }
 
-	
-	protected void addRequestTags(HttpRequest request) {
-		this.keysInjector.addRequestTags(request.getURI().toString(),
-				request.getURI().getHost(),
-				request.getURI().getPath(),
-				request.getMethod().name(),
-				request.getHeaders());
-	}
+  protected void addRequestTags(HttpRequest request) {
+    this.keysInjector.addRequestTags(
+        request.getURI().toString(),
+        request.getURI().getHost(),
+        request.getURI().getPath(),
+        request.getMethod().name(),
+        request.getHeaders());
+  }
 
-	
-	public void finish() {
-		if (!isTracing()) {
-			return;
-		}
-		currentSpan().logEvent(Item.CLIENT_RECV);
-		this.tracer.close(this.currentSpan());
-	}
+  public void finish() {
+    if (!isTracing()) {
+      return;
+    }
+    currentSpan().logEvent(Item.CLIENT_RECV);
+    this.tracer.close(this.currentSpan());
+  }
 
-	protected Item currentSpan() {
-		return this.tracer.getCurrentSpan();
-	}
+  protected Item currentSpan() {
+    return this.tracer.getCurrentSpan();
+  }
 
-	protected boolean isTracing() {
-		return this.tracer.isTracing();
-	}
-
+  protected boolean isTracing() {
+    return this.tracer.isTracing();
+  }
 }

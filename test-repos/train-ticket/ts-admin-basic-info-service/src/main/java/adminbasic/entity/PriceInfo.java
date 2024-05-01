@@ -10,14 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PriceInfo {
 
-    private String id;
+  private String id;
 
-    private String trainType;
+  private String trainType;
 
-    private String routeId;
+  private String routeId;
 
-    private double basicPriceRate;
+  private double basicPriceRate;
 
-    private double firstClassPriceRate;
-
+  private double firstClassPriceRate;
 }

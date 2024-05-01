@@ -1,14 +1,8 @@
-
-
 package org.myproject.ms.monitoring;
-
 
 public interface ItemAccessor {
 
-	
-	Item getCurrentSpan();
+  Item getCurrentSpan();
 
-	
-	boolean isTracing();
-
+  boolean isTracing();
 }

@@ -1,5 +1,3 @@
-
-
 package org.myproject.ms.monitoring;
 
 import java.util.Collection;
@@ -7,341 +5,314 @@ import java.util.LinkedHashSet;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-
 @ConfigurationProperties("spring.sleuth.keys")
 public class ChainKeys {
 
-	private Http http = new Http();
+  private Http http = new Http();
 
-	private Message message = new Message();
+  private Message message = new Message();
 
-	private Hystrix hystrix = new Hystrix();
+  private Hystrix hystrix = new Hystrix();
 
-	private Async async = new Async();
+  private Async async = new Async();
 
-	private Mvc mvc = new Mvc();
+  private Mvc mvc = new Mvc();
 
-	public Http getHttp() {
-		return this.http;
-	}
+  public Http getHttp() {
+    return this.http;
+  }
 
-	public Message getMessage() {
-		return this.message;
-	}
+  public Message getMessage() {
+    return this.message;
+  }
 
-	public Hystrix getHystrix() {
-		return this.hystrix;
-	}
+  public Hystrix getHystrix() {
+    return this.hystrix;
+  }
 
-	public Async getAsync() {
-		return this.async;
-	}
+  public Async getAsync() {
+    return this.async;
+  }
 
-	public Mvc getMvc() {
-		return this.mvc;
-	}
+  public Mvc getMvc() {
+    return this.mvc;
+  }
 
-	public void setHttp(Http http) {
-		this.http = http;
-	}
+  public void setHttp(Http http) {
+    this.http = http;
+  }
 
-	public void setMessage(Message message) {
-		this.message = message;
-	}
+  public void setMessage(Message message) {
+    this.message = message;
+  }
 
-	public void setHystrix(Hystrix hystrix) {
-		this.hystrix = hystrix;
-	}
+  public void setHystrix(Hystrix hystrix) {
+    this.hystrix = hystrix;
+  }
 
-	public void setAsync(Async async) {
-		this.async = async;
-	}
+  public void setAsync(Async async) {
+    this.async = async;
+  }
 
-	public void setMvc(Mvc mvc) {
-		this.mvc = mvc;
-	}
+  public void setMvc(Mvc mvc) {
+    this.mvc = mvc;
+  }
 
-	public static class Message {
+  public static class Message {
 
-		private Payload payload = new Payload();
+    private Payload payload = new Payload();
 
-		public Payload getPayload() {
-			return this.payload;
-		}
+    public Payload getPayload() {
+      return this.payload;
+    }
 
-		public String getPrefix() {
-			return this.prefix;
-		}
+    public String getPrefix() {
+      return this.prefix;
+    }
 
-		public Collection<String> getHeaders() {
-			return this.headers;
-		}
+    public Collection<String> getHeaders() {
+      return this.headers;
+    }
 
-		public void setPayload(Payload payload) {
-			this.payload = payload;
-		}
+    public void setPayload(Payload payload) {
+      this.payload = payload;
+    }
 
-		public void setPrefix(String prefix) {
-			this.prefix = prefix;
-		}
+    public void setPrefix(String prefix) {
+      this.prefix = prefix;
+    }
 
-		public void setHeaders(Collection<String> headers) {
-			this.headers = headers;
-		}
+    public void setHeaders(Collection<String> headers) {
+      this.headers = headers;
+    }
 
-		public static class Payload {
-			
-			private String size = "message/payload-size";
-			
-			private String type = "message/payload-type";
+    public static class Payload {
 
-			public String getSize() {
-				return this.size;
-			}
+      private String size = "message/payload-size";
 
-			public String getType() {
-				return this.type;
-			}
+      private String type = "message/payload-type";
 
-			public void setSize(String size) {
-				this.size = size;
-			}
+      public String getSize() {
+        return this.size;
+      }
 
-			public void setType(String type) {
-				this.type = type;
-			}
-		}
+      public String getType() {
+        return this.type;
+      }
 
-		
-		private String prefix = "message/";
+      public void setSize(String size) {
+        this.size = size;
+      }
 
-		
-		private Collection<String> headers = new LinkedHashSet<String>();
+      public void setType(String type) {
+        this.type = type;
+      }
+    }
 
-	}
+    private String prefix = "message/";
 
-	public static class Http {
+    private Collection<String> headers = new LinkedHashSet<String>();
+  }
 
-		
-		private String host = "http.host";
+  public static class Http {
 
-		
-		private String method = "http.method";
+    private String host = "http.host";
 
-		
-		private String path = "http.path";
+    private String method = "http.method";
 
-		
-		private String url = "http.url";
+    private String path = "http.path";
 
-		
-		private String statusCode = "http.status_code";
+    private String url = "http.url";
 
-		
-		private String requestSize = "http.request.size";
+    private String statusCode = "http.status_code";
 
-		
-		private String responseSize = "http.response.size";
+    private String requestSize = "http.request.size";
 
-		
-		private String prefix = "http.";
+    private String responseSize = "http.response.size";
 
-		
-		private Collection<String> headers = new LinkedHashSet<String>();
+    private String prefix = "http.";
 
-		public String getHost() {
-			return this.host;
-		}
+    private Collection<String> headers = new LinkedHashSet<String>();
 
-		public String getMethod() {
-			return this.method;
-		}
+    public String getHost() {
+      return this.host;
+    }
 
-		public String getPath() {
-			return this.path;
-		}
+    public String getMethod() {
+      return this.method;
+    }
 
-		public String getUrl() {
-			return this.url;
-		}
+    public String getPath() {
+      return this.path;
+    }
 
-		public String getStatusCode() {
-			return this.statusCode;
-		}
+    public String getUrl() {
+      return this.url;
+    }
 
-		public String getRequestSize() {
-			return this.requestSize;
-		}
+    public String getStatusCode() {
+      return this.statusCode;
+    }
 
-		public String getResponseSize() {
-			return this.responseSize;
-		}
+    public String getRequestSize() {
+      return this.requestSize;
+    }
 
-		public String getPrefix() {
-			return this.prefix;
-		}
+    public String getResponseSize() {
+      return this.responseSize;
+    }
 
-		public Collection<String> getHeaders() {
-			return this.headers;
-		}
+    public String getPrefix() {
+      return this.prefix;
+    }
 
-		public void setHost(String host) {
-			this.host = host;
-		}
+    public Collection<String> getHeaders() {
+      return this.headers;
+    }
 
-		public void setMethod(String method) {
-			this.method = method;
-		}
+    public void setHost(String host) {
+      this.host = host;
+    }
 
-		public void setPath(String path) {
-			this.path = path;
-		}
+    public void setMethod(String method) {
+      this.method = method;
+    }
 
-		public void setUrl(String url) {
-			this.url = url;
-		}
+    public void setPath(String path) {
+      this.path = path;
+    }
 
-		public void setStatusCode(String statusCode) {
-			this.statusCode = statusCode;
-		}
+    public void setUrl(String url) {
+      this.url = url;
+    }
 
-		public void setRequestSize(String requestSize) {
-			this.requestSize = requestSize;
-		}
+    public void setStatusCode(String statusCode) {
+      this.statusCode = statusCode;
+    }
 
-		public void setResponseSize(String responseSize) {
-			this.responseSize = responseSize;
-		}
+    public void setRequestSize(String requestSize) {
+      this.requestSize = requestSize;
+    }
 
-		public void setPrefix(String prefix) {
-			this.prefix = prefix;
-		}
+    public void setResponseSize(String responseSize) {
+      this.responseSize = responseSize;
+    }
 
-		public void setHeaders(Collection<String> headers) {
-			this.headers = headers;
-		}
-	}
+    public void setPrefix(String prefix) {
+      this.prefix = prefix;
+    }
 
-	
-	public static class Hystrix {
+    public void setHeaders(Collection<String> headers) {
+      this.headers = headers;
+    }
+  }
 
-		
-		private String prefix = "";
+  public static class Hystrix {
 
-		
-		private String commandKey = "commandKey";
+    private String prefix = "";
 
-		
-		private String commandGroup = "commandGroup";
+    private String commandKey = "commandKey";
 
-		
-		private String threadPoolKey = "threadPoolKey";
+    private String commandGroup = "commandGroup";
 
-		public String getPrefix() {
-			return this.prefix;
-		}
+    private String threadPoolKey = "threadPoolKey";
 
-		public String getCommandKey() {
-			return this.commandKey;
-		}
+    public String getPrefix() {
+      return this.prefix;
+    }
 
-		public String getCommandGroup() {
-			return this.commandGroup;
-		}
+    public String getCommandKey() {
+      return this.commandKey;
+    }
 
-		public String getThreadPoolKey() {
-			return this.threadPoolKey;
-		}
+    public String getCommandGroup() {
+      return this.commandGroup;
+    }
 
-		public void setPrefix(String prefix) {
-			this.prefix = prefix;
-		}
+    public String getThreadPoolKey() {
+      return this.threadPoolKey;
+    }
 
-		public void setCommandKey(String commandKey) {
-			this.commandKey = commandKey;
-		}
+    public void setPrefix(String prefix) {
+      this.prefix = prefix;
+    }
 
-		public void setCommandGroup(String commandGroup) {
-			this.commandGroup = commandGroup;
-		}
+    public void setCommandKey(String commandKey) {
+      this.commandKey = commandKey;
+    }
 
-		public void setThreadPoolKey(String threadPoolKey) {
-			this.threadPoolKey = threadPoolKey;
-		}
-	}
+    public void setCommandGroup(String commandGroup) {
+      this.commandGroup = commandGroup;
+    }
 
-	
-	public static class Async {
+    public void setThreadPoolKey(String threadPoolKey) {
+      this.threadPoolKey = threadPoolKey;
+    }
+  }
 
-		
-		private String prefix = "";
+  public static class Async {
 
-		
-		private String threadNameKey = "thread";
+    private String prefix = "";
 
-		
-		private String classNameKey = "class";
+    private String threadNameKey = "thread";
 
-		
-		private String methodNameKey = "method";
+    private String classNameKey = "class";
 
-		public String getPrefix() {
-			return this.prefix;
-		}
+    private String methodNameKey = "method";
 
-		public String getThreadNameKey() {
-			return this.threadNameKey;
-		}
+    public String getPrefix() {
+      return this.prefix;
+    }
 
-		public String getClassNameKey() {
-			return this.classNameKey;
-		}
+    public String getThreadNameKey() {
+      return this.threadNameKey;
+    }
 
-		public String getMethodNameKey() {
-			return this.methodNameKey;
-		}
+    public String getClassNameKey() {
+      return this.classNameKey;
+    }
 
-		public void setPrefix(String prefix) {
-			this.prefix = prefix;
-		}
+    public String getMethodNameKey() {
+      return this.methodNameKey;
+    }
 
-		public void setThreadNameKey(String threadNameKey) {
-			this.threadNameKey = threadNameKey;
-		}
+    public void setPrefix(String prefix) {
+      this.prefix = prefix;
+    }
 
-		public void setClassNameKey(String classNameKey) {
-			this.classNameKey = classNameKey;
-		}
+    public void setThreadNameKey(String threadNameKey) {
+      this.threadNameKey = threadNameKey;
+    }
 
-		public void setMethodNameKey(String methodNameKey) {
-			this.methodNameKey = methodNameKey;
-		}
-	}
+    public void setClassNameKey(String classNameKey) {
+      this.classNameKey = classNameKey;
+    }
 
-	
-	public static class Mvc {
+    public void setMethodNameKey(String methodNameKey) {
+      this.methodNameKey = methodNameKey;
+    }
+  }
 
-		
-		private String controllerClass = "mvc.controller.class";
+  public static class Mvc {
 
-		
-		private String controllerMethod = "mvc.controller.method";
+    private String controllerClass = "mvc.controller.class";
 
-		public String getControllerClass() {
-			return this.controllerClass;
-		}
+    private String controllerMethod = "mvc.controller.method";
 
-		public void setControllerClass(String controllerClass) {
-			this.controllerClass = controllerClass;
-		}
+    public String getControllerClass() {
+      return this.controllerClass;
+    }
 
-		public String getControllerMethod() {
-			return this.controllerMethod;
-		}
+    public void setControllerClass(String controllerClass) {
+      this.controllerClass = controllerClass;
+    }
 
-		public void setControllerMethod(String controllerMethod) {
-			this.controllerMethod = controllerMethod;
-		}
-	}
+    public String getControllerMethod() {
+      return this.controllerMethod;
+    }
 
+    public void setControllerMethod(String controllerMethod) {
+      this.controllerMethod = controllerMethod;
+    }
+  }
 }

@@ -1,5 +1,3 @@
-
-
 package org.myproject.ms.monitoring.instrument.msg;
 
 import java.util.Random;
@@ -16,23 +14,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.config.GlobalChannelInterceptor;
 
-
 @Configuration
 @ConditionalOnClass(GlobalChannelInterceptor.class)
 @ConditionalOnBean(Chainer.class)
-@AutoConfigureAfter({ TraceAutoConfiguration.class,
-		TSMAConf.class })
+@AutoConfigureAfter({TraceAutoConfiguration.class, TSMAConf.class})
 @ConditionalOnProperty(value = "spring.sleuth.integration.enabled", matchIfMissing = true)
 @EnableConfigurationProperties(ChainKeys.class)
 public class TSIAConf {
 
-	@Bean
-	@GlobalChannelInterceptor(patterns = "${spring.sleuth.integration.patterns:*}")
-	public TCInter traceChannelInterceptor(Chainer tracer,
-			ChainKeys traceKeys, Random random, MSTMExtra spanExtractor,
-			MSTMInject spanInjector) {
-		return new ITCInter(tracer, traceKeys, spanExtractor,
-				spanInjector);
-	}
-
+  @Bean
+  @GlobalChannelInterceptor(patterns = "${spring.sleuth.integration.patterns:*}")
+  public TCInter traceChannelInterceptor(
+      Chainer tracer,
+      ChainKeys traceKeys,
+      Random random,
+      MSTMExtra spanExtractor,
+      MSTMInject spanInjector) {
+    return new ITCInter(tracer, traceKeys, spanExtractor, spanInjector);
+  }
 }

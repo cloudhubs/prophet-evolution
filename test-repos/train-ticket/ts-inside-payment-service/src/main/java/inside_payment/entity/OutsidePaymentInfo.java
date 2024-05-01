@@ -7,12 +7,11 @@ import lombok.Data;
  */
 @Data
 public class OutsidePaymentInfo {
-    public OutsidePaymentInfo(){
-        //Default Constructor
-    }
+  public OutsidePaymentInfo() {
+    // Default Constructor
+  }
 
-    private String orderId;
-    private String price;
-    private String userId;
-
+  private String orderId;
+  private String price;
+  private String userId;
 }

@@ -9,16 +9,16 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class PaymentInfo {
-    public PaymentInfo(){
-        //Default Constructor
-    }
+  public PaymentInfo() {
+    // Default Constructor
+  }
 
-    private String userId;
-    private String orderId;
-    private String tripId;
-    private String price;
+  private String userId;
+  private String orderId;
+  private String tripId;
+  private String price;
 
-//    public String getOrderId(){
-//        return this.orderId;
-//    }
+  //    public String getOrderId(){
+  //        return this.orderId;
+  //    }
 }

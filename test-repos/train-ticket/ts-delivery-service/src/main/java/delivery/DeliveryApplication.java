@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-
 /**
  * @author humbertzhang
  */
@@ -18,13 +17,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 public class DeliveryApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(DeliveryApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(DeliveryApplication.class, args);
+  }
 
-    @LoadBalanced
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
+  @LoadBalanced
+  @Bean
+  public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    return builder.build();
+  }
 }

@@ -22,53 +22,71 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @RunWith(JUnit4.class)
 public class AdminRouteControllerTest {
 
-    @InjectMocks
-    private AdminRouteController adminRouteController;
+  @InjectMocks private AdminRouteController adminRouteController;
 
-    @Mock
-    private AdminRouteService adminRouteService;
-    private MockMvc mockMvc;
-    private Response response = new Response();
+  @Mock private AdminRouteService adminRouteService;
+  private MockMvc mockMvc;
+  private Response response = new Response();
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(adminRouteController).build();
-    }
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+    mockMvc = MockMvcBuilders.standaloneSetup(adminRouteController).build();
+  }
 
-    @Test
-    public void testHome() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/adminrouteservice/welcome"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
+  @Test
+  public void testHome() throws Exception {
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/v1/adminrouteservice/welcome"))
+        .andExpect(MockMvcResultMatchers.status().isOk());
+  }
 
-    @Test
-    public void testGetAllRoutes() throws Exception {
-        Mockito.when(adminRouteService.getAllRoutes(Mockito.any(HttpHeaders.class))).thenReturn(response);
-        String result = mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/adminrouteservice/adminroute"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
-    }
+  @Test
+  public void testGetAllRoutes() throws Exception {
+    Mockito.when(adminRouteService.getAllRoutes(Mockito.any(HttpHeaders.class)))
+        .thenReturn(response);
+    String result =
+        mockMvc
+            .perform(MockMvcRequestBuilders.get("/api/v1/adminrouteservice/adminroute"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
+  }
 
-    @Test
-    public void testAddRoute() throws Exception {
-        RouteInfo request = new RouteInfo();
-        Mockito.when(adminRouteService.createAndModifyRoute(Mockito.any(RouteInfo.class), Mockito.any(HttpHeaders.class))).thenReturn(response);
-        String requestJson = JSONObject.toJSONString(request);
-        String result = mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/adminrouteservice/adminroute").contentType(MediaType.APPLICATION_JSON).content(requestJson))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
-    }
+  @Test
+  public void testAddRoute() throws Exception {
+    RouteInfo request = new RouteInfo();
+    Mockito.when(
+            adminRouteService.createAndModifyRoute(
+                Mockito.any(RouteInfo.class), Mockito.any(HttpHeaders.class)))
+        .thenReturn(response);
+    String requestJson = JSONObject.toJSONString(request);
+    String result =
+        mockMvc
+            .perform(
+                MockMvcRequestBuilders.post("/api/v1/adminrouteservice/adminroute")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(requestJson))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
+  }
 
-    @Test
-    public void testDeleteRoute() throws Exception {
-        Mockito.when(adminRouteService.deleteRoute(Mockito.anyString(),Mockito.any(HttpHeaders.class))).thenReturn(response);
-        String result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/adminrouteservice/adminroute/routeId"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn().getResponse().getContentAsString();
-        Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
-    }
-
+  @Test
+  public void testDeleteRoute() throws Exception {
+    Mockito.when(adminRouteService.deleteRoute(Mockito.anyString(), Mockito.any(HttpHeaders.class)))
+        .thenReturn(response);
+    String result =
+        mockMvc
+            .perform(MockMvcRequestBuilders.delete("/api/v1/adminrouteservice/adminroute/routeId"))
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    Assert.assertEquals(response, JSONObject.parseObject(result, Response.class));
+  }
 }

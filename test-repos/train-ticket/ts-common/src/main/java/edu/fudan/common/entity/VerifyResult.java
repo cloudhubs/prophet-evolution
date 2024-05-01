@@ -8,12 +8,11 @@ import lombok.Data;
 @Data
 public class VerifyResult {
 
-    private boolean status;
+  private boolean status;
 
-    private String message;
+  private String message;
 
-    public VerifyResult() {
-        //Default Constructor
-    }
-
+  public VerifyResult() {
+    // Default Constructor
+  }
 }

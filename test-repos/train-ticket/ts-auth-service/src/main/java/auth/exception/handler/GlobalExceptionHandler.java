@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(UserOperationException.class)
-    @ResponseBody
-    public ResponseEntity<String> handleUserNotFoundException(UserOperationException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-    }
+  @ExceptionHandler(UserOperationException.class)
+  @ResponseBody
+  public ResponseEntity<String> handleUserNotFoundException(UserOperationException e) {
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+  }
 }

@@ -26,65 +26,81 @@ import static org.springframework.web.cors.CorsConfiguration.ALL;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    String admin = "ADMIN";
-    String orderOther = "/api/v1/orderOtherService/orderOther";
-    /**
-     * load password encoder
-     *
-     * @return PasswordEncoder
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+  String admin = "ADMIN";
+  String orderOther = "/api/v1/orderOtherService/orderOther";
 
-    /**
-     * allow cors domain
-     * header  By default, only six fields can be taken from the header, and the other fields can only be specified in the header.
-     * credentials   Cookies are not sent by default and can only be true if a Cookie is needed
-     * Validity of this request
-     *
-     * @return WebMvcConfigurer
-     */
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins(ALL)
-                        .allowedMethods(ALL)
-                        .allowedHeaders(ALL)
-                        .allowCredentials(false)
-                        .maxAge(3600);
-            }
-        };
-    }
+  /**
+   * load password encoder
+   *
+   * @return PasswordEncoder
+   */
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 
+  /**
+   * allow cors domain header By default, only six fields can be taken from the header, and the
+   * other fields can only be specified in the header. credentials Cookies are not sent by default
+   * and can only be true if a Cookie is needed Validity of this request
+   *
+   * @return WebMvcConfigurer
+   */
+  @Bean
+  public WebMvcConfigurer corsConfigurer() {
+    return new WebMvcConfigurerAdapter() {
+      @Override
+      public void addCorsMappings(CorsRegistry registry) {
+        registry
+            .addMapping("/**")
+            .allowedOrigins(ALL)
+            .allowedMethods(ALL)
+            .allowedHeaders(ALL)
+            .allowCredentials(false)
+            .maxAge(3600);
+      }
+    };
+  }
 
-    @Override
-    protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.httpBasic().disable()
-                // close default csrf
-                .csrf().disable()
-                // close session
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/api/v1/orderOtherService/orderOther/**").permitAll()
-                .antMatchers(HttpMethod.POST, orderOther).hasAnyRole(admin, "USER")
-                .antMatchers(HttpMethod.PUT, orderOther).hasAnyRole(admin, "USER")
-                .antMatchers(HttpMethod.DELETE, orderOther).hasAnyRole(admin, "USER")
-                .antMatchers(HttpMethod.POST, "/api/v1/orderOtherService/orderOther/admin").hasAnyRole(admin)
-                .antMatchers(HttpMethod.PUT, "/api/v1/orderOtherService/orderOther/admin").hasAnyRole(admin)
+  @Override
+  protected void configure(HttpSecurity httpSecurity) throws Exception {
+    httpSecurity
+        .httpBasic()
+        .disable()
+        // close default csrf
+        .csrf()
+        .disable()
+        // close session
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        .and()
+        .authorizeRequests()
+        .antMatchers("/api/v1/orderOtherService/orderOther/**")
+        .permitAll()
+        .antMatchers(HttpMethod.POST, orderOther)
+        .hasAnyRole(admin, "USER")
+        .antMatchers(HttpMethod.PUT, orderOther)
+        .hasAnyRole(admin, "USER")
+        .antMatchers(HttpMethod.DELETE, orderOther)
+        .hasAnyRole(admin, "USER")
+        .antMatchers(HttpMethod.POST, "/api/v1/orderOtherService/orderOther/admin")
+        .hasAnyRole(admin)
+        .antMatchers(HttpMethod.PUT, "/api/v1/orderOtherService/orderOther/admin")
+        .hasAnyRole(admin)
+        .antMatchers(
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/images/**",
+            "/configuration/**",
+            "/swagger-resources/**",
+            "/v2/**")
+        .permitAll()
+        .anyRequest()
+        .authenticated()
+        .and()
+        .addFilterBefore(new JWTFilter(), UsernamePasswordAuthenticationFilter.class);
 
-                .antMatchers("/swagger-ui.html", "/webjars/**", "/images/**",
-                        "/configuration/**", "/swagger-resources/**", "/v2/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .addFilterBefore(new JWTFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        // close cache
-        httpSecurity.headers().cacheControl();
-    }
+    // close cache
+    httpSecurity.headers().cacheControl();
+  }
 }

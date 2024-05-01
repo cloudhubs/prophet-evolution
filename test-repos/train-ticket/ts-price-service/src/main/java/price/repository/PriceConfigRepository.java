@@ -13,15 +13,16 @@ import java.util.Optional;
 @Repository
 public interface PriceConfigRepository extends CrudRepository<PriceConfig, String> {
 
-    @Override
-    Optional<PriceConfig> findById(String id);
+  @Override
+  Optional<PriceConfig> findById(String id);
 
-    PriceConfig findByRouteIdAndTrainType(String routeId,String trainType);
+  PriceConfig findByRouteIdAndTrainType(String routeId, String trainType);
 
-    @Query(value="SELECT * FROM price_config WHERE route_id IN ?1 AND train_type IN ?2", nativeQuery = true)
-    List<PriceConfig> findByRouteIdsAndTrainTypes(List<String> routeIds, List<String> trainTypes);
+  @Query(
+      value = "SELECT * FROM price_config WHERE route_id IN ?1 AND train_type IN ?2",
+      nativeQuery = true)
+  List<PriceConfig> findByRouteIdsAndTrainTypes(List<String> routeIds, List<String> trainTypes);
 
-    @Override
-    List<PriceConfig> findAll();
-
+  @Override
+  List<PriceConfig> findAll();
 }

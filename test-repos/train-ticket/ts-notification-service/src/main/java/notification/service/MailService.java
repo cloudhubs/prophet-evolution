@@ -19,30 +19,28 @@ import freemarker.template.Template;
 @Service
 public class MailService {
 
-    @Autowired
-    private JavaMailSender sender;
+  @Autowired private JavaMailSender sender;
 
-    @Autowired
-    @Qualifier("freeMarkerConfiguration")
-    private Configuration freemarkerConfig;
+  @Autowired
+  @Qualifier("freeMarkerConfiguration")
+  private Configuration freemarkerConfig;
 
+  public void sendEmail(Mail mail, String template) throws Exception {
+    MimeMessage message = sender.createMimeMessage();
 
-    public void sendEmail(Mail mail,String template) throws Exception {
-        MimeMessage message = sender.createMimeMessage();
+    MimeMessageHelper helper = new MimeMessageHelper(message);
 
-        MimeMessageHelper helper = new MimeMessageHelper(message);
+    // Using a subfolder such as /templates here
+    freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
 
-        // Using a subfolder such as /templates here
-        freemarkerConfig.setClassForTemplateLoading(this.getClass(), "/templates");
+    Template t = freemarkerConfig.getTemplate(template);
+    String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
 
-        Template t = freemarkerConfig.getTemplate(template);
-        String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
+    helper.setTo(mail.getMailTo());
+    helper.setText(text, true);
+    helper.setFrom(mail.getMailFrom());
+    helper.setSubject(mail.getMailSubject());
 
-        helper.setTo(mail.getMailTo());
-        helper.setText(text, true);
-        helper.setFrom(mail.getMailFrom());
-        helper.setSubject(mail.getMailSubject());
-
-        sender.send(message);
-    }
+    sender.send(message);
+  }
 }

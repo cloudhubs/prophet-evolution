@@ -2,7 +2,6 @@ package user.dto;
 
 import lombok.*;
 
-import java.util.UUID;
 
 /**
  * @author fdse
@@ -14,17 +13,17 @@ import java.util.UUID;
 @ToString
 public class UserDto {
 
-    private String userId;
-    
-    private String userName;
+  private String userId;
 
-    private String password;
+  private String userName;
 
-    private int gender;
+  private String password;
 
-    private int documentType;
+  private int gender;
 
-    private String documentNum;
+  private int documentType;
 
-    private String email;
+  private String documentNum;
+
+  private String email;
 }

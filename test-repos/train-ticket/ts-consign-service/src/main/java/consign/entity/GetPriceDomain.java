@@ -7,11 +7,10 @@ import lombok.Data;
  */
 @Data
 public class GetPriceDomain {
-    private double weight;
-    private boolean isWithinRegion;
+  private double weight;
+  private boolean isWithinRegion;
 
-    public GetPriceDomain(){
-        //Default Constructor
-    }
-
+  public GetPriceDomain() {
+    // Default Constructor
+  }
 }

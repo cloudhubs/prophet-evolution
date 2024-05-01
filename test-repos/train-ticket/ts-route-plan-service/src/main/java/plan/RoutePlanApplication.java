@@ -23,13 +23,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableDiscoveryClient
 public class RoutePlanApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(RoutePlanApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(RoutePlanApplication.class, args);
+  }
 
-    @LoadBalanced
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
+  @LoadBalanced
+  @Bean
+  public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    return builder.build();
+  }
 }

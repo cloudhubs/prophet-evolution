@@ -8,12 +8,11 @@ import lombok.Data;
 @Data
 public class AccountInfo {
 
-    private String userId;
+  private String userId;
 
-    private String money;
+  private String money;
 
-    public AccountInfo(){
-        //Default Constructor
-    }
-
+  public AccountInfo() {
+    // Default Constructor
+  }
 }

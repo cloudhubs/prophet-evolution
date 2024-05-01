@@ -14,11 +14,9 @@ import lombok.ToString;
 @ToString
 public class Response<T> {
 
-    /**
-     * 1 true, 0 false
-     */
-    Integer status;
+  /** 1 true, 0 false */
+  Integer status;
 
-    String msg;
-    T data;
+  String msg;
+  T data;
 }

@@ -18,44 +18,51 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping("/api/v1/seatservice")
 public class SeatController {
 
-    @Autowired
-    private SeatService seatService;
+  @Autowired private SeatService seatService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SeatController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(SeatController.class);
 
-    @GetMapping(path = "/welcome")
-    public String home() {
-        return "Welcome to [ Seat Service ] !";
-    }
+  @GetMapping(path = "/welcome")
+  public String home() {
+    return "Welcome to [ Seat Service ] !";
+  }
 
-    /**
-     * Assign seats by seat request
-     *
-     * @param seatRequest seat request
-     * @param headers headers
-     * @return HttpEntity
-     */
-    @CrossOrigin(origins = "*")
-    @PostMapping(value = "/seats")
-    public HttpEntity create(@RequestBody Seat seatRequest, @RequestHeader HttpHeaders headers) {
-        SeatController.LOGGER.info("[distributeSeat][Create seat][TravelDate: {},TrainNumber: {},SeatType: {}]",seatRequest.getTravelDate(),seatRequest.getTrainNumber(),seatRequest.getSeatType());
-        return ok(seatService.distributeSeat(seatRequest, headers));
-    }
+  /**
+   * Assign seats by seat request
+   *
+   * @param seatRequest seat request
+   * @param headers headers
+   * @return HttpEntity
+   */
+  @CrossOrigin(origins = "*")
+  @PostMapping(value = "/seats")
+  public HttpEntity create(@RequestBody Seat seatRequest, @RequestHeader HttpHeaders headers) {
+    SeatController.LOGGER.info(
+        "[distributeSeat][Create seat][TravelDate: {},TrainNumber: {},SeatType: {}]",
+        seatRequest.getTravelDate(),
+        seatRequest.getTrainNumber(),
+        seatRequest.getSeatType());
+    return ok(seatService.distributeSeat(seatRequest, headers));
+  }
 
-    /**
-     * get left ticket of interval
-     * query specific interval residual
-     *
-     * @param seatRequest seat request
-     * @param headers headers
-     * @return HttpEntity
-     */
-    @CrossOrigin(origins = "*")
-    @PostMapping(value = "/seats/left_tickets")
-    public HttpEntity getLeftTicketOfInterval(@RequestBody Seat seatRequest, @RequestHeader HttpHeaders headers) {
-        // int
-        SeatController.LOGGER.info("[getLeftTicketOfInterval][Get left ticket of interval][TravelDate: {},TrainNumber: {},SeatType: {}]",seatRequest.getTravelDate(),seatRequest.getTrainNumber(),seatRequest.getSeatType());
-        return ok(seatService.getLeftTicketOfInterval(seatRequest, headers));
-    }
-
+  /**
+   * get left ticket of interval query specific interval residual
+   *
+   * @param seatRequest seat request
+   * @param headers headers
+   * @return HttpEntity
+   */
+  @CrossOrigin(origins = "*")
+  @PostMapping(value = "/seats/left_tickets")
+  public HttpEntity getLeftTicketOfInterval(
+      @RequestBody Seat seatRequest, @RequestHeader HttpHeaders headers) {
+    // int
+    SeatController.LOGGER.info(
+        "[getLeftTicketOfInterval][Get left ticket of interval][TravelDate: {},TrainNumber:"
+            + " {},SeatType: {}]",
+        seatRequest.getTravelDate(),
+        seatRequest.getTrainNumber(),
+        seatRequest.getSeatType());
+    return ok(seatService.getLeftTicketOfInterval(seatRequest, headers));
+  }
 }
