@@ -3,7 +3,6 @@ package edu.university.ecs.lab.impact.metrics;
 import edu.university.ecs.lab.impact.metrics.services.MetricsService;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class MetricsRunner {
 
@@ -22,10 +21,7 @@ public class MetricsRunner {
     }
 
     MetricsService metricsService =
-        new MetricsService(
-            Path.of(args[0]).toAbsolutePath().toString(),
-            Path.of(args[1]).toAbsolutePath().toString(),
-            Path.of(args[2]).toAbsolutePath().toString());
+        new MetricsService(args[0], args[1], args[2]);
 
     System.out.println(metricsService.generateSystemMetrics());
   }

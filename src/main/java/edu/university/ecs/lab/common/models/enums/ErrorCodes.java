@@ -41,6 +41,8 @@ public enum ErrorCodes {
       "No microservices were detected in intermediate representation extraction. "
           + "Check your config file to make sure that the repositories are correct and"
           + "contain the correct structure for the microservices to be detected."),
+  /** Given file not found */
+  FILE_NOT_FOUND("File not found"),
   ;
 
   /** The message associated with the error code (may be empty, never null) */
