@@ -11,25 +11,24 @@ import javax.json.JsonObjectBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Annotation implements JsonSerializable{
-    /** The name of the annotation **/
-    protected String annotationName;
+public class Annotation implements JsonSerializable {
+  /** The name of the annotation * */
+  protected String annotationName;
 
-    /** The contents of the annotation **/
-    protected String contents;
+  /** The contents of the annotation * */
+  protected String contents;
 
-    @Override
-    public JsonObject toJsonObject() {
-        return createBuilder().build();
-    }
+  @Override
+  public JsonObject toJsonObject() {
+    return createBuilder().build();
+  }
 
-    protected JsonObjectBuilder createBuilder() {
-        JsonObjectBuilder methodObjectBuilder = Json.createObjectBuilder();
+  protected JsonObjectBuilder createBuilder() {
+    JsonObjectBuilder methodObjectBuilder = Json.createObjectBuilder();
 
-        methodObjectBuilder.add("annotationName", annotationName);
-        methodObjectBuilder.add("contents", contents);
+    methodObjectBuilder.add("annotationName", annotationName);
+    methodObjectBuilder.add("contents", contents);
 
-        return methodObjectBuilder;
-    }
-
+    return methodObjectBuilder;
+  }
 }

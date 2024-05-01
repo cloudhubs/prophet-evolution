@@ -35,7 +35,6 @@ public class RestCall extends MethodCall {
   /** The object holding payload for api call */
   private String payloadObject;
 
- 
   /**
    * Constructor for RestCall
    *
@@ -48,8 +47,16 @@ public class RestCall extends MethodCall {
    * @param destMsId The destination service of the call
    * @param destFile The destination file of the call
    */
-   public RestCall(String methodName, String objectName, String calledFrom, String msId,
-                  HttpMethod httpMethod, String destEndpoint, String destMsId, String destFile, String payloadObject) {
+  public RestCall(
+      String methodName,
+      String objectName,
+      String calledFrom,
+      String msId,
+      HttpMethod httpMethod,
+      String destEndpoint,
+      String destMsId,
+      String destFile,
+      String payloadObject) {
     super(methodName, objectName, calledFrom, msId);
     this.httpMethod = httpMethod.name();
     this.destEndpoint = destEndpoint;
