@@ -41,8 +41,7 @@ public class JClass implements JsonSerializable {
   @SerializedName("variables")
   protected List<Field> fields;
 
-
-  /** Class level annotations **/
+  /** Class level annotations * */
   protected List<Annotation> annotations;
 
   /** List of method invocations made from within this class e.g. obj.method() */
@@ -78,15 +77,16 @@ public class JClass implements JsonSerializable {
    * @param methodCalls List of method calls in the class
    * @param msId The associated microservice id
    */
-  public JClass(String className,
-                String classPath,
-                String packageName,
-                ClassRole classRole,
-                List<Method> methods,
-                List<Field> fields,
-                List<Annotation> annotations,
-                List<MethodCall> methodCalls,
-                String msId) {
+  public JClass(
+      String className,
+      String classPath,
+      String packageName,
+      ClassRole classRole,
+      List<Method> methods,
+      List<Field> fields,
+      List<Annotation> annotations,
+      List<MethodCall> methodCalls,
+      String msId) {
 
     setClassName(className);
     setClassPath(classPath);
@@ -97,7 +97,6 @@ public class JClass implements JsonSerializable {
     setAnnotations(annotations);
     setMethodCalls(methodCalls);
     setMsId(msId);
-
   }
 
   /**

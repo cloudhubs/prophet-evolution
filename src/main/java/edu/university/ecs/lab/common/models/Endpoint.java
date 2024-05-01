@@ -47,7 +47,11 @@ public class Endpoint extends Method implements JsonSerializable {
    * @param msId the microservice id that this endpoint belongs to
    */
   public Endpoint(Method method, String url, String decorator, String httpMethod, String msId) {
-    super(method.getMethodName(), method.getParameterList(), method.getReturnType(), method.getAnnotations());
+    super(
+        method.getMethodName(),
+        method.getParameterList(),
+        method.getReturnType(),
+        method.getAnnotations());
     setMsId(msId);
     setUrl(url);
     setDecorator(decorator);

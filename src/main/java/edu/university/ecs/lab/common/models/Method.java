@@ -29,7 +29,7 @@ public class Method implements JsonSerializable {
   /** Java return type of the method */
   protected String returnType;
 
-  /** Method definition level annotations **/
+  /** Method definition level annotations * */
   protected List<Annotation> annotations;
 
   @Override
