@@ -114,21 +114,6 @@ public class RestCall extends MethodCall {
     return msId + "#" + calledFrom + "[" + httpMethod + "]" + "->" + destMsId + ":" + destEndpoint;
   }
 
-  /**
-   * @return Converted JsonObject of RestCall object
-   */
-  public JsonObject toJsonObject() {
-    // Get "restCall" methodCalls in service
-    JsonObjectBuilder restCallBuilder = super.createBuilder();
-
-    restCallBuilder.add("httpMethod", httpMethod);
-    restCallBuilder.add("dest-endpoint", destEndpoint);
-    restCallBuilder.add("dest-msId", destMsId);
-    restCallBuilder.add("dest-file", destFile);
-
-    return restCallBuilder.build();
-  }
-
   /** Represents a call as an endpoint source. */
   @Getter
   public static class EndpointCall implements JsonSerializable {
