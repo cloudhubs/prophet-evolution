@@ -53,14 +53,11 @@ public class GitFetchUtils {
         // get the difference between local main and origin/main
         return git.diff()
             .setOldTree(prepareLocalTreeParser(repo))
-                .setNewTree(
-                        prepareRemoteTreeParser(
-                                reader, repo, commit))
+            .setNewTree(prepareRemoteTreeParser(reader, repo, commit))
             .call();
       }
     }
   }
-
 
   /**
    * Prepare the tree parser for the given repository and git branch reference.

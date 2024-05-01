@@ -41,7 +41,9 @@ public class CimetRunner {
 
     // RUN IR MERGE
     System.out.println("Starting IR Merge...");
-    String[] IRMergeArgs = {FullCimetUtils.pathToIR, FullCimetUtils.pathToDelta, configPath, compareBranch, compareCommit};
+    String[] IRMergeArgs = {
+      FullCimetUtils.pathToIR, FullCimetUtils.pathToDelta, configPath, compareBranch, compareCommit
+    };
     IRMergeRunner.main(IRMergeArgs);
 
     // RUN REPORT

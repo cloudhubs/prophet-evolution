@@ -12,7 +12,8 @@ public class IRMergeRunner {
   /**
    * Entry point for the intermediate representation merge process.
    *
-   * @param args {@literal </path/to/intermediate-json> </path/to/delta-json> [/path/to/config]} <compare branch> <compare commit>
+   * @param args {@literal </path/to/intermediate-json> </path/to/delta-json> [/path/to/config]}
+   *     <compare branch> <compare commit>
    */
   public static void main(String[] args) throws IOException {
     //    args =
@@ -27,8 +28,7 @@ public class IRMergeRunner {
       return;
     }
 
-    InputConfig inputConfig =
-        ConfigUtil.validateConfig(args[2]);
+    InputConfig inputConfig = ConfigUtil.validateConfig(args[2]);
 
     MergeService mergeService = new MergeService(args[0], args[1], inputConfig, args[3], args[4]);
     String outputFileName = mergeService.mergeAndWriteToFile();

@@ -4,7 +4,6 @@ import edu.fudan.common.util.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-
 /**
  * @author fdse
  */

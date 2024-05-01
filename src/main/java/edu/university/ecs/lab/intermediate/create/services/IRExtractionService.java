@@ -173,6 +173,11 @@ public class IRExtractionService {
    * @return the output file name
    */
   private String getOutputFileName() {
-    return config.getOutputPath() + "/rest-extraction-output-[" + baseBranch + "-" + baseCommit.substring(0, 7) + "].json";
+    return config.getOutputPath()
+        + "/rest-extraction-output-["
+        + baseBranch
+        + "-"
+        + baseCommit.substring(0, 7)
+        + "].json";
   }
 }

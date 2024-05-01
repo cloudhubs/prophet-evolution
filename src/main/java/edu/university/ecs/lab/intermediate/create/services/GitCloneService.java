@@ -38,13 +38,11 @@ public class GitCloneService {
     if (exitCode < 400) {
       System.out.println("Git clone of " + inputRepository.getRepoUrl() + " successful ");
 
-
       if (Objects.isNull(baseCommit)) {
         baseCommit = "HEAD";
       }
-      //TODO if commit is null then don't do reset?
-      processBuilder =
-          new ProcessBuilder("git", "reset", "--hard", baseCommit);
+      // TODO if commit is null then don't do reset?
+      processBuilder = new ProcessBuilder("git", "reset", "--hard", baseCommit);
       processBuilder.directory(new File(relativeClonePath));
       processBuilder.redirectErrorStream(true);
       process = processBuilder.start();

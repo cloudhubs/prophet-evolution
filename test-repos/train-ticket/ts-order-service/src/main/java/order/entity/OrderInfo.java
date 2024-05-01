@@ -2,7 +2,6 @@ package order.entity;
 
 import lombok.Data;
 
-
 /**
  * @author fdse
  */

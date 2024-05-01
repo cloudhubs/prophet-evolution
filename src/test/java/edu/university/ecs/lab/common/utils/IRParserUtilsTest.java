@@ -2,7 +2,6 @@ package edu.university.ecs.lab.common.utils;
 
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class IRParserUtilsTest {

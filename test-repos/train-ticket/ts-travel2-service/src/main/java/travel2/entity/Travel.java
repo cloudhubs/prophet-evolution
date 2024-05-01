@@ -2,7 +2,6 @@ package travel2.entity;
 
 import lombok.Data;
 
-
 /**
  * @author fdse
  */

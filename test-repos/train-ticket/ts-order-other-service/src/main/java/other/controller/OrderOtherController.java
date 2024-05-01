@@ -13,7 +13,6 @@ import other.entity.Order;
 import other.entity.QueryInfo;
 import other.service.OrderOtherService;
 
-
 import static org.springframework.http.ResponseEntity.ok;
 
 /**
