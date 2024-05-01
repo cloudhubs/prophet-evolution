@@ -139,12 +139,12 @@ public class DeltaExtractionService {
     String outputName =
         "./out/delta-changes-["
             + FullCimetUtils.baseBranch
-            + "-"
-            + FullCimetUtils.baseCommit.substring(0, 7)
-            + " -> "
-            + branch
-            + "-"
-            + compareCommit.substring(0, 7)
+//            + "-"
+//            + FullCimetUtils.baseCommit.substring(0, 7)
+//            + "->"
+//            + branch
+//            + "-"
+//            + compareCommit.substring(0, 7)
             + "].json";
 
     MsJsonWriter.writeJsonToFile(systemChange.toJsonObject(), outputName);
