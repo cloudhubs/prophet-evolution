@@ -1,15 +1,19 @@
 package edu.university.ecs.lab.common.models;
 
 import com.google.gson.annotations.SerializedName;
+import edu.university.ecs.lab.common.config.models.InputConfig;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import lombok.*;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.io.File;
 import java.util.List;
 
 import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.*;
+import static edu.university.ecs.lab.common.utils.SourceToObjectUtils.getMicroserviceName;
+import static edu.university.ecs.lab.common.utils.SourceToObjectUtils.getRepositoryPath;
 
 /**
  * Represents a class in Java. It holds all information regarding that class including all method
@@ -17,7 +21,6 @@ import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.*;
  */
 @Data
 @ToString
-@Builder
 public class JClass implements JsonSerializable {
   /** Name of the class e.g. Food */
   protected String className;
@@ -49,6 +52,24 @@ public class JClass implements JsonSerializable {
 
   /** The associated microservice object for this class */
   protected String msId;
+
+  public void setClassName(String className) {
+    this.className = className.replace(".java", "");
+  }
+
+  public static JClass deletedClass(File classFile, InputConfig config) {
+    return new JClass(
+            classFile.getName(),
+            getRepositoryPath(classFile, config),
+            "",
+            ClassRole.fromSourceFile(classFile),
+            List.of(),
+            List.of(),
+            List.of(),
+            List.of(),
+            getMicroserviceName(classFile, config)
+    );
+  }
 
   /** Uniquely identify a class as an object of a given service */
   @SerializedName("id")

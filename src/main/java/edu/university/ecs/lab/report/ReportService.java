@@ -19,6 +19,7 @@ import java.util.*;
 
 import static edu.university.ecs.lab.common.models.enums.ErrorCodes.FREEMARKER_CONFIG_ERROR;
 import static edu.university.ecs.lab.common.models.enums.ErrorCodes.TEMPLATE_PROCESS_ERROR;
+import static edu.university.ecs.lab.common.utils.FullCimetUtils.getShortCommit;
 
 /** To use this class, simply call the constructor and then run generateReport() */
 public class ReportService {
@@ -48,6 +49,7 @@ public class ReportService {
 
   /** The service for generating metrics */
   private final MetricsService metricsService;
+
 
   /**
    * Constructor for ReportService
@@ -91,9 +93,9 @@ public class ReportService {
     root.put("dateTime", LocalDateTime.now().format(formatter));
 
     root.put("branch1", baseBranch);
-    root.put("commit1", baseCommit);
+    root.put("commit1", getShortCommit(baseCommit));
     root.put("branch2", compareBranch);
-    root.put("commit2", compareCommit);
+    root.put("commit2", getShortCommit(compareCommit));
 
     /* Metrics */
     SystemMetrics systemMetrics = metricsService.generateSystemMetrics();
@@ -113,6 +115,7 @@ public class ReportService {
       System.exit(TEMPLATE_PROCESS_ERROR.ordinal());
     }
   }
+
 
   /**
    * Logic for naming the report file, this can be changed as preferred

@@ -152,14 +152,14 @@ public class CallChangeService {
     for (RestCall oldCall : oldRestCalls) {
       if (!newRestCalls.remove(oldCall)) {
         // If no call removed, it isn't present (removed)
-        callChanges.add(new CallChange(oldCall, null, ChangeType.DELETE));
+        callChanges.add(CallChange.buildChange(oldCall, null));
       }
     }
 
     for (RestCall newCall : newRestCalls) {
       if (!oldRestCalls.remove(newCall)) {
         // If no call was removed, it isn't present (added)
-        callChanges.add(new CallChange(null, newCall, ChangeType.ADD));
+        callChanges.add(CallChange.buildChange(null, newCall));
       }
     }
 
@@ -242,6 +242,7 @@ public class CallChangeService {
     int newADS = MicroserviceMetricsService.calculateADS(newMicroservice);
 
     // If our ADS (# of links) went down or remains the same
+    // TODO I didn't understand the left half of this condition at first, I think we can implement this better
     if (oldADS >= newADS || MicroserviceMetricsService.THRESHOLD > newADS) {
       return false;
     }

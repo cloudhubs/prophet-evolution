@@ -16,7 +16,7 @@ public class ClassMetrics {
 
   private int addedClassCount;
 
-  private int removedClassCount;
+  private int deletedClassCount;
 
   private int modifiedClassCount;
 
@@ -25,11 +25,17 @@ public class ClassMetrics {
   }
 
   public void incrementRemovedClassCount() {
-    removedClassCount++;
+    deletedClassCount++;
   }
 
   public void incrementModifiedClassCount() {
     modifiedClassCount++;
   }
 
+  public Map<String, Object> getMetricsAsMap() {
+    return Map.of(
+        "Added Classes", addedClassCount,
+        "Deleted Classes", deletedClassCount,
+        "Modified Classes", modifiedClassCount);
+  }
 }

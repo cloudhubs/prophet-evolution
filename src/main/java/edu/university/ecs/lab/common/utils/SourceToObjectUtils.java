@@ -15,6 +15,7 @@ import edu.university.ecs.lab.common.models.*;
 import javassist.NotFoundException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,12 @@ public class SourceToObjectUtils {
    */
   // TODO move this logic to JClass
   public static JClass parseClass(File sourceFile, InputConfig config) throws IOException {
-    CompilationUnit cu = StaticJavaParser.parse(sourceFile);
+    CompilationUnit cu;
+    try {
+      cu = StaticJavaParser.parse(sourceFile);
+    } catch (FileNotFoundException e) {
+      return JClass.deletedClass(sourceFile, config);
+    }
 
     String packageName = StringParserUtils.findPackage(cu);
     if (packageName == null) {
@@ -45,18 +51,16 @@ public class SourceToObjectUtils {
     String msId = getMicroserviceName(sourceFile, config);
 
     JClass jClass =
-        JClass.builder()
-            .classPath(getRepositoryPath(sourceFile, config))
-            .className(sourceFile.getName().replace(".java", ""))
-            .packageName(packageName)
-            .methods(parseMethods(cu))
-            .fields(parseFields(cu))
-            .methodCalls(parseMethodCalls(cu, msId))
-            .msId(msId)
-            .classRole(ClassRole.fromSourceFile(sourceFile))
-            .annotations(
-                parseAnnotations(cu.getClassByName(sourceFile.getName().replace(".java", ""))))
-            .build();
+        new JClass(
+            sourceFile.getName(),
+            getRepositoryPath(sourceFile, config),
+            packageName,
+            ClassRole.fromSourceFile(sourceFile),
+            parseMethods(cu),
+            parseFields(cu),
+            parseAnnotations(cu.getClassByName(sourceFile.getName().replace(".java", ""))),
+            parseMethodCalls(cu, msId),
+            msId);
 
     // Handle special class roles
     if (jClass.getClassRole() == ClassRole.CONTROLLER) {
@@ -79,7 +83,7 @@ public class SourceToObjectUtils {
    * @return the service name of the file, null if not found TODO this logic is now in {@link
    *     InputRepository#getServiceNameFromPath(String)}, refactor and delete
    */
-  private static String getMicroserviceName(File sourceFile, InputConfig config) {
+  public static String getMicroserviceName(File sourceFile, InputConfig config) {
     // Get the path beginning with repoName/serviceName/...
     String filePath = getRepositoryPath(sourceFile, config);
 
@@ -114,7 +118,7 @@ public class SourceToObjectUtils {
    * @return the relative path of the file after ./clonePath/ TODO this logic should be put in
    *     {@link InputRepository}, refactor and delete
    */
-  private static String getRepositoryPath(File sourceFile, InputConfig config) {
+  public static String getRepositoryPath(File sourceFile, InputConfig config) {
     // Get the file path start from the clonePath directory
     String filePath = sourceFile.getAbsolutePath();
     String clonePath = config.getClonePath();

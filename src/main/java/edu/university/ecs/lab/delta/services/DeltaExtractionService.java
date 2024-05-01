@@ -116,14 +116,7 @@ public class DeltaExtractionService {
 
       JClass jClass = null;
       try {
-        if (!Objects.equals(DiffEntry.ChangeType.DELETE, entry.getChangeType())) {
           jClass = parseClass(classFile, config);
-        } else {
-          // TODO implement delete logic (remove the continue;)
-          System.out.println(
-              "Deleted file detected, not yet implemented: " + classFile.getAbsolutePath());
-          continue;
-        }
       } catch (IOException e) {
         System.err.println("Error parsing class file: " + classFile.getAbsolutePath());
         System.err.println(e.getMessage());

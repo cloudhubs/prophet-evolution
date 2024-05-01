@@ -65,6 +65,17 @@ public class MetricsService {
     // Now Microservice specific metrics
     systemMetrics.setMicroserviceMetrics(microserviceMetricsService.getMicroserviceMetrics());
 
+    // Sort system metrics by number of changed endpoints and calls
+    sortMicroserviceMetrics(systemMetrics);
     return systemMetrics;
+  }
+
+  private void sortMicroserviceMetrics(SystemMetrics systemMetrics) {
+    systemMetrics
+        .getMicroserviceMetrics()
+        .sort(Comparator.comparing(
+                    m -> -1 * (m.getDependencyMetrics().getCallChanges().size()
+                        + m.getDependencyMetrics().getEndpointChanges().size())
+        ));
   }
 }
