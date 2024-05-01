@@ -50,7 +50,6 @@ public class ReportService {
   /** The service for generating metrics */
   private final MetricsService metricsService;
 
-
   /**
    * Constructor for ReportService
    *
@@ -115,7 +114,6 @@ public class ReportService {
       System.exit(TEMPLATE_PROCESS_ERROR.ordinal());
     }
   }
-
 
   /**
    * Logic for naming the report file, this can be changed as preferred

@@ -59,16 +59,15 @@ public class JClass implements JsonSerializable {
 
   public static JClass deletedClass(File classFile, InputConfig config) {
     return new JClass(
-            classFile.getName(),
-            getRepositoryPath(classFile, config),
-            "",
-            ClassRole.fromSourceFile(classFile),
-            List.of(),
-            List.of(),
-            List.of(),
-            List.of(),
-            getMicroserviceName(classFile, config)
-    );
+        classFile.getName(),
+        getRepositoryPath(classFile, config),
+        "",
+        ClassRole.fromSourceFile(classFile),
+        List.of(),
+        List.of(),
+        List.of(),
+        List.of(),
+        getMicroserviceName(classFile, config));
   }
 
   /** Uniquely identify a class as an object of a given service */

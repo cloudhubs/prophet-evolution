@@ -8,7 +8,6 @@ import edu.university.ecs.lab.impact.models.ClassMetrics;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /** Service to generate metrics pertaining to classes in the system */
 public class ClassMetricsService {
@@ -45,11 +44,20 @@ public class ClassMetricsService {
     ClassMetrics totalMetrics = new ClassMetrics();
     totalMetrics.setClassRole(ClassRole.TOTAL);
     totalMetrics.setAddedClassCount(
-        classMetricsList.stream().map(ClassMetrics::getAddedClassCount).mapToInt(Integer::intValue).sum());
+        classMetricsList.stream()
+            .map(ClassMetrics::getAddedClassCount)
+            .mapToInt(Integer::intValue)
+            .sum());
     totalMetrics.setModifiedClassCount(
-        classMetricsList.stream().map(ClassMetrics::getModifiedClassCount).mapToInt(Integer::intValue).sum());
+        classMetricsList.stream()
+            .map(ClassMetrics::getModifiedClassCount)
+            .mapToInt(Integer::intValue)
+            .sum());
     totalMetrics.setDeletedClassCount(
-        classMetricsList.stream().map(ClassMetrics::getDeletedClassCount).mapToInt(Integer::intValue).sum());
+        classMetricsList.stream()
+            .map(ClassMetrics::getDeletedClassCount)
+            .mapToInt(Integer::intValue)
+            .sum());
 
     classMetricsList.add(totalMetrics);
 

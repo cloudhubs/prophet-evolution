@@ -73,9 +73,11 @@ public class MetricsService {
   private void sortMicroserviceMetrics(SystemMetrics systemMetrics) {
     systemMetrics
         .getMicroserviceMetrics()
-        .sort(Comparator.comparing(
-                    m -> -1 * (m.getDependencyMetrics().getCallChanges().size()
-                        + m.getDependencyMetrics().getEndpointChanges().size())
-        ));
+        .sort(
+            Comparator.comparing(
+                m ->
+                    -1
+                        * (m.getDependencyMetrics().getCallChanges().size()
+                            + m.getDependencyMetrics().getEndpointChanges().size())));
   }
 }

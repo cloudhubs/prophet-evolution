@@ -116,7 +116,7 @@ public class DeltaExtractionService {
 
       JClass jClass = null;
       try {
-          jClass = parseClass(classFile, config);
+        jClass = parseClass(classFile, config);
       } catch (IOException e) {
         System.err.println("Error parsing class file: " + classFile.getAbsolutePath());
         System.err.println(e.getMessage());

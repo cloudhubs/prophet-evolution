@@ -1,7 +1,5 @@
 package edu.university.ecs.lab.impact.models.change;
 
-import edu.university.ecs.lab.common.models.Endpoint;
-import edu.university.ecs.lab.common.models.Method;
 import edu.university.ecs.lab.common.models.RestCall;
 import edu.university.ecs.lab.common.models.enums.HttpMethod;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
@@ -9,8 +7,6 @@ import edu.university.ecs.lab.impact.models.enums.RestCallImpact;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Change to the call itself. A change type of 'Add' means that a new call was created. A change
@@ -51,7 +47,7 @@ public class CallChange {
 
     // TODO remove modify and verify one is null
     ChangeType changeType =
-            oldCall == null ? ChangeType.ADD : newCall == null ? ChangeType.DELETE : ChangeType.MODIFY;
+        oldCall == null ? ChangeType.ADD : newCall == null ? ChangeType.DELETE : ChangeType.MODIFY;
 
     if (oldCall == null) {
       oldCall = CallChange.blankCall();
@@ -61,13 +57,12 @@ public class CallChange {
       newCall = CallChange.blankCall();
     }
 
-    return new CallChange(
-            oldCall, newCall, changeType);
+    return new CallChange(oldCall, newCall, changeType);
   }
 
   /**
-   * Create a blank endpoint with no information. This represents an endpoint
-   * before ADD or after DELETE.
+   * Create a blank endpoint with no information. This represents an endpoint before ADD or after
+   * DELETE.
    *
    * @return a blank endpoint
    */

@@ -16,8 +16,7 @@ public enum ClassRole {
   DTO(JClass.class),
   UNKNOWN(null),
   /** Only for metrics reporting, not a real class role */
-  TOTAL(null)
-  ;
+  TOTAL(null);
 
   /** Get the associated class type for a role */
   @Getter private final Class<? extends JClass> classType;

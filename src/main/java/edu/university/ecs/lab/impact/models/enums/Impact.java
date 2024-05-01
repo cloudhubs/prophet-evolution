@@ -4,13 +4,13 @@ import lombok.Getter;
 
 @Getter
 public enum Impact {
-    NONE("No risk"),
-    QUALITY("Quality Detriment"),
-    WILL_FAULT("Will cause fault");
+  NONE("No risk"),
+  QUALITY("Quality Detriment"),
+  WILL_FAULT("Will cause fault");
 
-    private final String name;
+  private final String name;
 
-    Impact(String name) {
-        this.name = name;
-    }
+  Impact(String name) {
+    this.name = name;
+  }
 }

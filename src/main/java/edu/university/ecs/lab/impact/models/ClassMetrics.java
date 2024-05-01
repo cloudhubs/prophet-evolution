@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

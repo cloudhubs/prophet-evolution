@@ -6,14 +6,25 @@ import lombok.Getter;
 @Getter
 public enum EndpointImpact {
   NONE("No change", "Endpoint is unchanged", Impact.NONE, ""),
-  NOW_UNUSED("Endpoint now unused", "Endpoint is not invoked by rest calls as of this commit.", Impact.QUALITY, "Endpoint should be investigated for removal for maintainability."),
-  NOT_USED("Endpoint not used", "Endpoint is not invoked by rest calls.", Impact.QUALITY, "Endpoint should be investigated for removal for maintainability."),
+  NOW_UNUSED(
+      "Endpoint now unused",
+      "Endpoint is not invoked by rest calls as of this commit.",
+      Impact.QUALITY,
+      "Endpoint should be investigated for removal for maintainability."),
+  NOT_USED(
+      "Endpoint not used",
+      "Endpoint is not invoked by rest calls.",
+      Impact.QUALITY,
+      "Endpoint should be investigated for removal for maintainability."),
   ADD("Added endpoint", "New endpoint", Impact.NONE, ""),
   DELETE("Deleted Endpoint", "Deleted endpoint", Impact.NONE, ""),
-  IS_CHANGED("Modified endpoint","Endpoint is changed", Impact.NONE, ""),
-  BROKE_DEPENDENT_CALLS("Broken dependent calls",
+  IS_CHANGED("Modified endpoint", "Endpoint is changed", Impact.NONE, ""),
+  BROKE_DEPENDENT_CALLS(
+      "Broken dependent calls",
       "Endpoint is changed, resulting in broken rest calls that invoked it and were not updated"
-          + " correctly. This will cause these methods to fault.", Impact.WILL_FAULT, "All rest calls directed at this endpoint will fault."),
+          + " correctly. This will cause these methods to fault.",
+      Impact.WILL_FAULT,
+      "All rest calls directed at this endpoint will fault."),
   ;
 
   private final String name;

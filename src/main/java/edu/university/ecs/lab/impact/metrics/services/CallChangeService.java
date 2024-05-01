@@ -242,7 +242,8 @@ public class CallChangeService {
     int newADS = MicroserviceMetricsService.calculateADS(newMicroservice);
 
     // If our ADS (# of links) went down or remains the same
-    // TODO I didn't understand the left half of this condition at first, I think we can implement this better
+    // TODO I didn't understand the left half of this condition at first, I think we can implement
+    // this better
     if (oldADS >= newADS || MicroserviceMetricsService.THRESHOLD > newADS) {
       return false;
     }
