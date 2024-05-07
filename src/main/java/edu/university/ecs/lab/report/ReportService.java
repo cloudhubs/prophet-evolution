@@ -23,8 +23,7 @@ import static edu.university.ecs.lab.common.utils.FullCimetUtils.getShortCommit;
 
 /** To use this class, simply call the constructor and then run generateReport() */
 public class ReportService {
-  // TODO get this from the config.json file as yet another constructor parameter
-  private static final String OUTPUT_PATH = "./out/";
+
   private static final String TEMPLATE_NAME = "report.ftl";
   private static Configuration config;
 
@@ -50,9 +49,13 @@ public class ReportService {
   /** The service for generating metrics */
   private final MetricsService metricsService;
 
+  /** The base path for output files from config */
+  private final String outputBasePath;
+
   /**
    * Constructor for ReportService
    *
+   * @param outputBasePath base path to output files (output directory from config)
    * @param baseBranch branch merging into, usually main/master
    * @param baseCommit commit merging into, on baseBranch
    * @param compareBranch base comparing from, usually feature branch
@@ -62,6 +65,7 @@ public class ReportService {
    * @throws NullPointerException if either path is null
    */
   ReportService(
+      String outputBasePath,
       String baseBranch,
       String baseCommit,
       String compareBranch,
@@ -70,6 +74,7 @@ public class ReportService {
       String newIntermediatePath,
       String deltaPath)
       throws NullPointerException, IOException {
+    this.outputBasePath = Objects.requireNonNull(outputBasePath);
     this.intermediatePath = Objects.requireNonNull(intermediatePath);
     this.baseBranch = baseBranch;
     this.compareBranch = compareBranch;
@@ -106,7 +111,7 @@ public class ReportService {
     try {
       template = config.getTemplate(TEMPLATE_NAME);
       /* Merge data-model with template */
-      Writer out = new FileWriter(OUTPUT_PATH + getReportFileName());
+      Writer out = new FileWriter(outputBasePath + "/" + getReportFileName());
       template.process(root, out);
       out.close();
     } catch (IOException | TemplateException e) {

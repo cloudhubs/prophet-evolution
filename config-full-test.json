@@ -1,7 +1,7 @@
 {
   "systemName": "Train-ticket",
   "clonePath": "./repos-full-test",
-  "outputPath": "out-full-test",
+  "outputPath": "./out-full-test",
   "repositories": [
     {
       "repoUrl": "https://github.com/cloudhubs/train-ticket-microservices.git",

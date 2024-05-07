@@ -1,5 +1,8 @@
 package edu.university.ecs.lab.report;
 
+import edu.university.ecs.lab.common.config.ConfigUtil;
+import edu.university.ecs.lab.common.config.models.InputConfig;
+
 import java.io.*;
 import java.util.*;
 
@@ -13,24 +16,26 @@ public class ReportRunner {
    *     <path/to/intermediate-json> <path/to/new-intermediate-json> <path/to/delta-json>
    */
   public static void main(String[] args) throws IOException {
-    if (args.length != 7) {
+    if (args.length != 8) {
       System.err.println(
-          "Invalid # of args, 2 expected: <base branch> <base commit> <compare branch> <compare"
+          "Invalid # of args, 2 expected: <path/to/config> <base branch> <base commit> <compare branch> <compare"
               + " commit> <path/to/intermediate-json> <path/to/new-intermediate-json>"
               + " <path/to/delta-json>");
       return;
     }
 
-    String baseBranch = args[0];
-    String baseCommit = args[1];
-    String compareBranch = args[2];
-    String compareCommit = args[3];
-    String intermediatePath = args[4];
-    String newIntermediatePath = args[5];
-    String deltaPath = args[6];
+    InputConfig inputConfig = ConfigUtil.validateConfig(args[0]);
+    String baseBranch = args[1];
+    String baseCommit = args[2];
+    String compareBranch = args[3];
+    String compareCommit = args[4];
+    String intermediatePath = args[5];
+    String newIntermediatePath = args[6];
+    String deltaPath = args[7];
 
     ReportService reportService =
         new ReportService(
+            inputConfig.getOutputPath(),
             baseBranch,
             baseCommit,
             compareBranch,

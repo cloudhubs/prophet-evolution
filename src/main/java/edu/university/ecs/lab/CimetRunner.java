@@ -49,6 +49,7 @@ public class CimetRunner {
     // RUN REPORT
     System.out.println("Starting Report Creation...");
     String[] reportArgs = {
+      configPath,
       baseBranch,
       baseCommit,
       compareBranch,

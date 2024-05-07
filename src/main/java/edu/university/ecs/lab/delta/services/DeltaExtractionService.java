@@ -67,6 +67,7 @@ public class DeltaExtractionService {
         outputNames.add(outputFile);
       } catch (Exception e) {
         System.err.println("Error extracting delta: " + e.getMessage());
+        e.printStackTrace();
         System.exit(DELTA_EXTRACTION_FAIL.ordinal());
       }
     }
@@ -114,16 +115,16 @@ public class DeltaExtractionService {
       String localPath = isDeleted ? basePath + entry.getOldPath() : basePath + entry.getNewPath();
       File classFile = new File(localPath);
 
-      JClass jClass = null;
       try {
-        jClass = parseClass(classFile, config);
+        JClass jClass = parseClass(classFile, config);
+        if (jClass != null) {
+          systemChange.addChange(jClass, entry, localPath);
+        }
       } catch (IOException e) {
         System.err.println("Error parsing class file: " + classFile.getAbsolutePath());
         System.err.println(e.getMessage());
         System.exit(DELTA_EXTRACTION_FAIL.ordinal());
       }
-
-      systemChange.addChange(jClass, entry, localPath);
 
       System.out.println(
           "Change impact of type " + entry.getChangeType() + " detected in " + entry.getNewPath());

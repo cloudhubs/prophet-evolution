@@ -150,9 +150,7 @@ public class MicroserviceMetricsService {
         microserviceMap.values().stream()
             .flatMap(ms -> ms.getServices().stream())
             .flatMap(jService -> jService.getRestCalls().stream())
-            .filter(
-                restCall ->
-                    !restCall.getDestMsId().equals("") && !restCall.getDestMsId().equals("DELETED"))
+            .filter(restCall -> RestCall.hasDestination(restCall.getDestMsId()))
             .count();
 
     for (JController controller : microservice.getControllers()) {
@@ -175,7 +173,7 @@ public class MicroserviceMetricsService {
       }
     }
 
-    if (usedOperations == 0) {
+    if (usedOperations == 0 || totalOperations == 0) {
       return 0;
     }
 
@@ -201,19 +199,10 @@ public class MicroserviceMetricsService {
      In other words this is the coupling degree with other services, closer to 0 means less coupling
   */
   public static int calculateADS(Microservice microservice) {
-    Set<Link> links = new HashSet<>();
-    for (JService service : microservice.getServices()) {
-      for (RestCall restCall : service.getRestCalls()) {
-        links.add(new Link(restCall));
-      }
-    }
+    Set<Link> links = microservice.getAllLinks();
 
-    links =
-        links.stream()
-            .filter(
-                link ->
-                    !link.getMsDestination().equals("")
-                        && !link.getMsDestination().equals("DELETED"))
+    links = links.stream()
+            .filter(Link::hasDestination)
             .collect(Collectors.toSet());
 
     return links.size();

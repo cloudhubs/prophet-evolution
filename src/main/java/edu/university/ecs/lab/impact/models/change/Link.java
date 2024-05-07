@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,5 +45,9 @@ public class Link {
    */
   public static Link blankLink() {
     return new Link("", "");
+  }
+
+  public boolean hasDestination() {
+    return RestCall.hasDestination(msDestination);
   }
 }
