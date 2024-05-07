@@ -15,15 +15,14 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FullIRConstructionTest {
 
-  private final static String inputConfigPath = "config-full-test.json";
-  private final static String baseBranch = "main";
-  private final static String baseCommit = "7874340529b1f7094c8c6682e0dc1c37c8033ac2";
-  private final static String endCommit = "13f93fae687efebe8b931b58b953fc4a2c2df222";
+  private static final String inputConfigPath = "config-full-test.json";
+  private static final String baseBranch = "main";
+  private static final String baseCommit = "7874340529b1f7094c8c6682e0dc1c37c8033ac2";
+  private static final String endCommit = "13f93fae687efebe8b931b58b953fc4a2c2df222";
 
   private static final Logger LOGGER = Logger.getLogger(FullIRConstructionTest.class.getName());
 
@@ -41,30 +40,27 @@ class FullIRConstructionTest {
     }
   }
 
-
   @Test
-  public void fullIRComparisonTest(){
+  public void fullIRComparisonTest() {
     ObjectMapper mapper = new ObjectMapper();
 
     JsonNode json1 = null, json2 = null;
 
     // Run IncrementalCimetRunner
     try {
-      IncrementalCimetRunner.main(new String[]{inputConfigPath, baseBranch, baseCommit, endCommit});
+      IncrementalCimetRunner.main(
+          new String[] {inputConfigPath, baseBranch, baseCommit, endCommit});
       json1 = mapper.readTree(new File(FullCimetUtils.pathToNewIR));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.severe("Error in IncrementalCimetRunner: " + e.getMessage());
       assert false;
     }
 
-
     // Run IR Extraction
     try {
-      IRExtraction.main(new String[]{inputConfigPath, baseBranch, endCommit});
+      IRExtraction.main(new String[] {inputConfigPath, baseBranch, endCommit});
       json2 = mapper.readTree(new File(FullCimetUtils.pathToIR));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOGGER.severe("Error in IR Extraction: " + e.getMessage());
       assert false;
     }
@@ -73,6 +69,5 @@ class FullIRConstructionTest {
     boolean isEqual = json1.equals(json2);
 
     assertTrue(isEqual);
-
   }
 }
