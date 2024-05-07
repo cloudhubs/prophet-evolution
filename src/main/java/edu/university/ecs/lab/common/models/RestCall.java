@@ -168,6 +168,6 @@ public class RestCall extends MethodCall {
 
   public static boolean hasDestination(String msDestination) {
     return !Objects.equals(msDestination, "")
-            && !Objects.equals(msDestination, RestCall.DEST_DELETED);
+        && !Objects.equals(msDestination, RestCall.DEST_DELETED);
   }
 }

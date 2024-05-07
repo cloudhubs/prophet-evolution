@@ -201,9 +201,7 @@ public class MicroserviceMetricsService {
   public static int calculateADS(Microservice microservice) {
     Set<Link> links = microservice.getAllLinks();
 
-    links = links.stream()
-            .filter(Link::hasDestination)
-            .collect(Collectors.toSet());
+    links = links.stream().filter(Link::hasDestination).collect(Collectors.toSet());
 
     return links.size();
   }

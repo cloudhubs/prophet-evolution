@@ -7,7 +7,6 @@ import edu.university.ecs.lab.impact.models.enums.RestCallImpact;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 /**
  * Change to the call itself. A change type of 'Add' means that a new call was created. A change
  * type of 'Delete' means that a call was deleted. A change type of 'Modify' means that a call was

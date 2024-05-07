@@ -1,15 +1,10 @@
 package edu.university.ecs.lab.impact.models;
 
-import edu.university.ecs.lab.common.models.JService;
 import edu.university.ecs.lab.common.models.Microservice;
-import edu.university.ecs.lab.common.models.RestCall;
-import edu.university.ecs.lab.delta.models.SystemChange;
 import edu.university.ecs.lab.impact.metrics.services.MicroserviceMetricsService;
 import edu.university.ecs.lab.impact.models.change.Link;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,12 +21,15 @@ public class SystemMetrics {
   private List<ClassMetrics> classMetrics;
   private List<MicroserviceMetrics> microserviceMetrics;
 
-  private SystemMetrics() { super(); }
+  private SystemMetrics() {
+    super();
+  }
 
-  public static SystemMetrics buildSystemMetrics(Map<String, Microservice> oldMicroserviceMap,
-                                                 Map<String, Microservice> newMicroserviceMap,
-                                                 List<ClassMetrics> classMetrics,
-                                                 List<MicroserviceMetrics> microserviceMetrics) {
+  public static SystemMetrics buildSystemMetrics(
+      Map<String, Microservice> oldMicroserviceMap,
+      Map<String, Microservice> newMicroserviceMap,
+      List<ClassMetrics> classMetrics,
+      List<MicroserviceMetrics> microserviceMetrics) {
     SystemMetrics metrics = new SystemMetrics();
     metrics.oldScfScore = calculateSCF(oldMicroserviceMap);
     metrics.oldAdcsScore = calculateADCS(oldMicroserviceMap);
@@ -84,9 +82,7 @@ public class SystemMetrics {
     for (Microservice microservice : microserviceMap.values()) {
       links.addAll(microservice.getAllLinks());
     }
-    links =
-            links.stream().filter(Link::hasDestination)
-                    .collect(Collectors.toSet());
+    links = links.stream().filter(Link::hasDestination).collect(Collectors.toSet());
 
     double serviceCount = microserviceMap.values().size();
     double maxConnectivity = serviceCount * (serviceCount + 1);
@@ -95,9 +91,11 @@ public class SystemMetrics {
   }
 
   private void sortMicroserviceMetrics() {
-    this.microserviceMetrics.sort(Comparator.comparing(
-            m -> -1 * (m.getDependencyMetrics().getCallChanges().size()
-                    + m.getDependencyMetrics().getEndpointChanges().size()))
-    );
+    this.microserviceMetrics.sort(
+        Comparator.comparing(
+            m ->
+                -1
+                    * (m.getDependencyMetrics().getCallChanges().size()
+                        + m.getDependencyMetrics().getEndpointChanges().size())));
   }
 }

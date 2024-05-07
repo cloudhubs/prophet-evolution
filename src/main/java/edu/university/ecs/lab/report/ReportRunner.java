@@ -18,9 +18,9 @@ public class ReportRunner {
   public static void main(String[] args) throws IOException {
     if (args.length != 8) {
       System.err.println(
-          "Invalid # of args, 2 expected: <path/to/config> <base branch> <base commit> <compare branch> <compare"
-              + " commit> <path/to/intermediate-json> <path/to/new-intermediate-json>"
-              + " <path/to/delta-json>");
+          "Invalid # of args, 2 expected: <path/to/config> <base branch> <base commit> <compare"
+              + " branch> <compare commit> <path/to/intermediate-json>"
+              + " <path/to/new-intermediate-json> <path/to/delta-json>");
       return;
     }
 

@@ -38,7 +38,6 @@ public class MetricsService {
     classMetricsService = new ClassMetricsService(systemChange);
     microserviceMetricsService =
         new MicroserviceMetricsService(oldMicroserviceMap, newMicroserviceMap);
-
   }
 
   /**
@@ -47,11 +46,10 @@ public class MetricsService {
    * @return complete system metrics
    */
   public SystemMetrics generateSystemMetrics() {
-      return SystemMetrics.buildSystemMetrics(
-            oldMicroserviceMap,
-            newMicroserviceMap,
-            classMetricsService.generateAllClassMetrics(),
-            microserviceMetricsService.getMicroserviceMetrics()
-    );
+    return SystemMetrics.buildSystemMetrics(
+        oldMicroserviceMap,
+        newMicroserviceMap,
+        classMetricsService.generateAllClassMetrics(),
+        microserviceMetricsService.getMicroserviceMetrics());
   }
 }
