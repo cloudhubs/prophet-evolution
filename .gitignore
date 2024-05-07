@@ -7,4 +7,6 @@ commands.txt
 /results/
 /repos/
 /out/*
+/repos-full-test/*
+/out-full-test/*
 /test-repos/

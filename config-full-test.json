@@ -28,7 +28,8 @@
         "ts-station-service",
         "ts-travel-service",
         "ts-ui-dashboard",
-        "ts-user-service"
+        "ts-user-service",
+        "ts-server"
       ]
     }
   ]
