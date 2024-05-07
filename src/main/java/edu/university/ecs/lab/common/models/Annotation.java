@@ -7,9 +7,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 /** Represents an annotation in Java */
-@Data
 @AllArgsConstructor
-@NoArgsConstructor
 @ToString
 public class Annotation implements JsonSerializable {
   /** The name of the annotation * */

@@ -10,11 +10,9 @@ import javax.json.JsonObjectBuilder;
 
 /** Represents a field attribute in a Java class or in our case a JClass. */
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 public class Field implements JsonSerializable {
   /** Java class type of the class variable e.g. String */
   @SerializedName("variableType")

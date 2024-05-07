@@ -23,9 +23,6 @@ public class MetricsService {
   /** Service to generate metrics on a per-service basis */
   private final MicroserviceMetricsService microserviceMetricsService;
 
-  /** Service to generate overall system metrics */
-  private final SystemMetricsService systemMetricsService;
-
   /**
    * Constructor for MetricsService. Parses
    *
@@ -41,8 +38,6 @@ public class MetricsService {
     classMetricsService = new ClassMetricsService(systemChange);
     microserviceMetricsService =
         new MicroserviceMetricsService(oldMicroserviceMap, newMicroserviceMap);
-    systemMetricsService =
-        new SystemMetricsService(oldMicroserviceMap, newMicroserviceMap, systemChange);
   }
 
   /**
@@ -51,20 +46,10 @@ public class MetricsService {
    * @return complete system metrics
    */
   public SystemMetrics generateSystemMetrics() {
-    SystemMetrics systemMetrics = new SystemMetrics();
-
-    // System metrics first
-    systemMetrics.setOldAdcsScore(systemMetricsService.calculateADCS(oldMicroserviceMap));
-    systemMetrics.setOldScfScore(systemMetricsService.calculateSCF(newMicroserviceMap));
-    systemMetrics.setNewAdcsScore(systemMetricsService.calculateADCS(oldMicroserviceMap));
-    systemMetrics.setNewScfScore(systemMetricsService.calculateSCF(newMicroserviceMap));
-
-    // Now class change metrics
-    systemMetrics.setClassMetrics(classMetricsService.generateAllClassMetrics());
-
-    // Now Microservice specific metrics
-    systemMetrics.setMicroserviceMetrics(microserviceMetricsService.getMicroserviceMetrics());
-
-    return systemMetrics;
+    return SystemMetrics.buildSystemMetrics(
+        oldMicroserviceMap,
+        newMicroserviceMap,
+        classMetricsService.generateAllClassMetrics(),
+        microserviceMetricsService.getMicroserviceMetrics());
   }
 }

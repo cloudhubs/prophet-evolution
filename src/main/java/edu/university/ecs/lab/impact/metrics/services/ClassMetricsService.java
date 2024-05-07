@@ -40,6 +40,27 @@ public class ClassMetricsService {
     classMetricsList.add(generateMetricsForRole(ClassRole.DTO, systemChange.getDtos()));
     classMetricsList.add(generateMetricsForRole(ClassRole.ENTITY, systemChange.getEntities()));
 
+    // Generate total metrics
+    ClassMetrics totalMetrics = new ClassMetrics();
+    totalMetrics.setClassRole(ClassRole.TOTAL);
+    totalMetrics.setAddedClassCount(
+        classMetricsList.stream()
+            .map(ClassMetrics::getAddedClassCount)
+            .mapToInt(Integer::intValue)
+            .sum());
+    totalMetrics.setModifiedClassCount(
+        classMetricsList.stream()
+            .map(ClassMetrics::getModifiedClassCount)
+            .mapToInt(Integer::intValue)
+            .sum());
+    totalMetrics.setDeletedClassCount(
+        classMetricsList.stream()
+            .map(ClassMetrics::getDeletedClassCount)
+            .mapToInt(Integer::intValue)
+            .sum());
+
+    classMetricsList.add(totalMetrics);
+
     return classMetricsList;
   }
 

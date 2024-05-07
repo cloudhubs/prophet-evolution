@@ -6,6 +6,7 @@ import edu.university.ecs.lab.impact.models.MicroserviceMetrics;
 import edu.university.ecs.lab.impact.models.change.Link;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MicroserviceMetricsService {
   public static final int THRESHOLD = 5;
@@ -59,7 +60,7 @@ public class MicroserviceMetricsService {
   }
 
   /*
-     https://drive.google.com/drive/folders/1nEknAyMAsw-aUze0_ot9_lER2yNV-HOx
+     https://drive.google.com/file/d/1tU8Do3tWM1hyk-bzjuxc_zdV2rBomoDO/view?usp=sharing
 
          Service Interface Data Cohesion (SIDC1): this metric quantifies
      the cohesion of a service based on the cohesiveness
@@ -81,6 +82,8 @@ public class MicroserviceMetricsService {
      service operations pairs which have a same return type.
      – Total(SOp(sis )) returns the number of combinations of
      operation pairs for the service interface sis .
+
+     Numbers closer to 0 indicate lower cohesion and less overlap
   */
   public static double calculateSIDC2Score(Microservice microservice) {
     Map<String, Integer> paramTypes = new HashMap<>();
@@ -96,13 +99,14 @@ public class MicroserviceMetricsService {
           String[] params = endpoint.getParameterList().split(",");
           for (String param : params) {
             String[] paramParts = param.split(" ");
-            if (paramParts.length == 2) {
+            if (paramParts.length == 2 || paramParts.length == 3) {
               // If we try to add it but it was already there
-              if (paramTypes.containsKey(paramParts[0])) {
-                paramTypes.merge(paramParts[0], 1, Integer::sum);
-                commonParams += (paramTypes.get(paramParts[0]) - 1) * 2;
+              String paramType = paramParts.length == 2 ? paramParts[0] : paramParts[1];
+              if (paramTypes.containsKey(paramType)) {
+                paramTypes.merge(paramType, 1, Integer::sum);
+                commonParams += (paramTypes.get(paramType) - 1) * 2;
               } else {
-                paramTypes.put(paramParts[0], 1);
+                paramTypes.put(paramType, 1);
               }
             }
           }
@@ -121,7 +125,7 @@ public class MicroserviceMetricsService {
   }
 
   /*
-     https://drive.google.com/drive/folders/1nEknAyMAsw-aUze0_ot9_lER2yNV-HOx
+     https://drive.google.com/file/d/1tU8Do3tWM1hyk-bzjuxc_zdV2rBomoDO/view?usp=sharing
 
      Service Interface Usage Cohesion (SIUC): this metric
      quantifies the client usage patterns of service operations
@@ -133,12 +137,21 @@ public class MicroserviceMetricsService {
      – clients is the set of all clients of service s.
      – Invoked(clients, SOp(sis )) returns the number of used
      operations per client.
+
+     Closer to 0 indicates lower utilization from other services and less coupling overall
+     This values remains between 0 and 1
   */
   public static double calculateSIUCScore(
       Map<String, Microservice> microserviceMap, Microservice microservice) {
     Map<String, Integer> clients = new HashMap<>();
 
     int usedOperations = 0;
+    long totalOperations =
+        microserviceMap.values().stream()
+            .flatMap(ms -> ms.getServices().stream())
+            .flatMap(jService -> jService.getRestCalls().stream())
+            .filter(restCall -> RestCall.hasDestination(restCall.getDestMsId()))
+            .count();
 
     for (JController controller : microservice.getControllers()) {
 
@@ -160,7 +173,7 @@ public class MicroserviceMetricsService {
       }
     }
 
-    if (usedOperations == 0) {
+    if (usedOperations == 0 || totalOperations == 0) {
       return 0;
     }
 
@@ -170,9 +183,7 @@ public class MicroserviceMetricsService {
       siuc += i;
     }
 
-    siuc /= clients.size();
-
-    siuc /= (clients.size() * siuc);
+    siuc /= totalOperations;
 
     return siuc;
   }
@@ -185,15 +196,12 @@ public class MicroserviceMetricsService {
      operation to be complete. The higher the ADS, the more this service depends on other
      services, i.e., it is more vulnerable to the side effects of failures in the services invoked.
 
-     In other words this is the coupling degree with other services
+     In other words this is the coupling degree with other services, closer to 0 means less coupling
   */
   public static int calculateADS(Microservice microservice) {
-    Set<Link> links = new HashSet<>();
-    for (JService service : microservice.getServices()) {
-      for (RestCall restCall : service.getRestCalls()) {
-        links.add(new Link(restCall));
-      }
-    }
+    Set<Link> links = microservice.getAllLinks();
+
+    links = links.stream().filter(Link::hasDestination).collect(Collectors.toSet());
 
     return links.size();
   }

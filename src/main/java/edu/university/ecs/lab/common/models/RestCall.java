@@ -7,6 +7,7 @@ import lombok.Getter;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
+import java.util.Objects;
 
 /**
  * Represents an extension of a method call. A rest call exists at the service level and represents
@@ -46,6 +47,7 @@ public class RestCall extends MethodCall {
    * @param destEndpoint The endpoint of the call
    * @param destMsId The destination service of the call
    * @param destFile The destination file of the call
+   * @param payloadObject Object holding payload for api call
    */
   public RestCall(
       String methodName,
@@ -162,5 +164,10 @@ public class RestCall extends MethodCall {
 
       return restCallBuilder.build();
     }
+  }
+
+  public static boolean hasDestination(String msDestination) {
+    return !Objects.equals(msDestination, "")
+        && !Objects.equals(msDestination, RestCall.DEST_DELETED);
   }
 }

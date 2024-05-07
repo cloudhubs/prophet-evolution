@@ -67,6 +67,7 @@ public class DeltaExtractionService {
         outputNames.add(outputFile);
       } catch (Exception e) {
         System.err.println("Error extracting delta: " + e.getMessage());
+        e.printStackTrace();
         System.exit(DELTA_EXTRACTION_FAIL.ordinal());
       }
     }
@@ -114,15 +115,10 @@ public class DeltaExtractionService {
       String localPath = isDeleted ? basePath + entry.getOldPath() : basePath + entry.getNewPath();
       File classFile = new File(localPath);
 
-      JClass jClass = null;
       try {
-        if (!Objects.equals(DiffEntry.ChangeType.DELETE, entry.getChangeType())) {
-          jClass = parseClass(classFile, config);
-        } else {
-          // TODO implement delete logic (remove the continue;)
-          System.out.println(
-              "Deleted file detected, not yet implemented: " + classFile.getAbsolutePath());
-          continue;
+        JClass jClass = parseClass(classFile, config);
+        if (jClass != null) {
+          systemChange.addChange(jClass, entry, localPath);
         }
       } catch (IOException e) {
         System.err.println("Error parsing class file: " + classFile.getAbsolutePath());
@@ -130,22 +126,11 @@ public class DeltaExtractionService {
         System.exit(DELTA_EXTRACTION_FAIL.ordinal());
       }
 
-      systemChange.addChange(jClass, entry, localPath);
-
       System.out.println(
           "Change impact of type " + entry.getChangeType() + " detected in " + entry.getNewPath());
     }
 
-    String outputName =
-        "./out/delta-changes-["
-            + FullCimetUtils.baseBranch
-            + "-"
-            + FullCimetUtils.baseCommit.substring(0, 7)
-            + " -> "
-            + branch
-            + "-"
-            + compareCommit.substring(0, 7)
-            + "].json";
+    String outputName = FullCimetUtils.getDeltaOutputName(branch, compareCommit);
 
     MsJsonWriter.writeJsonToFile(systemChange.toJsonObject(), outputName);
 

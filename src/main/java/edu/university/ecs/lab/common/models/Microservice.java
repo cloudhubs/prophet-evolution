@@ -3,15 +3,14 @@ package edu.university.ecs.lab.common.models;
 import com.google.gson.annotations.SerializedName;
 import edu.university.ecs.lab.common.models.enums.ClassRole;
 import edu.university.ecs.lab.delta.models.Delta;
+import edu.university.ecs.lab.impact.models.change.Link;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static edu.university.ecs.lab.common.utils.ObjectToJsonUtils.listToJsonArray;
 
@@ -217,5 +216,18 @@ public class Microservice implements JsonSerializable {
         System.err.println("Unable to add change for class role: " + delta);
         break;
     }
+  }
+
+  public Set<Link> getAllLinks() {
+    Set<Link> links = new HashSet<>();
+
+    // Detect all rest calls
+    for (JService service : services) {
+      for (RestCall restCall : service.getRestCalls()) {
+        links.add(new Link(restCall));
+      }
+    }
+
+    return links;
   }
 }
