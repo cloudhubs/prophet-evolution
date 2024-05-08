@@ -1,7 +1,12 @@
 package edu.university.ecs.lab.impact.metrics.services;
 
+import com.google.common.graph.Graph;
 import edu.university.ecs.lab.common.models.*;
 import edu.university.ecs.lab.delta.models.enums.ChangeType;
+import edu.university.ecs.lab.impact.metrics.services.cyclic.MicroserviceGraph;
+import edu.university.ecs.lab.impact.metrics.services.cyclic.node.Link;
+import edu.university.ecs.lab.impact.metrics.services.cyclic.node.Node;
+import edu.university.ecs.lab.impact.metrics.services.cyclic.node.Request;
 import edu.university.ecs.lab.impact.models.change.CallChange;
 import edu.university.ecs.lab.impact.models.enums.RestCallImpact;
 
@@ -12,118 +17,16 @@ public class CallChangeService {
 
   private final Map<String, Microservice> oldMicroserviceMap;
   private final Map<String, Microservice> newMicroserviceMap;
+  private final Map<String, List<Set<Node>>> cyclicDependencyMap;
 
-  // Cycle stuff
-  private final Map<String, Integer> microserviceKey;
-  private final int vertices;
-  private final Map<Integer, List<Integer>> adjList;
-  private int[] parent; // To keep track of the path
 
   public CallChangeService(
       Map<String, Microservice> oldMicroserviceMap, Map<String, Microservice> newMicroserviceMap) {
     this.oldMicroserviceMap = oldMicroserviceMap;
     this.newMicroserviceMap = newMicroserviceMap;
-    this.vertices = newMicroserviceMap.size();
-    this.microserviceKey = new HashMap<>(vertices);
-    this.adjList = new HashMap<>(vertices);
-    this.parent = new int[vertices];
-
-    initializeKeyAndAdjlist();
+    this.cyclicDependencyMap = getCyclicDependencies();
   }
 
-  private void initializeKeyAndAdjlist() {
-    // Init the keys
-    int i = 0;
-    for (Microservice microservice : newMicroserviceMap.values()) {
-      microserviceKey.put(microservice.getId(), i);
-      i++;
-    }
-
-    // Create the links
-    for (Microservice microservice : newMicroserviceMap.values()) {
-      for (JService service : microservice.getServices()) {
-        for (RestCall restCall : service.getRestCalls()) {
-          if (Objects.nonNull(restCall.getDestFile()) && !restCall.getDestFile().isEmpty()) {
-            Microservice destMicroservice = oldMicroserviceMap.get(restCall.getDestMsId());
-            if (Objects.nonNull(destMicroservice)) {
-              addEdge(
-                  microserviceKey.get(microservice.getId()),
-                  microserviceKey.get(destMicroservice.getId()));
-            }
-          }
-        }
-      }
-    }
-
-    return;
-  }
-
-  public void addEdge(int start, int end) {
-    adjList.computeIfAbsent(start, k -> new ArrayList<>()).add(end);
-  }
-
-  private boolean detectCycleUtil(
-      int node, Set<Integer> visited, Set<Integer> recStack, List<Integer> path) {
-    if (recStack.contains(node)) {
-      int startIndex = path.indexOf(node);
-      return startIndex != -1; // return true if node is found in path
-    }
-    if (visited.contains(node)) {
-      return false;
-    }
-
-    visited.add(node);
-    recStack.add(node);
-    path.add(node);
-
-    List<Integer> children = adjList.get(node);
-    if (children != null) {
-      for (int child : children) {
-        if (detectCycleUtil(child, visited, recStack, path)) {
-          return true;
-        }
-      }
-    }
-
-    recStack.remove(node);
-    path.remove(path.size() - 1);
-    return false;
-  }
-
-  public List<Integer> detectCycle() {
-    Set<Integer> visited = new HashSet<>();
-    Set<Integer> recStack = new HashSet<>();
-    List<Integer> path = new ArrayList<>();
-
-    for (int node : adjList.keySet()) {
-      if (detectCycleUtil(node, visited, recStack, path)) {
-        return path;
-      }
-    }
-    return null; // no cycle found
-  }
-
-  public boolean isInCycle(Microservice microservice) {
-    List<Integer> cycleServices = detectCycle();
-
-    for (Integer node : cycleServices) {
-      if (microservice.getId().equals(keyFromValue(node))) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  private String keyFromValue(int i) {
-    for (Map.Entry<String, Integer> entry : microserviceKey.entrySet()) {
-      if (entry.getValue() == i) {
-        return entry.getKey();
-      }
-    }
-
-    return null;
-  }
 
   /**
    * Get a list of all changed rest calls for a single microservice
@@ -131,7 +34,6 @@ public class CallChangeService {
    * @return list of rest call changes from the given delta
    */
   public List<CallChange> getMsRestCallChanges(Microservice oldService, Microservice newService) {
-
     // Ensure non null TODO make work for either deleted old or new service
     assert Objects.nonNull(oldService) && Objects.nonNull(newService);
 
@@ -177,8 +79,30 @@ public class CallChangeService {
       } else if (checkAboveCouplingThreshold(callChange, microserviceName)) {
         break;
       }
+      // TODO Cyclic
+//      else if (cyclicDependencyMap.get(microserviceName)) {
+//
+//      }
     }
   }
+
+  /*
+
+   */
+  // TODO Cyclic Note: Need to add links to node? So we can see requests which contain information to identify callchange
+//  private boolean checkMemberOfCyclic(CallChange callChange, String microserviceName) {
+//    if(!cyclicDependencyMap.containsKey(microserviceName)) {
+//      return false;
+//    }
+//
+//    List<Set<Node>> cyclicDependencies = cyclicDependencyMap.get(microserviceName);
+//
+//    for(Set<Node> cyclicDependency : cyclicDependencies) {
+//      for(Node node : cyclicDependency) {
+//
+//      }
+//    }
+//  }
 
   /*
      Check if there is at least 1 other restcall making a call to the same endpoint
@@ -253,4 +177,80 @@ public class CallChangeService {
     callChange.setImpact(RestCallImpact.HIGH_COUPLING);
     return true;
   }
+
+  // Cycle stuff
+
+  /**
+   * Generates a microservice graph used for cyclic analysis
+   * uses newMicroserviceMap and returns it
+   *
+   * @return the microservice graph
+   */
+  public MicroserviceGraph buildMicroserviceGraph() {
+    Set<Node> nodes = newMicroserviceMap.keySet().stream().map(name -> new Node(name)).collect(Collectors.toUnmodifiableSet());
+    Set<Link> links = new HashSet<>();
+
+    // Create the links
+    for (Microservice microservice : newMicroserviceMap.values()) {
+      for (JService service : microservice.getServices()) {
+        for (RestCall restCall : service.getRestCalls()) {
+          if (Objects.nonNull(restCall.getDestFile()) && !restCall.getDestFile().isEmpty()) {
+            Microservice destMicroservice = oldMicroserviceMap.get(restCall.getDestMsId());
+            if (Objects.nonNull(destMicroservice)) {
+              Optional<Link> existingLink = links.stream().filter(l -> l.getSource().equals(microservice.getId()) && l.getTarget().equals(destMicroservice.getId())).findFirst();
+              // Keep track of at least the function name and where the ms is and file
+              Request request = new Request(microservice.getId(), service.getClassPath(), restCall);
+
+              if(existingLink.isPresent()) {
+                links.remove(existingLink.get());
+                existingLink.get().getRequests().add(request);
+                links.add(existingLink.get());
+              } else {
+                List<Request> rList = new ArrayList<>();
+                rList.add(request);
+                links.add(new Link(microservice.getId(), destMicroservice.getId(), rList));
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return new MicroserviceGraph(nodes, links);
+  }
+
+  /**
+   * Function to calculate all cyclic dependencies each node (microservice)
+   * is a member of.
+   *
+   * @return map of microservice list pairs
+   */
+  public Map<String, List<Set<Node>>> getCyclicDependencies() {
+    MicroserviceGraph graph = buildMicroserviceGraph();
+
+    // Find the strongly connected components
+    Graph<Set<Node>> sccs = graph.findSCCs();
+    // Reduce SCCs to only those containing multiple nodes
+    List<Set<Node>> sccList = sccs.nodes().stream().filter(scc -> scc.size() > 1).toList();
+    Map<String, List<Set<Node>>> cyclicDeps = new HashMap<>();
+    // Iterate over the strongly connected components and add cyclic dependency
+    // tags to applicable nodes
+    for (Set<Node> scc :  sccList) {
+      scc.forEach(node -> graph.getNodes().stream().filter(node2 ->
+                  node2.filterByName(node.getNodeName())).findFirst().ifPresent(
+                  n -> {
+                    cyclicDeps.putIfAbsent(n.getNodeName(), new ArrayList<>());
+                    cyclicDeps.computeIfPresent(n.getNodeName(), (key, existingList) -> {
+                      existingList.add(scc);
+                      return existingList;
+                    });
+                  }
+              )
+      );
+    }
+
+    return cyclicDeps;
+
+  }
+
 }

@@ -186,6 +186,14 @@ public class MergeService {
       for (Microservice ms : msModelMap.values()) {
         if (!ms.getId().equals(servicePath)) {
           for (JController controller : ms.getControllers()) {
+            // Reassign controller if it is in the deltas
+            String classPath = controller.getClassPath();
+            JController deltaController = systemChange.getControllers().values().stream().filter(delta -> delta.getChangedClass().getClassPath().equals(classPath)).map(delta -> (JController) delta.getChangedClass()).findFirst().orElse(null);
+
+            if(Objects.nonNull(deltaController)) {
+              controller = deltaController;
+            }
+
             for (Endpoint endpoint : controller.getEndpoints()) {
               if (endpoint.matchCall(restCall)) {
                 restCall.setDestination(controller);
