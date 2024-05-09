@@ -2,7 +2,6 @@ package edu.university.ecs.lab.impact.metrics.services.cyclic.node;
 
 import lombok.*;
 
-
 /** Simple node representation containing only name and type */
 @Getter
 @ToString
