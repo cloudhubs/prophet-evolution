@@ -1,23 +1,23 @@
-//package edu.university.ecs.lab.impact.metrics.services.cyclic;
+// package edu.university.ecs.lab.impact.metrics.services.cyclic;
 //
-//import com.google.common.collect.ImmutableList;
-//import com.google.common.graph.ElementOrder;
-//import com.google.common.graph.Graph;
-//import com.google.common.graph.GraphBuilder;
-//import com.google.common.graph.Graphs;
-//import com.google.common.graph.MutableGraph;
+// import com.google.common.collect.ImmutableList;
+// import com.google.common.graph.ElementOrder;
+// import com.google.common.graph.Graph;
+// import com.google.common.graph.GraphBuilder;
+// import com.google.common.graph.Graphs;
+// import com.google.common.graph.MutableGraph;
 //
-//import java.util.*;
+// import java.util.*;
 //
-///**
+/// **
 // * I shamelessly ripped this off of stack exchange ;)
 // * -Austin
 // * <br/>
 // * Allows us to perform SCC search namely.
 // * Probably a much better way to do this
 // */
-//@SuppressWarnings("UnstableApiUsage")
-//public class GraphUtils {
+// @SuppressWarnings("UnstableApiUsage")
+// public class GraphUtils {
 //    private GraphUtils() {
 //    }
 //
@@ -36,7 +36,8 @@
 //        // Kosaraju's algorithm
 //        final Map<T, Set<T>> ccStore = new HashMap<>(graph.nodes().size());
 //        // Step 1
-//        final ImmutableList<T> topologicalOrder = GraphUtils.traverse(graph).postOrderTraversal(graph.nodes()).toList()
+//        final ImmutableList<T> topologicalOrder =
+// GraphUtils.traverse(graph).postOrderTraversal(graph.nodes()).toList()
 //                .reverse();
 //        // Step 2
 //        final Graph<T> transposeGraph = Graphs.transpose(graph);
@@ -49,7 +50,8 @@
 //            final Set<T> hitExistingNodes = new HashSet<>();
 //
 //            GraphUtils.traverse(transposeGraph)
-//                    .postOrderTraversal(Collections.singleton(node), ccStore.keySet(), hitExistingNodes::add)
+//                    .postOrderTraversal(Collections.singleton(node), ccStore.keySet(),
+// hitExistingNodes::add)
 //                    .forEach(connectedComponent::add);
 //
 //            result.addNode(connectedComponent);
@@ -69,4 +71,4 @@
 //    public static <T> GraphTraverser<T> traverse(Graph<T> graph) {
 //        return new GraphTraverser<>(graph);
 //    }
-//}
+// }

@@ -1,18 +1,18 @@
-//package edu.university.ecs.lab.impact.metrics.services.cyclic;
+// package edu.university.ecs.lab.impact.metrics.services.cyclic;
 //
-//import com.google.common.collect.AbstractIterator;
-//import com.google.common.collect.FluentIterable;
-//import com.google.common.graph.Graph;
+// import com.google.common.collect.AbstractIterator;
+// import com.google.common.collect.FluentIterable;
+// import com.google.common.graph.Graph;
 //
-//import java.util.*;
-//import java.util.function.Consumer;
+// import java.util.*;
+// import java.util.function.Consumer;
 //
-///**
+/// **
 // * Graph traverser for post order
 // * @param <T> Type of node
 // */
-//@SuppressWarnings("UnstableApiUsage")
-//public class GraphTraverser<T> {
+// @SuppressWarnings("UnstableApiUsage")
+// public class GraphTraverser<T> {
 //    private record PostOrderNode<T>(T root, Iterator<T> childIterator) {
 //            private PostOrderNode(T root, Iterator<T> childIterator) {
 //            this.root = Objects.requireNonNull(root);
@@ -27,7 +27,8 @@
 //        private final Set<T> ignoredSet;
 //        private final Consumer<T> ignoreNodeEncountered;
 //
-//        public PostOrderIterator(Collection<T> roots, Set<T> ignoredNodes, Consumer<T> ignoreNodeMet) {
+//        public PostOrderIterator(Collection<T> roots, Set<T> ignoredNodes, Consumer<T>
+// ignoreNodeMet) {
 //            this.rootNodes = roots.iterator();
 //            this.visitedSet = new HashSet<>(graph.nodes().size());
 //            this.ignoredSet = ignoredNodes;
@@ -85,7 +86,8 @@
 //    }
 //
 //    /**
-//     * Does post order traversal of the (directed) graph. When a node in ignoredNodes is encountered, ignoreNodeMet is
+//     * Does post order traversal of the (directed) graph. When a node in ignoredNodes is
+// encountered, ignoreNodeMet is
 //     * called
 //     *
 //     * @param rootNodes
@@ -105,4 +107,4 @@
 //            }
 //        };
 //    }
-//}
+// }

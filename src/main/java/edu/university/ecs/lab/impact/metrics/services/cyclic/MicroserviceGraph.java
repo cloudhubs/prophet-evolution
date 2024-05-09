@@ -1,17 +1,17 @@
-//package edu.university.ecs.lab.impact.metrics.services.cyclic;
+// package edu.university.ecs.lab.impact.metrics.services.cyclic;
 //
-//import com.google.common.graph.*;
-//import edu.university.ecs.lab.impact.metrics.services.cyclic.node.Node;
-//import edu.university.ecs.lab.impact.metrics.services.cyclic.node.Link;
+// import com.google.common.graph.*;
+// import edu.university.ecs.lab.impact.metrics.services.cyclic.node.Node;
+// import edu.university.ecs.lab.impact.metrics.services.cyclic.node.Link;
 //
-//import java.util.Set;
+// import java.util.Set;
 //
-///**
+/// **
 // * Adapts the Guava Network representation for simplified interface
 // * Allows us to run algorithms on the graph
 // */
-//@SuppressWarnings("UnstableApiUsage")
-//public class MicroserviceGraph {
+// @SuppressWarnings("UnstableApiUsage")
+// public class MicroserviceGraph {
 //    /** The graph we actually store this as */
 //    MutableNetwork<Node, Link> graph = NetworkBuilder.directed().build();
 //
@@ -22,7 +22,8 @@
 //     */
 //    public MicroserviceGraph(Set<Node> nodes, Set<Link> links) {
 //        nodes.forEach(graph::addNode);
-//        links.forEach(link -> graph.addEdge(lookup(link.getSource()), lookup(link.getTarget()), link));
+//        links.forEach(link -> graph.addEdge(lookup(link.getSource()), lookup(link.getTarget()),
+// link));
 //    }
 //
 //    /**
@@ -50,4 +51,4 @@
 //                .filter((node -> nodeName.equals(node.getNodeName())))
 //                .findFirst().orElse(null);
 //    }
-//}
+// }
