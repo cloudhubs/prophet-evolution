@@ -110,7 +110,7 @@
                         <div><span class="font-semibold text-pink-800">SIDC Score</span></div>
                         <p class="text-xs mb-2 text-gray-400">
                             Service Interface Data Cohesion (SIDC): this metric quantifies the cohesion of a service based on the cohesiveness of the operations exposed in its interface, which means operations sharing the same type of input parameter.
-                            Numbers closer to 1 indicate a higher level of cohesion, while numbers closer to 0 indicate a lower level of cohesion.
+                            Higher numbers indicate a higher level of cohesion, while numbers closer to 0 indicate a lower level of cohesion.
                         </p>
                     </div>
                 </div>

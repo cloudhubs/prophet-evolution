@@ -47,16 +47,15 @@ public class MicroserviceMetricsService {
 
   private MicroserviceMetrics buildMetrics(
       Microservice oldMicroservice, Microservice newMicroservice) {
-    MicroserviceMetrics microserviceMetrics;
-    microserviceMetrics = new MicroserviceMetrics(oldMicroservice, newMicroservice);
+    MicroserviceMetrics metrics = new MicroserviceMetrics(oldMicroservice, newMicroservice);
 
-    microserviceMetrics.generateSiucMetrics(oldMicroserviceMap, newMicroserviceMap);
+    metrics.generateSiucMetrics(oldMicroserviceMap, newMicroserviceMap);
 
-    microserviceMetrics.setDependencyMetrics(
+    metrics.setDependencyMetrics(
         new DependencyMetrics(
             callChangeService.getMsRestCallChanges(oldMicroservice, newMicroservice),
             endpointChangeService.getAllMsEndpointChanges(oldMicroservice, newMicroservice)));
-    return microserviceMetrics;
+    return metrics;
   }
 
   /*
